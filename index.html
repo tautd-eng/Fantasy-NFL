@@ -8,26 +8,28 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#050506;--s1:#101013;--s2:#17171c;--s3:#202027;--line:#2b2b34;--tx:#f3f5f8;--mu:#9aa3b2;--blue:#2f80ff;--navy:#0b3a7a;--red:#d50a0a;--white:#fff}
+:root{color-scheme:light;--bg:#fff;--s1:#fff;--s2:#f3f5f9;--s3:#e6ebf3;--line:#d3d9e4;--tx:#0b0f19;--mu:#556074;--blue:#0b5bd3;--navy:#0a2a5e;--red:#c8102e;--white:#fff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.5 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .wrap{max-width:1120px;margin:0 auto}
-header{background:#000;color:var(--white);padding:22px 20px 18px;border-bottom:3px solid var(--white);box-shadow:0 3px 0 var(--navy),0 6px 0 var(--blue)}
+header{background:#000;color:#fff;padding:22px 20px 18px;border-bottom:4px solid var(--blue)}
+header .meta,header .pick{color:#b7c0d0}
 .top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
 h1{margin:0;font-size:clamp(1.6rem,5vw,2.3rem);line-height:1.1;font-weight:700;letter-spacing:-.01em}
-.meta{margin:6px 0 0;color:var(--mu);font-size:.85rem}
-.pick{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--mu)}
-select,input[type=search]{font:500 .95rem Inter,sans-serif;color:var(--tx);background:var(--s2);border:1px solid var(--line);padding:8px 10px;min-height:40px;border-radius:0}
-select:focus,input:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.meta{margin:6px 0 0;font-size:.85rem}
+.pick{display:flex;flex-direction:column;gap:3px;font-size:.8rem}
+select,input[type=search],input[type=number],input[type=password],textarea{font:500 .95rem Inter,sans-serif;color:var(--tx);background:#fff;border:1px solid #9aa5b8;padding:8px 10px;min-height:40px;border-radius:0}
+textarea{width:100%;min-height:70px;resize:vertical;font-weight:400}
+select:focus,input:focus,textarea:focus,button:focus-visible,.hv:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 .banner{background:var(--navy);color:#fff;padding:9px 20px;font-weight:500;font-size:.9rem}
 main{padding:18px 20px 56px}
-.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+.tabs{display:flex;gap:2px;border-bottom:2px solid #000;margin-bottom:18px;overflow-x:auto}
 .tabs button{background:none;border:0;padding:11px 16px;font:700 .95rem Inter,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap}
-.tabs button[aria-selected=true]{color:#fff;box-shadow:inset 0 -4px 0 var(--blue)}
+.tabs button[aria-selected=true]{color:#000;box-shadow:inset 0 -4px 0 var(--blue)}
 h3{margin:0 0 4px;font-size:1.2rem;font-weight:700}
 .hint{margin:0 0 12px;color:var(--mu);font-size:.85rem;max-width:80ch}
 small,.mut{color:var(--mu)}
-details.how{background:var(--s1);border:1px solid var(--line);border-left:5px solid var(--blue);padding:10px 14px;margin:0 0 16px;font-size:.88rem}
+details.how{background:var(--s2);border:1px solid var(--line);border-left:5px solid var(--blue);padding:10px 14px;margin:0 0 16px;font-size:.88rem}
 details.how summary{cursor:pointer;font-weight:700}
 details.how p{margin:8px 0 0}details.how code{background:var(--s3);padding:1px 5px}
 .tag{display:inline-block;margin-left:6px;padding:0 6px;background:var(--red);color:#fff;font-size:.7rem;font-weight:700}
@@ -35,30 +37,35 @@ details.how p{margin:8px 0 0}details.how code{background:var(--s3);padding:1px 5
 .act.hold{border-color:var(--line);color:var(--mu)}
 .act.sell{background:var(--red);border-color:var(--red);color:#fff}
 .act.add,.act.buy{background:var(--blue);border-color:var(--blue);color:#fff}
-.act.trade{border-color:var(--blue);color:#8db8ff}
-button.act{cursor:pointer}button.act:hover{background:var(--white);color:#000;border-color:var(--white)}
+.act.trade{border-color:var(--blue);color:var(--blue)}
+button.act{cursor:pointer}button.act:hover{background:#000;color:#fff;border-color:#000}
 .pl,.card{background:var(--s1);border:1px solid var(--line);margin-bottom:8px;padding:10px 12px}
-.pl{display:grid;grid-template-columns:3.4rem minmax(0,1fr) 10rem 4.2rem 5rem;gap:4px 14px;align-items:center}
-.pl.bn{background:transparent}
-.slot{font-weight:700;font-size:.8rem;background:var(--s3);text-align:center;padding:2px 0}
+.pl{display:grid;grid-template-columns:3.4rem minmax(0,1fr) 10rem 5.6rem 5rem;gap:4px 14px;align-items:center}
+.pl.bn{background:var(--s2)}
+.slot{font-weight:700;font-size:.8rem;background:#000;color:#fff;text-align:center;padding:2px 0}
 .who b{font-weight:700}.who small{display:block}
 .pj{display:grid;grid-template-columns:1fr 3rem;gap:8px;align-items:center}
-.track{height:14px;background:#000;border:1px solid var(--line);position:relative;
- background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(16.66% - 1px),var(--line) calc(16.66% - 1px),var(--line) 16.66%)}
-.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);border-right:2px solid #fff;transition:width .7s ease-out}
+.track{height:14px;background:var(--s3);position:relative}
+.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);transition:width .7s ease-out}
 .num{text-align:right;font-weight:700;font-size:1.25rem;line-height:1}
-.p3{text-align:right;line-height:1.1}.p3 b{font-size:1.1rem;display:block}.p3 small{font-size:.7rem}
+.fp{display:flex;align-items:end;gap:6px;justify-content:flex-end;padding:3px 6px;border:1px dashed var(--line);cursor:help}
+.fp .n{text-align:right;line-height:1.05}.fp .n b{font-size:1.05rem;display:block}.fp .n small{font-size:.65rem}
+.mb{display:flex;align-items:end;gap:2px;height:26px}.mb i{width:6px;background:var(--mu);min-height:2px}
+.mb i.e{background:var(--blue)}.mb i.t{background:var(--red)}.mb i.b{background:var(--line)}
+.hv:hover{border-color:var(--blue);border-style:solid}
 .spark{display:flex;align-items:end;gap:3px;height:30px}
-.spark i{flex:1;background:var(--s3);min-height:2px}.spark i:last-child{background:var(--blue)}
+.spark i{flex:1;background:#b9c3d4;min-height:2px}.spark i:last-child{background:#000}
 .ins{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.85rem;border-top:1px dashed var(--line);padding-top:7px;margin-top:4px}
-.ins .bd{flex-basis:100%;color:var(--mu);font-size:.78rem}
-.ins .bd2{flex-basis:100%;color:#6f7888;font-size:.74rem}
+.mx{flex-basis:100%;border-collapse:collapse;width:100%;min-width:0;font-size:.76rem;margin-top:2px}
+.mx th,.mx td{padding:2px 8px;border-top:1px solid var(--line);text-align:right;background:none;cursor:default;white-space:nowrap;font-size:.76rem;box-shadow:none}
+.mx th{color:var(--mu);font-weight:700;text-align:right}.mx td:first-child,.mx th:first-child{text-align:left;color:var(--mu)}
+.mx td.hi{background:#dbe8ff;color:var(--navy)}.mx td.lo{background:#fde0e4;color:var(--red)}.mx td small{margin-left:5px}
 .chips{display:flex;gap:3px;margin-left:auto}
-.chips span{min-width:36px;text-align:center;font-size:.7rem;font-weight:700;padding:1px 4px;border:1px solid var(--line);background:var(--s3);color:var(--mu)}
+.chips span{min-width:36px;text-align:center;font-size:.7rem;font-weight:700;padding:1px 4px;border:1px solid var(--line);background:var(--s2);color:var(--mu)}
 .chips .e{background:var(--blue);color:#fff;border-color:var(--blue)}.chips .t{background:var(--red);color:#fff;border-color:var(--red)}.chips .b{background:transparent;border-style:dashed}
 .sub{margin:20px 0 8px;font-weight:700;font-size:.9rem;color:var(--mu)}
 .card{display:grid;grid-template-columns:1fr auto;gap:3px 14px}
-.card .num{grid-row:span 2;align-self:center;color:#8db8ff}
+.card .num{grid-row:span 2;align-self:center;color:var(--blue)}
 .live{font-size:.8rem;color:var(--mu);margin:0 0 10px}
 .empty{color:var(--mu)}
 .trade{background:var(--s1);border:1px solid var(--line);border-left:5px solid var(--blue);padding:12px 14px;margin-bottom:12px}
@@ -69,32 +76,42 @@ button.act{cursor:pointer}button.act:hover{background:var(--white);color:#000;bo
 .sw{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
 .sw>div{background:var(--s2);padding:8px 10px}.sw h5{margin:0 0 4px;font-size:.75rem;color:var(--mu);font-weight:700}
 .sw p{margin:2px 0;font-size:.88rem}
-.hl{background:var(--navy);font-weight:700;padding:0 4px}
+.hl{background:#dbe8ff;font-weight:700;padding:0 4px}
 .gain{font-size:.85rem;margin-top:4px}
-.builder{background:var(--s1);border:1px solid var(--line);padding:12px 14px;margin:0 0 16px;display:grid;gap:12px}
+.builder,.aibox{background:var(--s2);border:1px solid var(--line);padding:12px 14px;margin:0 0 16px;display:grid;gap:12px}
+.aibox{border-left:5px solid var(--red);background:#fff}
+.aibox h4{margin:0}
+.msgs{display:grid;gap:8px;max-height:360px;overflow:auto}
+.cm{padding:8px 11px;font-size:.9rem;white-space:pre-wrap}.cm.u{background:var(--s3);justify-self:end;max-width:85%}.cm.a{background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue)}
 .builder label{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--mu)}
 .pickrow{display:flex;flex-wrap:wrap;gap:6px}
-.pc{font:500 .8rem Inter,sans-serif;background:var(--s2);color:var(--tx);border:1px solid var(--line);padding:4px 9px;cursor:pointer}
+.pc{font:500 .8rem Inter,sans-serif;background:#fff;color:var(--tx);border:1px solid var(--line);padding:4px 9px;cursor:pointer}
 .pc[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
 .pc small{color:inherit;opacity:.7;margin-left:4px}
-.btn{font:700 .85rem Inter,sans-serif;background:var(--white);color:#000;border:0;padding:7px 14px;cursor:pointer}
-.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
-.lk,.tog,.clr{font:700 .78rem Inter,sans-serif;background:transparent;border:1px solid var(--blue);color:#8db8ff;padding:3px 9px;cursor:pointer}
+.btn{font:700 .85rem Inter,sans-serif;background:#000;color:#fff;border:0;padding:8px 14px;cursor:pointer}
+.btn:hover{background:var(--blue)}.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid #9aa5b8}
+.lk,.tog,.clr{font:700 .78rem Inter,sans-serif;background:transparent;border:1px solid var(--blue);color:var(--blue);padding:3px 9px;cursor:pointer}
 .lk:hover,.clr:hover{background:var(--blue);color:#fff}
 .tog[aria-pressed=true]{background:var(--blue);color:#fff}
 .focus{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--navy);padding:8px 12px;margin:0 0 14px}
 .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 14px}
-.seg{display:flex}.seg button{background:var(--s2);border:1px solid var(--line);margin-left:-1px;padding:7px 13px;font:700 .85rem Inter,sans-serif;cursor:pointer;color:var(--tx)}
-.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.seg{display:flex}.seg button{background:#fff;border:1px solid #9aa5b8;margin-left:-1px;padding:7px 13px;font:700 .85rem Inter,sans-serif;cursor:pointer;color:var(--tx)}
+.seg button[aria-pressed=true]{background:#000;border-color:#000;color:#fff}
 .count{margin-left:auto;color:var(--mu);font-size:.85rem}
-.tw{overflow-x:auto;background:var(--s1);border:1px solid var(--line)}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line)}
 table{border-collapse:collapse;width:100%;min-width:760px}
 th,td{padding:7px 10px;text-align:right;border-top:1px solid var(--line);white-space:nowrap;font-size:.88rem}
-th{font-weight:700;cursor:pointer;border-top:0;background:var(--s2);user-select:none}
+tbody tr:nth-child(even){background:#f8f9fc}
+th{font-weight:700;cursor:pointer;border-top:0;background:#000;color:#fff;user-select:none}
 th.l,td.l{text-align:left}th[aria-sort]{box-shadow:inset 0 -3px 0 var(--blue)}
-td.pj2{font-weight:700;background:#0d2447}
-td.hi{color:#8db8ff;font-weight:700}td.lo{color:#ff7a7a}
-@media(max-width:820px){.pl{grid-template-columns:3rem 1fr 4rem}.pj,.spark{grid-column:1/-1}.p3{grid-column:3;grid-row:1}.sw{grid-template-columns:1fr}.chips{margin-left:0}}
+td.pj2{font-weight:700;background:#e4eeff}td.hv{cursor:help}
+td.hi{color:var(--blue);font-weight:700}td.lo{color:var(--red);font-weight:700}
+.tip{display:none;position:fixed;z-index:50;width:min(360px,calc(100vw - 16px));background:#fff;color:var(--tx);border:2px solid #000;box-shadow:0 8px 24px rgba(0,0,0,.25);padding:10px 12px;font-size:.8rem;line-height:1.4}
+.tip h5{margin:0 0 6px;font-size:.8rem}.tip .fr{display:grid;grid-template-columns:2.4rem 4.2rem 2.6rem 1fr;gap:6px;padding:3px 0;border-top:1px solid var(--line)}
+.tip .fr b.e{color:var(--blue)}.tip .fr b.t{color:var(--red)}.tip p{margin:6px 0 0;color:var(--mu)}
+.tw-ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:8px 0 14px}.tw-ctl input{width:5rem}
+@media(max-width:820px){.pl{grid-template-columns:3rem 1fr 5.6rem}.pj,.spark{grid-column:1/-1}.fp{grid-column:3;grid-row:1}.sw{grid-template-columns:1fr}.chips{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.fill{transition:none}}
 </style>
 </head>
@@ -117,6 +134,7 @@ const HOW=`<p><b>Projekcija artimiausiai savaitei</b> = ½ × <b>Modelis</b> + �
 <p><b>Sveikata:</b> IR/Sus/PUP = 0; Out: 0 / 0,4 / 0,8 per 3 savaites; Doubtful 0,4 / 0,8 / 1; Questionable 0,92; bye savaitė = 0.</p>
 <p><b>Kalendoriaus kvadratėliai:</b> kitų 4 savaičių varžovai pagal Matchup koeficientą. Mėlyna = lengvas (&gt; 1,04), raudona = sunkus (&lt; 0,96), pilka = vidutinis, punktyrinė = bye.</p>
 <p><b>Žymos:</b> skaičiuojamos pagal 3 savaičių sumą ir tavo starterių sudėtį. PRIDĖTI: laisvas žaidėjas pagerina tavo sudėtį bent 1 tšk. per 3 sav. SELL: paskutinių 3 sav. vidurkis &gt; 1,25 × sezono, o kalendorius sunkus arba vertė aukšta. SVARSTYTI TRADE: silpniausias starteris su sunkiu kalendoriumi, arba suolo žaidėjas su aukšta verte (mainų valiuta). Kitu atveju HOLD. Tai taisyklės, o ne garantija.</p>
+<p><b>Komandų langas:</b> NFL komandų skiltyje gali rinktis paskutines 3 / 5 / 10 rungtynių ar savo skaičių; vidurkiai, reitingai ir jardų projekcija perskaičiuojami tame lange.</p>
 <p><b>Trade paieška:</b> sudaromi paketai (1–3 žaidėjai) iš tavo sudėties, vertės skirtumas ne didesnis kaip ±20 % (trade calculator vertės), o gerėjimas skaičiuojamas pagal pilną starterių sudėtį (įskaitant FLEX) 3 savaičių suma abiem pusėms.</p>`;
 let D,L,mine=new Set(),view="roster",F={pos:"",own:"",q:"",sort:"proj",dir:-1},liveTaken=null,liveAt=null,TR={partner:-1,get:[],give:[]},owners={},autoCache={};
 const $=id=>document.getElementById(id);
@@ -215,17 +233,57 @@ function bd(s){return "Proj. "+f1(s.proj)+" = ½ modelis "+f1(s.model)+" (forma 
 const adv=id=>{L._adv=L._adv||{};return L._adv[id]||(L._adv[id]=adviceFor(id))};
 function how(){const d=el("details","how"),s=el("summary","","Kaip skaičiuojama projekcija, jardai ir žymos?");d.append(s);d.insertAdjacentHTML("beforeend",HOW);return d}
 
+const tip=el("div","tip");document.body.append(tip);
+document.addEventListener("click",ev=>{if(!ev.target.closest(".hv"))tip.style.display="none"});
+function hover(e,fn){e.classList.add("hv");e.tabIndex=0;
+  const show=()=>{tip.replaceChildren(fn());tip.style.display="block";const r=e.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+    const x=Math.min(Math.max(8,r.right-w),innerWidth-w-8);let y=r.bottom+6;if(y+h>innerHeight-8)y=Math.max(8,r.top-h-6);tip.style.left=x+"px";tip.style.top=y+"px"};
+  e.onmouseenter=show;e.onfocus=show;e.onmouseleave=e.onblur=()=>{tip.style.display="none"};e.onclick=show}
+const MUTXT={e:"palankus varžovas",m:"vidutinis varžovas",t:"sunkus varžovas",b:"bye, taškų nebus"};
+function fpTip(s){
+  const d=el("div");d.append(el("h5","","Ateinančios savaitės · "+s.name+" · 3 sav. suma "+f1(s.p3)));
+  (s.fut||[]).forEach(x=>{const r=el("div","fr");r.append(el("span","","S"+x.w),el("span","",x.o==="BYE"?"BYE":(x.h?"vs ":"@ ")+x.o),el("b",x.d,x.o==="BYE"?"–":f1(x.p)),
+    el("span","",MUTXT[x.d]+(x.mu&&x.o!=="BYE"?" (×"+x.mu.toFixed(2)+")":"")));d.append(r)});
+  if(s.note3)d.append(el("p","",s.note3));d.append(el("p","",bd(s)));return d}
+function fpBox(s){
+  const b=el("div","fp"),n=el("div","n"),m=el("div","mb");n.append(el("b","",f1(s.p3)),el("small","","3 sav."));
+  (s.fut||[]).forEach(x=>{const i=el("i",x.d);i.style.height=(x.o==="BYE"?3:Math.max(3,Math.min(x.p,30)/30*26))+"px";m.append(i)});
+  b.append(m,n);hover(b,()=>fpTip(s));return b}
+/* komandos rodikliai pasirinktam langui (n paskutinių rungtynių; 0 = sezonas) */
+function teamView(n){
+  const base=D.nfl_teams||{},W=D.nfl_weeks||{},out={},keys=Object.keys(base);
+  if(!n||!Object.keys(W).length){keys.forEach(t=>out[t]=base[t]);return {v:out,games:0}}
+  const avg=a=>{a=a.filter(x=>x!=null);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
+  let gmax=0;
+  keys.forEach(t=>{const rows=(W[t]||[]).slice(-n);gmax=Math.max(gmax,rows.length);
+    out[t]={ro:avg(rows.map(r=>r[1])),po:avg(rows.map(r=>r[2])),rd:avg(rows.map(r=>r[3])),pd:avg(rows.map(r=>r[4])),next:base[t].next?Object.assign({},base[t].next):null}});
+  const rank=(k,asc)=>{const a=keys.filter(t=>out[t][k]!=null).sort((x,y)=>asc?out[x][k]-out[y][k]:out[y][k]-out[x][k]);a.forEach((t,i)=>out[t]["rk"+k]=i+1)};
+  rank("ro",0);rank("po",0);rank("rd",1);rank("pd",1);
+  const m=k=>avg(keys.map(t=>out[t][k])),Lr=m("ro"),Lp=m("po"),ia=D.imp_avg||22,cl=(x,a,b)=>Math.max(a,Math.min(b,x));
+  keys.forEach(t=>{const T=out[t],nx=T.next;if(!nx||!out[nx.opp])return;const O=out[nx.opp],spr=nx.spr||0,env=Math.sqrt(cl((nx.imp||ia)/ia,.85,1.2));
+    nx.pr=T.ro!=null&&O.rd!=null?T.ro*O.rd/Lr*cl(1+.012*spr,.88,1.12)*env:null;
+    nx.pp=T.po!=null&&O.pd!=null?T.po*O.pd/Lp*cl(1-.012*spr,.88,1.12)*env:null});
+  return {v:out,games:gmax}}
+function mxBlock(s){
+  const base=D.nfl_teams||{},T=base[s.team],nx=T&&T.next;if(!T||!nx||!base[nx.opp])return null;
+  const O=base[nx.opp],N=Object.keys(base).length,l3=teamView(3).v,A=l3[s.team],B=l3[nx.opp];
+  const offc=r=>r==null?"":(r<=N/4?"hi":(r>=N*3/4?"lo":"")),defc=r=>r==null?"":(r>=N*3/4?"hi":(r<=N/4?"lo":""));
+  const t=el("table","mx"),hd=el("tr");["",  "Bėgimas (rush) yd","Metimas (pass) yd"].forEach(x=>hd.append(el("th","",x)));t.append(hd);
+  const row=(lab,a,b,ra,rb,ca,l3a,l3b)=>{const r=el("tr");r.append(el("td","",lab));
+    [[a,ra,l3a],[b,rb,l3b]].forEach(([v,rk,l],i)=>{const td=el("td",ca(rk),i0(v)+(rk?" (#"+rk+")":""));if(l!=null)td.append(el("small","","L3 "+i0(l)));r.append(td)});return r};
+  t.append(row(s.team+" puolimas",T.ro,T.po,T.rkro,T.rkpo,offc,A&&A.ro,A&&A.po),
+    row(nx.opp+" gynyba leidžia",O.rd,O.pd,O.rkrd,O.rkpd,defc,B&&B.rd,B&&B.pd));
+  const pr=el("tr");pr.append(el("td","","Šių rungtynių proj. ("+(nx.h?"vs ":"@ ")+nx.opp+")"),el("td","",i0(nx.pr)+" yd"),el("td","",i0(nx.pp)+" yd"));t.append(pr);return t}
 function plRow(id,slot,bn){
   const s=D.stats[id],r=el("div","pl"+(bn?" bn":"")),w=el("div","who");
   w.append(nameB(id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")));
   const p=el("div","pj"),t=el("div","track"),f=el("div","fill");f.dataset.w=Math.max(0,Math.min(s.proj,MAXP))/MAXP*100;t.append(f);p.append(t,el("div","num",f1(s.proj)));
-  const p3=el("div","p3");p3.append(el("b","",f1(s.p3)),el("small","","3 sav."));
   const a=adv(id),ins=el("div","ins");ins.append(badge(a.action,id),el("span","",a.insight),chips(s.sos));
-  if(s.note3)ins.append(el("div","bd",s.note3));ins.append(el("div","bd2",bd(s)));
-  r.append(el("div","slot",slot),w,p,p3,spark(s.weeks),ins);return r}
+  const mx=mxBlock(s);if(mx)ins.append(mx);
+  r.append(el("div","slot",slot),w,p,fpBox(s),spark(s.weeks),ins);return r}
 
 function vRoster(v){
-  v.append(el("h3","","Sudėtis · "+L.team),el("p","hint","Juosta rodo projekciją artimiausiai savaitei (skalė 0–30), dešinėje 3 savaičių suma ir paskutinių 5 savaičių forma (mėlyna = naujausia). Kvadratėliai: kitų 4 savaičių varžovai."),fmtLine(),how());
+  v.append(el("h3","","Sudėtis · "+L.team),el("p","hint","Juosta = projekcija artimiausiai savaitei (skalė 0–30). Kampe: 3 savaičių suma ir trys stulpeliai (kitos 3 savaitės); užvedus pelę (ar paspaudus) matai kiekvienos savaitės varžovą, projekciją ir komentarą. Dešinėje: paskutinių 5 savaičių forma. Lentelėje po eilute: žaidėjo komandos puolimas (rush/pass) ir varžovo gynyba, sezono vidurkis, L3 ir šių rungtynių projekcija (mėlyna = palanku, raudona = nepalanku)."),fmtLine(),how());
   L.roster.forEach(r=>v.append(plRow(r.id,r.slot,false)));
   v.append(el("p","sub","Suolas"));L.bench.forEach(id=>v.append(plRow(id,"BN",true)))}
 
@@ -253,6 +311,56 @@ function tradeCard(t){
   c.append(hd,el("small","","Jų situacija: "+situation(L.teams[t.pi])),sw,
     el("div","gain","Tavo starteriai: "+fd(t.gme)+" tšk. per 3 sav. · jų starteriai: "+fd(t.tg)+" tšk."+(t.give.length!==t.get.length?" · mainai ne 1:1, reikės numesti ar pridėti žaidėją":"")));
   return c}
+/* ---------- AI trade asistentas ---------- */
+let AI={msgs:[],busy:false,draft:""};
+function aiMode(){return (window.claude&&window.claude.use)?"claude":(lsGet("anthropic_key")?"key":"none")}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}
+function aiContext(){
+  const P=id=>{const s=D.stats[id];return id+"|"+s.name+"|"+s.pos+"|"+s.team+(s.status?"|"+s.status:"")+"|vid "+f1(s.avg)+"|3sav "+f1(s.p3)+"|vertė "+vl(id)};
+  const my=myTeam();let c="LYGA: "+L.name+(L.format?" ("+L.format.label+")":"")+". Savaitė "+D.week+". Eilutės formatas: id|vardas|poz|komanda|[statusas]|sezono vid. PPR|3 sav. projekcija|trade vertė.\n";
+  c+="MANO KOMANDA ("+my.name+"):\n"+my.players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).map(P).join("\n")+"\n";
+  L.teams.forEach((t,i)=>{if(t.mine)return;c+="\nKOMANDA #"+i+" "+t.name+" · "+situation(t)+"\n"+t.players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).slice(0,16).map(P).join("\n")+"\n"});
+  return c}
+async function callAI(text){
+  if(aiMode()==="claude"){const s=await window.claude.use("sample");if(!s)throw new Error("AI šiame lange neprieinamas (leidimas nesuteiktas).");const r=await s(text,{cache:false});return r.text}
+  const key=lsGet("anthropic_key");if(!key)throw new Error("Nėra API rakto.");
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1500,messages:[{role:"user",content:text}]})});
+  const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||"API klaida "+r.status);return j.content.map(x=>x.text||"").join("")}
+function parseAI(t){
+  let j=null;const m=t.match(/\{[\s\S]*\}/);if(m){try{j=JSON.parse(m[0])}catch(e){}}
+  if(!j||typeof j.reply!=="string")return {reply:t.trim()};
+  const valid=id=>D.stats[id];const my=new Set(myTeam().players);
+  const get=(j.get||[]).map(String).filter(id=>valid(id)&&!my.has(id)).slice(0,3),give=(j.give||[]).map(String).filter(id=>valid(id)&&my.has(id)).slice(0,3);
+  let partner=Number.isInteger(j.partner)&&L.teams[j.partner]&&!L.teams[j.partner].mine?j.partner:-1;
+  if(get.length){const pi=L.teams.findIndex(t=>!t.mine&&t.players.includes(get[0]));if(pi>=0)partner=pi}
+  const get2=partner>=0?get.filter(id=>L.teams[partner].players.includes(id)):[];
+  return {reply:j.reply,partner,get:get2,give}}
+function aiPanel(){
+  const box=el("div","aibox"),mode=aiMode();
+  box.append(el("h4","","Trade asistentas (AI)"),el("p","hint","Parašyk, ką nori parduoti, ką pirkti ir kokiu kampu ieškoti (pvz. „parduodu RB su sunkiu kalendoriumi, noriu WR1 iš komandos, kuriai trūksta RB“). Asistentas mato tavo ir kitų komandų sudėtis bei vertes, atsako ir gali įkelti konkretų paketą į paiešką aukščiau."));
+  if(mode==="none"){
+    const k=el("input");k.type="password";k.placeholder="Anthropic API raktas (sk-ant-…)";k.style.maxWidth="360px";
+    const b=el("button","btn","Išsaugoti raktą šioje naršyklėje");b.onclick=()=>{if(k.value.trim()){lsSet("anthropic_key",k.value.trim());draw()}};
+    box.append(el("p","hint","Šiame puslapyje (GitHub Pages) AI veikia tik su tavo paties API raktu. Raktas saugomas tik šios naršyklės localStorage, niekada nededamas į GitHub, o užklausos eina tiesiai į Anthropic. Naudok raktą su mažu išlaidų limitu."),k,b);return box}
+  const log=el("div","msgs"),draw1=()=>{log.replaceChildren();AI.msgs.forEach(m=>{const d=el("div","cm "+(m.role==="user"?"u":"a"),m.content);log.append(d);
+      if(m.apply){const bt=el("button","btn","Rodyti šį paketą paieškoje");bt.style.marginTop="6px";bt.onclick=()=>{TR={partner:m.apply.partner,get:m.apply.get,give:m.apply.give};draw();window.scrollTo({top:0,behavior:"smooth"})};d.append(document.createElement("br"),bt)}});log.scrollTop=log.scrollHeight};
+  if(AI.msgs.length)box.append(log);draw1();
+  const ta=el("textarea");ta.placeholder="Ką parduodi, ką nori gauti, kokį kampą pasirinkti?";ta.value=AI.draft;ta.oninput=()=>{AI.draft=ta.value};
+  const row=el("div","pickrow"),go=el("button","btn","Klausti"),clr=el("button","btn ghost","Valyti pokalbį"),st=el("span","mut");
+  clr.onclick=()=>{AI.msgs=[];draw()};
+  go.onclick=async()=>{const q=ta.value.trim();if(!q||AI.busy)return;AI.busy=true;go.disabled=true;st.textContent="Galvoju…";
+    AI.msgs.push({role:"user",content:q});AI.draft="";ta.value="";draw1();
+    const hist=AI.msgs.slice(-7,-1).map(m=>(m.role==="user"?"Vartotojas: ":"Asistentas: ")+m.content).join("\n");
+    const prompt="Tu esi fantasy NFL (Sleeper, PPR) trade patarėjas. Atsakyk lietuviškai, trumpai ir konkrečiai (iki ~150 žodžių). Siūlyk tik realistiškus mainus: vertės panašios (±20 %), partneris turi poreikį, kurį tavo duodamas žaidėjas užpildo. Naudok tik žemiau esančius žaidėjus ir jų id. Įvertink kalendorių ir komandų puolimą/gynybą tik pagal pateiktus skaičius, nieko neišgalvok.\n\n"+aiContext()+"\nANKSTESNIS POKALBIS:\n"+(hist||"(nėra)")+"\n\nNAUJAS VARTOTOJO PRAŠYMAS: "+q+"\n\nGrąžink TIK JSON: {\"reply\":\"tekstas\",\"partner\":<komandos # arba -1>,\"get\":[id,...iki 3 kitų komandų žaidėjų],\"give\":[id,...iki 3 mano žaidėjų]}. Jei konkretaus paketo neturi, get ir give palik tuščius.";
+    try{const out=parseAI(await callAI(prompt)),m={role:"assistant",content:out.reply};if(out.get&&out.get.length)m.apply={partner:out.partner,get:out.get,give:out.give};AI.msgs.push(m);st.textContent=""}
+    catch(e){AI.msgs.push({role:"assistant",content:"Nepavyko gauti atsakymo: "+(e.message||e.code||e)});st.textContent=""}
+    AI.busy=false;go.disabled=false;draw1()};
+  row.append(go,clr,st);box.append(ta,row);
+  if(mode==="key"){const x=el("button","clr","Pašalinti API raktą");x.onclick=()=>{lsSet("anthropic_key","");draw()};box.append(x)}
+  return box}
+
 function vTrade(v){
   v.append(el("h3","","Trade"),el("p","hint","Pasirink komandą ir žaidėją (ar kelis), kurio nori, ir pagal tai ieškome realistiškų paketų iš tavo sudėties. Gali nurodyti ir savo žaidėjus, kuriuos nori atiduoti. Gerėjimas skaičiuojamas pagal pilną starterių sudėtį 3 savaičių suma abiem pusėms, vertės skirtumas ne didesnis kaip ±20 %."),fmtLine());
   const others=L.teams.map((t,i)=>[t,i]).filter(([t])=>!t.mine),bd_=el("div","builder");
@@ -269,7 +377,7 @@ function vTrade(v){
   const gv=el("div");gv.append(el("small","","Noriu atiduoti (neprivaloma, iki 3 žaidėjų) · mano komanda"));
   const row2=el("div","pickrow");row2.style.marginTop="6px";myTeam().players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).forEach(id=>row2.append(chip(id,TR.give,3)));gv.append(row2);bd_.append(gv);
   const act=el("div","pickrow"),clr=el("button","btn ghost","Išvalyti pasirinkimus");clr.onclick=()=>{TR={partner:-1,get:[],give:[]};draw()};act.append(clr);bd_.append(act);
-  v.append(bd_);
+  v.append(bd_,aiPanel());
   const o={partners:TR.partner>=0?[TR.partner]:[],get:TR.get,give:TR.give};
   let r;
   if(!o.get.length&&!o.give.length){if(!autoCache[L.id])autoCache[L.id]=findTrades({partners:[],get:[],give:[]});r=autoCache[L.id]}
@@ -283,13 +391,15 @@ const C={gp:["GP",s=>s.gp,i0],total:["Viso",s=>s.total,f1],avg:["Vid.",s=>s.avg,
  snap:["Snap %",s=>s.snap,p0],tgt:["Tgt",s=>s.tgt,i0],tshare:["Tgt %",s=>s.tshare,p0],tpg:["Tgt/g",s=>div(s.tgt,s.gp),f1],
  rec:["Rec",s=>s.rec,i0],recyd:["Rec Yd",s=>s.recyd,i0],ypr:["Yd/Rec",s=>div(s.recyd,s.rec),f1],rectd:["Rec TD",s=>s.rectd,i0],
  ratt:["Neš.",s=>s.ratt,i0],ryd:["Neš. Yd",s=>s.ryd,i0],ypc:["Yd/neš.",s=>div(s.ryd,s.ratt),f1],rtd:["Neš. TD",s=>s.rtd,i0],tch:["Lietim./g",s=>s.ratt==null&&s.rec==null?null:div((s.ratt||0)+(s.rec||0),s.gp),f1],
- patt:["Perd.",s=>s.patt,i0],cmp:["Cmp %",s=>pct(s.cmp,s.patt),p0],pyd:["Perd. Yd",s=>s.pyd,i0],ptd:["Perd. TD",s=>s.ptd,i0],int:["INT",s=>s.int,i0],sx:["Kalend.",s=>s.sosx,v=>v==null?"–":v.toFixed(2)]};
-const SETS={"":["gp","total","avg","l3","proj","p3","sx","snap"],QB:["gp","patt","cmp","pyd","ptd","int","ratt","ryd","rtd","avg","l3","proj","p3","sx"],
- RB:["gp","snap","ratt","ryd","ypc","rtd","tgt","rec","recyd","tch","avg","l3","proj","p3","sx"],WR:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","sx"],
- TE:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","sx"],K:["gp","total","avg","l3","proj","p3","sx"],DEF:["gp","total","avg","l3","proj","p3","sx"]};
+ patt:["Perd.",s=>s.patt,i0],cmp:["Cmp %",s=>pct(s.cmp,s.patt),p0],pyd:["Perd. Yd",s=>s.pyd,i0],ptd:["Perd. TD",s=>s.ptd,i0],int:["INT",s=>s.int,i0],sx:["Kalend.",s=>s.sosx,v=>v==null?"–":v.toFixed(2)],
+ f1:["S+1",s=>fw(s,0),f1],f2:["S+2",s=>fw(s,1),f1],f3:["S+3",s=>fw(s,2),f1],up:["Kilimas",s=>s.avg==null||s.p3==null?null:s.p3/3-s.avg,fd]};
+const fw=(s,i)=>s.fut&&s.fut[i]&&s.fut[i].o!=="BYE"?s.fut[i].p:null;
+const SETS={"":["gp","total","avg","l3","proj","p3","f1","f2","f3","up","sx","snap"],QB:["gp","patt","cmp","pyd","ptd","int","ratt","ryd","rtd","avg","l3","proj","p3","f1","f2","f3","up","sx"],
+ RB:["gp","snap","ratt","ryd","ypc","rtd","tgt","rec","recyd","tch","avg","l3","proj","p3","f1","f2","f3","up","sx"],WR:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","f1","f2","f3","up","sx"],
+ TE:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","f1","f2","f3","up","sx"],K:["gp","total","avg","l3","proj","p3","f1","f2","f3","up","sx"],DEF:["gp","total","avg","l3","proj","p3","f1","f2","f3","up","sx"]};
 
 function vStats(v){
-  v.append(el("h3","","Žaidėjų statistika"),el("p","hint","Sezono statistika iki "+D.stats_week+" savaitės. Pasirinkus poziciją, stulpeliai pasikeičia. „Savininkas“ rodo, kurioje lygos komandoje žaidėjas; „Tik laisvi“ palieka nepaimtus. Kalend. = kitų 4 savaičių matchup koeficientas (&gt; 1 lengviau). „Veiksmas“ nuveda į trade konstruktorių ar waiver."));
+  v.append(el("h3","","Žaidėjų statistika"),el("p","hint","Sezono statistika iki "+D.stats_week+" savaitės. Pasirinkus poziciją, stulpeliai pasikeičia. „Savininkas“ rodo, kurioje lygos komandoje žaidėjas; „Tik laisvi“ palieka nepaimtus. S+1…S+3 = projekcija kitoms trims savaitėms (užvesk pelę ant jų: matai varžovus ir komentarą), Kilimas = prognozė per savaitę minus sezono vidurkis; „Boom kandidatai“ filtruoja būsimus kilimo kandidatus (naudok kartu su „Tik laisvi“). Kalend. = kitų 4 savaičių matchup koeficientas (> 1 lengviau). „Veiksmas“ nuveda į trade konstruktorių ar waiver."));
   const wv=new Set(waiversFor(liveTaken).map(w=>w.id));
   const bar=el("div","filters"),seg=el("div","seg"),btns=[];
   ["","QB","RB","WR","TE","K","DEF"].forEach(p=>{const b=el("button","",p||"Visi");b.dataset.p=p;b.onclick=()=>{F.pos=p;if(!SETS[p].includes(F.sort)&&!["name","pos","team","owner"].includes(F.sort))F.sort="proj";fill()};btns.push(b);seg.append(b)});
@@ -297,19 +407,20 @@ function vStats(v){
   own.value=F.own;own.onchange=()=>{F.own=own.value;fill()};
   const fr=el("button","tog","Tik laisvi");fr.onclick=()=>{F.own=F.own==="Laisvas"?"":"Laisvas";own.value=F.own;fill()};
   const q=el("input");q.type="search";q.placeholder="Ieškoti pagal vardą";q.value=F.q;q.oninput=()=>{F.q=q.value;fill()};
-  const cnt=el("span","count");bar.append(seg,fr,own,q,cnt);
+  const bm=el("button","tog","Boom kandidatai");bm.title="Prognozė per savaitę ≥ 1 tšk. virš sezono vidurkio (stulpelis Kilimas), žaidėjas ne Out/IR";bm.onclick=()=>{F.boom=!F.boom;if(F.boom){F.sort="up";F.dir=-1}fill()};
+  const cnt=el("span","count");bar.append(seg,fr,bm,own,q,cnt);
   const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(bar,tw);
   const val=(id,k)=>{const s=D.stats[id];return k==="name"?s.name:k==="owner"?ownerOf(id):k==="pos"||k==="team"?s[k]:C[k][1](s)};
   function fill(){
-    btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));fr.setAttribute("aria-pressed",F.own==="Laisvas");
+    btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));bm.setAttribute("aria-pressed",!!F.boom);fr.setAttribute("aria-pressed",F.own==="Laisvas");
     const cols=[["name","Žaidėjas"],["pos","Poz."],["team","Komanda"],["owner","Savininkas"],...SETS[F.pos].map(k=>[k,C[k][0]]),["act","Veiksmas"]];
     hr.replaceChildren();cols.forEach(([k,t])=>{const th=el("th",["name","pos","team","owner","act"].includes(k)?"l":"",t);if(k===F.sort)th.setAttribute("aria-sort",F.dir>0?"ascending":"descending");
       th.onclick=()=>{if(k==="act")return;F.dir=F.sort===k?-F.dir:(["name","pos","team","owner"].includes(k)?1:-1);F.sort=k;fill()};hr.append(th)});
-    let ids=Object.keys(D.stats).filter(id=>{const s=D.stats[id],o=ownerOf(id);return (!F.pos||s.pos===F.pos)&&(!F.q||s.name.toLowerCase().includes(F.q.toLowerCase()))&&(!F.own||(F.own==="kiti"?(o!=="Mano"&&o!=="Laisvas"):o===F.own))});
+    let ids=Object.keys(D.stats).filter(id=>{const s=D.stats[id],o=ownerOf(id);return (!F.pos||s.pos===F.pos)&&(!F.q||s.name.toLowerCase().includes(F.q.toLowerCase()))&&(!F.boom||(s.avg!=null&&s.p3!=null&&s.p3/3-s.avg>=1&&!OUTS.includes(s.status)))&&(!F.own||(F.own==="kiti"?(o!=="Mano"&&o!=="Laisvas"):o===F.own))});
     ids.sort((a,b)=>{const x=val(a,F.sort),y=val(b,F.sort);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*F.dir});
     cnt.textContent=ids.length+" žaidėjų";body.replaceChildren();
     ids.forEach(id=>{const s=D.stats[id],tr=el("tr"),c0=el("td","l");c0.append(nameB(id));tr.append(c0,el("td","l",s.pos),el("td","l",s.team),el("td","l",ownerOf(id)));
-      SETS[F.pos].forEach(k=>{const td=el("td",k==="proj"||k==="p3"?"pj2":"",C[k][2](C[k][1](s)));if(k==="sx"){td.className=s.sosx>=1.04?"hi":(s.sosx<=0.96?"lo":"")}tr.append(td)});
+      SETS[F.pos].forEach(k=>{const td=el("td",k==="proj"||k==="p3"?"pj2":"",C[k][2](C[k][1](s)));if(["p3","f1","f2","f3","up"].includes(k))hover(td,()=>fpTip(s));if(k==="sx"){td.className=s.sosx>=1.04?"hi":(s.sosx<=0.96?"lo":"")}tr.append(td)});
       const o=ownerOf(id),ad=el("td","l");
       if(o==="Laisvas"){if(wv.has(id)){const b=el("button","lk","Waiver →");b.onclick=()=>{view="waiver";draw()};ad.append(b)}else ad.textContent="–"}
       else{const b=el("button","lk","Trade →");b.onclick=()=>goTrade(id);ad.append(b)}
@@ -318,15 +429,24 @@ function vStats(v){
 
 const TC={team:["Komanda",(t,k)=>k,null],opp:["Kita rungtynė",(t)=>t.next?t.next.opp:null,null],pr:["Proj. rush yd",t=>t.next?t.next.pr:null,i0],pp:["Proj. pass yd",t=>t.next?t.next.pp:null,i0],
  spr:["Spread",t=>t.next?t.next.spr:null,fd],tot:["O/U",t=>t.next?t.next.tot:null,f1],ro:["Run puolimas yd/sav.",t=>t.ro,i0],po:["Pass puolimas yd/sav.",t=>t.po,i0],rd:["Run gynyba leidžia",t=>t.rd,i0],pd:["Pass gynyba leidžia",t=>t.pd,i0]};
-let TS={sort:"pr",dir:-1};
+let TS={sort:"pr",dir:-1,n:0};
 function vTeams(v){
-  v.append(el("h3","","NFL komandos: jardai už ir prieš"),el("p","hint","Projekcija = komandos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota spread ir O/U. Reitingas skliausteliuose: puolimui 1 = geriausias, gynybai 1 = leidžia mažiausiai. Mėlyna = didelė projekcija (palanku RB/WR), raudona = maža. Tai mūsų modelis, paremtas lažybų linijomis, o ne lažybų kompanijų jardų prognozė."));
-  const teams=D.nfl_teams||{},keys=Object.keys(teams);if(!keys.length){v.append(el("p","empty","Komandų duomenų nėra (nepavyko gauti tvarkaraščio ar statistikos)."));return}
+  v.append(el("h3","","NFL komandos: jardai už ir prieš"),el("p","hint","Pasirink, kiek paskutinių rungtynių vertinti (3 / 5 / 10 arba savo skaičius); vidurkiai, reitingai ir projekcija perskaičiuojami. Projekcija = komandos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota spread ir O/U. Reitingas skliausteliuose: puolimui 1 = geriausias, gynybai 1 = leidžia mažiausiai. Mėlyna = didelė projekcija (palanku RB/WR), raudona = maža. Tai mūsų modelis, paremtas lažybų linijomis, o ne lažybų kompanijų jardų prognozė."));
+  const base=D.nfl_teams||{},keys=Object.keys(base);if(!keys.length){v.append(el("p","empty","Komandų duomenų nėra (nepavyko gauti tvarkaraščio ar statistikos)."));return}
+  const hasW=D.nfl_weeks&&Object.keys(D.nfl_weeks).length>0,ctl=el("div","tw-ctl"),seg=el("div","seg"),sb=[];
+  [[3,"Paskutinės 3"],[5,"Paskutinės 5"],[10,"Paskutinės 10"],[0,"Visas sezonas"]].forEach(([n,t])=>{const b=el("button","",t);b.dataset.n=n;b.onclick=()=>{TS.n=n;ni.value=n||"";fill()};sb.push(b);seg.append(b)});
+  const ni=el("input");ni.type="number";ni.min=1;ni.max=18;ni.placeholder="N";ni.value=TS.n||"";ni.setAttribute("aria-label","Savaičių skaičius");
+  ni.oninput=()=>{TS.n=Math.max(0,Math.min(18,+ni.value||0));fill()};
+  const info=el("span","mut");ctl.append(seg,el("span","mut","arba savaičių:"),ni,info);
+  if(!hasW){ctl.querySelectorAll("button,input").forEach(x=>x.disabled=true);info.textContent="Savaitinių duomenų dar nėra: paleisk Actions workflow, kad data.json gautų nfl_weeks."}
+  v.append(ctl);
   const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(tw);
-  const rk={ro:"rkro",po:"rkpo",rd:"rkrd",pd:"rkpd"};
-  const vals=k=>keys.map(t=>TC[k][1](teams[t],t)).filter(x=>typeof x==="number").sort((a,b)=>a-b);
-  const pr=vals("pr"),pp=vals("pp"),q=(a,p)=>a.length?a[Math.floor(a.length*p)]:0;
+  const rk={ro:"rkro",po:"rkpo",rd:"rkrd",pd:"rkpd"},q=(a,p)=>a.length?a[Math.floor(a.length*p)]:0;
   function fill(){
+    const tv=teamView(hasW?TS.n:0),teams=tv.v;
+    sb.forEach(b=>b.setAttribute("aria-pressed",+b.dataset.n===TS.n));
+    if(hasW)info.textContent=TS.n?"Vertinamos paskutinės "+Math.min(TS.n,tv.games||TS.n)+" rungtynės (iki "+D.stats_week+" sav.).":"Vertinamas visas sezonas iki "+D.stats_week+" sav.";
+    const vals=k=>keys.map(t=>TC[k][1](teams[t],t)).filter(x=>typeof x==="number").sort((a,b)=>a-b),pr=vals("pr"),pp=vals("pp");
     hr.replaceChildren();Object.entries(TC).forEach(([k,[t]])=>{const th=el("th",k==="team"||k==="opp"?"l":"",t);if(k===TS.sort)th.setAttribute("aria-sort",TS.dir>0?"ascending":"descending");
       th.onclick=()=>{TS.dir=TS.sort===k?-TS.dir:(k==="team"||k==="opp"?1:-1);TS.sort=k;fill()};hr.append(th)});
     const ks=keys.slice().sort((a,b)=>{const x=TC[TS.sort][1](teams[a],a),y=TC[TS.sort][1](teams[b],b);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*TS.dir});
@@ -335,7 +455,7 @@ function vTeams(v){
       Object.entries(TC).forEach(([k,[,g,f]])=>{
         let x=g(T,t),txt;
         if(k==="team")txt=t;else if(k==="opp")txt=T.next?(T.next.h?"vs ":"@ ")+T.next.opp:"BYE";else txt=x==null?"–":f(x);
-        if(rk[k])txt+=" (#"+T[rk[k]]+")";
+        if(rk[k]&&T[rk[k]])txt+=" (#"+T[rk[k]]+")";
         const td=el("td",k==="team"||k==="opp"?"l":"",txt);
         if(k==="pr"&&x!=null)td.className=x>=q(pr,.75)?"hi":(x<=q(pr,.25)?"lo":"");
         if(k==="pp"&&x!=null)td.className=x>=q(pp,.75)?"hi":(x<=q(pp,.25)?"lo":"");
@@ -350,7 +470,7 @@ function draw(){
 async function pickLeague(i){
   L=D.leagues[i];L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
   L.teams.forEach(t=>{if(!t.mine)t.players.forEach(p=>owners[p]=t.name)});
-  TR={partner:-1,get:[],give:[]};
+  TR={partner:-1,get:[],give:[]};AI.msgs=[];AI.draft="";
   try{localStorage.setItem("lyga",L.id)}catch(e){}
   draw();await live();draw()}
 function init(d){

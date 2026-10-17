@@ -272,6 +272,16 @@ def nfl_team_table(c, nxt):
     return out
 
 
+def nfl_weeks_table(team_wk, sched):
+    """Savaitiniai komandų jardai (puolimas ir leidžiami) filtravimui puslapyje: {komanda: [[sav, rush, pass, leido_rush, leido_pass], ...]}"""
+    out = {}
+    for (t, wk), v in sorted(team_wk.items(), key=lambda kv: (kv[0][0], kv[0][1])):
+        g = sched.get(t, {}).get(wk)
+        o = team_wk.get((g["opp"], wk)) if g else None
+        out.setdefault(t, []).append([wk, round(v["r"]), round(v["p"]), round(o["r"]) if o else None, round(o["p"]) if o else None])
+    return out
+
+
 def league_format(lg):
     ss, rp = lg.get("scoring_settings") or {}, lg.get("roster_positions") or []
     rec = ss.get("rec", 0) or 0
@@ -354,7 +364,7 @@ def main():
 
     out = {"sample": False, "updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="minutes"),
            "season": season, "week": nxt, "stats_week": upto, "user": username, "stats": S, "leagues": leagues,
-           "nfl_teams": nfl_team_table(c, nxt), "sources": {"schedule": bool(sched), "sleeper_projections": bool(sp)}}
+           "nfl_teams": nfl_team_table(c, nxt), "nfl_weeks": nfl_weeks_table(team_wk, sched), "imp_avg": round(c.imp_avg, 2), "sources": {"schedule": bool(sched), "sleeper_projections": bool(sp)}}
     with open(os.environ.get("DATA_OUT") or os.path.join(here, "data.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
     print(f"OK: {len(leagues)} lygos, {len(S)} žaidėjų, komandų: {len(c.R)}, tvarkaraštis={bool(sched)}, Sleeper proj.={bool(sp)}")
