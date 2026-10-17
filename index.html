@@ -11,91 +11,150 @@
 :root{--paper:#edf0ee;--ink:#13203a;--mute:#5b6578;--turf:#2b7a4b;--bench:#8d9bb5;--flag:#f2b91f;--chalk:#fff;--line:rgba(19,32,58,.16)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,sans-serif}
-h1,h2,.num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700}
-header{background:var(--ink);color:var(--chalk);padding:28px 20px 22px}
+h1,h3,.num,.tabs button,.seg button,th{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
 .wrap{max-width:1080px;margin:0 auto}
-h1{margin:0;font-size:clamp(2rem,6vw,3.2rem);line-height:1}
+header{background:var(--ink);color:var(--chalk);padding:24px 20px 20px}
+.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+h1{margin:0;font-size:clamp(2rem,6vw,3rem);line-height:1;font-weight:700}
 .meta{margin:8px 0 0;color:#c4cde0;font-size:.95rem}
+.pick{display:flex;flex-direction:column;gap:2px;font-size:.9rem;color:#c4cde0}
+select,input[type=search]{font:500 1rem Barlow,sans-serif;color:var(--ink);background:var(--chalk);border:1px solid var(--line);padding:8px 10px;min-height:40px}
 .banner{background:var(--flag);color:var(--ink);padding:10px 20px;font-weight:500}
-main{padding:24px 20px 48px}
-.league{margin-bottom:40px}
-.league>h2{font-size:1.6rem;margin:0 0 14px}
-.cols{display:grid;grid-template-columns:3fr 2fr;gap:28px}
-section h3{margin:0 0 4px;font:700 1.25rem/1.2 "Barlow Condensed",sans-serif}
-.hint{margin:0 0 12px;color:var(--mute);font-size:.9rem}
-.row{display:grid;grid-template-columns:minmax(0,13rem) 1fr 3.4rem;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
-.who{min-width:0}
+main{padding:20px 20px 56px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;overflow-x:auto}
+.tabs button{background:none;border:0;padding:10px 14px;font-size:1.2rem;font-weight:700;color:var(--mute);cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -4px 0 var(--turf)}
+h3{margin:0 0 4px;font-size:1.35rem;font-weight:700}
+.hint{margin:0 0 12px;color:var(--mute);font-size:.9rem;max-width:70ch}
+.row{display:grid;grid-template-columns:minmax(0,15rem) 1fr 3.4rem;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
 .who b{font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.who small{color:var(--mute)}
+small{color:var(--mute)}
 .tag{display:inline-block;margin-left:6px;padding:0 6px;background:var(--flag);color:var(--ink);font-size:.75rem;font-weight:500}
 .track{position:relative;height:14px;background-color:var(--chalk);border:1px solid var(--line);
  background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),var(--line) calc(12.5% - 1px),var(--line) 12.5%)}
 .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--turf);transition:width .7s ease-out}
 .bench .fill{background:var(--bench)}
-.num{text-align:right;font-size:1.3rem;line-height:1}
-.sub{margin:18px 0 0;font:600 1rem "Barlow Condensed",sans-serif;color:var(--mute)}
-.w{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0;border-top:1px solid var(--line)}
-.w .num{grid-row:span 2;align-self:center;font-size:1.3rem}
-.w small{color:var(--mute)}
+.num{text-align:right;font-size:1.35rem;font-weight:700;line-height:1}
+.sub{margin:18px 0 0;font:600 1.05rem "Barlow Condensed",sans-serif;color:var(--mute)}
+.card{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:10px 0;border-top:1px solid var(--line)}
+.card .num{grid-row:span 3;align-self:center;color:var(--turf)}
+.card b{font-weight:500}
 .empty{color:var(--mute)}
-@media(max-width:760px){.cols{grid-template-columns:1fr}.row{grid-template-columns:1fr 3.4rem}.track{grid-column:1/3;grid-row:2}}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 14px}
+.seg{display:flex}
+.seg button{background:var(--chalk);border:1px solid var(--line);margin-left:-1px;padding:6px 12px;font-size:1.05rem;font-weight:600;cursor:pointer;color:var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--chalk);border-color:var(--ink)}
+.tw{overflow-x:auto;background:var(--chalk);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
+th{font-size:1.05rem;font-weight:700;cursor:pointer;border-top:0;background:var(--paper);user-select:none}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+td:first-child{font-weight:500}
+.count{margin-left:auto;color:var(--mute);font-size:.9rem}
+@media(max-width:760px){.row{grid-template-columns:1fr 3.4rem}.track{grid-column:1/3;grid-row:2}}
 @media(prefers-reduced-motion:reduce){.fill{transition:none}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
-  <h1>Mano fantasy savaitė</h1>
-  <p class="meta" id="meta">Kraunama…</p>
+<header><div class="wrap top">
+  <div><h1>Mano fantasy savaitė</h1><p class="meta" id="meta">Kraunama…</p></div>
+  <label class="pick">Lyga<select id="league" aria-label="Pasirink lygą"></select></label>
 </div></header>
-<div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys. Paleisk „Atnaujinti duomenis“ per GitHub Actions, kad pamatytum savo lygą.</div>
-<main><div class="wrap" id="app"></div></main>
+<div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys. Paleisk „Atnaujinti duomenis“ per GitHub Actions, kad pamatytum savo lygas.</div>
+<main><div class="wrap">
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="view"></div>
+</div></main>
 <script>
-const MAX = 40; // juostos skalė: 0–40 PPR taškų, linija kas 5
-function el(tag, cls, text){const e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e;}
-function pts(v){return v==null?"–":v.toFixed(1);}
-function status(p){return p.status?el("span","tag",p.status):null;}
+const MAX=40, HEUR="Forma = 60 % paskutinių 3 savaičių vidurkio + 40 % sezono vidurkio. Skaičius prie žaidėjo rodo, kiek taškų per savaitę jis galėtų pagerinti tavo silpniausią tinkamą starterį. Tai euristika, o ne garantija.";
+const TABS=[["roster","Sudėtis"],["waiver","Waiver"],["trade","Trade tikslai"],["stats","Žaidėjų statistika"]];
+const COLS=[["name","Žaidėjas"],["pos","Poz."],["team","Komanda"],["owner","Savininkas"],["gp","GP"],["total","Viso"],["avg","Vid."],["l3","L3"],["last","Praėj."],["tgt","Tgt"],["att","Nešimai"],["adds","Pridėj. 24 val."]];
+let D,L,mine=new Set(),view="roster",F={pos:"",own:"",q:"",sort:"form",dir:-1};
+const $=id=>document.getElementById(id);
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+const fmt=v=>v==null?"–":Number(v).toFixed(1);
+const nm=id=>D.stats[id]?D.stats[id].name:(!id||id==="0"?"tuščias slotas":id);
+const ownerOf=id=>mine.has(id)?"Mano":(L.owners[id]||"Laisvas");
+function nameB(id){const b=el("b","",nm(id)),s=D.stats[id];if(s&&s.status)b.append(el("span","tag",s.status));return b}
+function info(s){return s.pos+" · "+s.team+" · forma "+fmt(s.form)+" (L3 "+fmt(s.l3)+", vid. "+fmt(s.avg)+")"}
 
-function playerRow(p, bench){
-  const r = el("div","row"+(bench?" bench":""));
-  const who = el("div","who"), name = el("b","",p.name); const s = status(p); if(s) name.append(s);
-  who.append(name, el("small","",p.pos+" · "+p.team));
-  const track = el("div","track"), fill = el("div","fill");
-  fill.dataset.w = Math.max(0, Math.min(p.pts||0, MAX)) / MAX * 100;
-  track.append(fill);
-  r.append(who, track, el("div","num",pts(p.pts)));
-  return r;
-}
+function rosterRow(id,slot,bench){
+  const s=D.stats[id]||{},r=el("div","row"+(bench?" bench":"")),w=el("div","who");
+  w.append(nameB(id),el("small","",slot+" · "+(s.pos||"")+" · "+(s.team||"")+" · forma "+fmt(s.form)));
+  const t=el("div","track"),f=el("div","fill");f.dataset.w=Math.max(0,Math.min(s.last||0,MAX))/MAX*100;t.append(f);
+  r.append(w,t,el("div","num",fmt(s.last)));return r}
+function vRoster(v){
+  v.append(el("h3","","Mano sudėtis"+(L.team?" · "+L.team:"")),el("p","hint","Praėjusios savaitės PPR taškai (skalė 0–40, linija kas 5)"));
+  L.roster.forEach(r=>v.append(rosterRow(r.id,r.slot,false)));
+  v.append(el("p","sub","Suolas"));L.bench.forEach(id=>v.append(rosterRow(id,"BN",true)))}
 
-function render(d){
-  document.getElementById("meta").textContent =
-    d.season+" sezonas · "+d.week+" savaitė · taškai už "+d.stats_week+" savaitę · atnaujinta "+new Date(d.updated).toLocaleString("lt-LT");
-  document.getElementById("banner").hidden = !d.sample;
-  const app = document.getElementById("app");
-  if(!d.leagues.length){app.append(el("p","empty","Šiame sezone nerasta nė vienos Sleeper lygos. Patikrink vartotojo vardą faile config.json."));return;}
-  d.leagues.forEach(lg=>{
-    const box = el("div","league"); box.append(el("h2","",lg.name));
-    const cols = el("div","cols");
-    const left = el("section");
-    left.append(el("h3","","Mano sudėtis"), el("p","hint","Praėjusios savaitės PPR taškai (skalė 0–40, linija kas 5)"));
-    lg.starters.forEach(p=>left.append(playerRow(p,false)));
-    left.append(el("p","sub","Suolas"));
-    lg.bench.forEach(p=>left.append(playerRow(p,true)));
-    const right = el("section");
-    right.append(el("h3","","Waiver: populiaru ir laisva"), el("p","hint","Daugiausia pridėjimų per 24 val., kurių nėra jokioje lygos sudėtyje"));
-    if(!lg.waiver.length) right.append(el("p","empty","Šiuo metu nieko."));
-    lg.waiver.forEach(p=>{
-      const w = el("div","w"), n = el("b","",p.name); const s = status(p); if(s) n.append(s);
-      w.append(n, el("div","num",pts(p.pts)), el("small","",p.pos+" · "+p.team+" · +"+p.adds.toLocaleString("lt-LT")+" pridėjimų"));
-      right.append(w);
-    });
-    cols.append(left,right); box.append(cols); app.append(box);
-  });
-  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")));
-}
+function vWaiver(v){
+  v.append(el("h3","","Waiver pasiūlymai"),el("p","hint",HEUR));
+  if(!L.waivers.length){v.append(el("p","empty","Šiuo metu laisvų žaidėjų, kurie pagerintų sudėtį, nėra."));return}
+  L.waivers.forEach(w=>{const s=D.stats[w.id],c=el("div","card");
+    c.append(nameB(w.id),el("div","num","+"+fmt(w.gain)),el("small","",info(s)+(s.adds?" · +"+s.adds.toLocaleString("lt-LT")+" pridėjimų":"")),
+      el("small","","Pakeistų: "+nm(w.replaces)+" (forma "+fmt(w.replaces_form)+")"));v.append(c)})}
 
-fetch("data.json").then(r=>r.json()).then(render).catch(()=>{
-  document.getElementById("meta").textContent = "Nepavyko įkelti data.json. Atidaryk puslapį per GitHub Pages arba vietinį serverį (python -m http.server).";
-});
+function vTrade(v){
+  v.append(el("h3","","Trade tikslai"),el("p","hint","Rodomi kitų komandų suolo žaidėjai, kurie geriausiai pagerintų tavo sudėtį, nes jų savininkams jie nėra starteriai. "+HEUR));
+  if(!L.trades.length){v.append(el("p","empty","Šiuo metu aiškių trade tikslų nėra."));return}
+  L.trades.forEach(t=>{const s=D.stats[t.id],c=el("div","card");
+    c.append(nameB(t.id),el("div","num","+"+fmt(t.gain)),el("small","",info(s)+" · savininkas: "+t.owner),
+      el("small","","Pakeistų: "+nm(t.replaces)+" · galimas siūlymas iš suolo: "+(t.offer.length?t.offer.map(nm).join(", "):"nėra")));v.append(c)})}
+
+function vStats(v){
+  v.append(el("h3","","Žaidėjų statistika"),el("p","hint","Sezono PPR taškai iki "+D.stats_week+" savaitės. L3 – paskutinių 3 savaičių vidurkis. Spausk stulpelio pavadinimą, kad rikiuotum."));
+  const bar=el("div","filters"),seg=el("div","seg"),btns=[];
+  ["","QB","RB","WR","TE","K","DEF"].forEach(p=>{const b=el("button","",p||"Visi");b.onclick=()=>{F.pos=p;fill()};b.dataset.p=p;btns.push(b);seg.append(b)});
+  const own=el("select");own.setAttribute("aria-label","Savininkas");
+  [["","Visi žaidėjai"],["Laisvas","Tik laisvi"],["Mano","Mano žaidėjai"],["kiti","Kitų komandų"]].forEach(([k,t])=>{const o=el("option","",t);o.value=k;own.append(o)});
+  own.value=F.own;own.onchange=()=>{F.own=own.value;fill()};
+  const q=el("input");q.type="search";q.placeholder="Ieškoti pagal vardą";q.value=F.q;q.oninput=()=>{F.q=q.value;fill()};
+  const cnt=el("span","count");bar.append(seg,own,q,cnt);
+  const tw=el("div","tw"),tb=el("table"),hd=el("thead"),hr=el("tr"),body=el("tbody");
+  COLS.forEach(([k,t])=>{const th=el("th",["name","pos","team","owner"].includes(k)?"l":"",t);th.dataset.k=k;th.onclick=()=>{F.dir=F.sort===k?-F.dir:(k==="name"||k==="pos"||k==="team"||k==="owner"?1:-1);F.sort=k;fill()};hr.append(th)});
+  const th=el("th","","Forma");th.dataset.k="form";th.onclick=()=>{F.dir=F.sort==="form"?-F.dir:-1;F.sort="form";fill()};hr.append(th);
+  hd.append(hr);tb.append(hd,body);tw.append(tb);v.append(bar,tw);
+  function val(id,k){const s=D.stats[id];return k==="name"?s.name:k==="owner"?ownerOf(id):s[k]}
+  function fill(){
+    btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));
+    hr.querySelectorAll("th").forEach(h=>h.textContent=(COLS.find(c=>c[0]===h.dataset.k)||[0,"Forma"])[1]+(h.dataset.k===F.sort?(F.dir>0?" ▲":" ▼"):""));
+    let ids=Object.keys(D.stats).filter(id=>{const s=D.stats[id],o=ownerOf(id);
+      return (!F.pos||s.pos===F.pos)&&(!F.q||s.name.toLowerCase().includes(F.q.toLowerCase()))&&(!F.own||(F.own==="kiti"?(o!=="Mano"&&o!=="Laisvas"):o===F.own))});
+    ids.sort((a,b)=>{const x=val(a,F.sort),y=val(b,F.sort);
+      if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;
+      return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*F.dir});
+    cnt.textContent=ids.length+" žaidėjų";body.replaceChildren();
+    ids.forEach(id=>{const s=D.stats[id],tr=el("tr");const c0=el("td");c0.append(nameB(id));tr.append(c0);
+      [s.pos,s.team].forEach(x=>{const d=el("td","",x);d.style.textAlign="left";tr.append(d)});
+      const od=el("td","l",ownerOf(id));tr.append(od);
+      [s.gp,fmt(s.total),fmt(s.avg),fmt(s.l3),fmt(s.last),s.tgt,s.att,s.adds||"–",fmt(s.form)].forEach(x=>tr.append(el("td","",x)));
+      body.append(tr)})}
+  fill()}
+
+function draw(){
+  const tabs=$("tabs");tabs.replaceChildren();
+  TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw()};tabs.append(b)});
+  const v=$("view");v.replaceChildren();
+  ({roster:vRoster,waiver:vWaiver,trade:vTrade,stats:vStats})[view](v);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")))}
+
+function pickLeague(i){
+  L=D.leagues[i];mine=new Set([...L.roster.map(r=>r.id),...L.bench]);
+  try{localStorage.setItem("lyga",L.id)}catch(e){}
+  draw()}
+
+function init(d){
+  D=d;$("banner").hidden=!d.sample;
+  $("meta").textContent=d.season+" sezonas · "+d.week+" savaitė · taškai iki "+d.stats_week+" savaitės · atnaujinta "+new Date(d.updated).toLocaleString("lt-LT");
+  if(!d.leagues.length){$("view").append(el("p","empty","Šiame sezone nerasta nė vienos Sleeper lygos. Patikrink vartotojo vardą faile config.json."));return}
+  const sel=$("league");d.leagues.forEach((l,i)=>{const o=el("option","",l.name);o.value=i;sel.append(o)});
+  let saved=null;try{saved=localStorage.getItem("lyga")}catch(e){}
+  const idx=Math.max(0,d.leagues.findIndex(l=>l.id===saved));sel.value=idx;
+  sel.onchange=()=>pickLeague(+sel.value);pickLeague(idx)}
+
+fetch("data.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(init).catch(e=>{
+  $("meta").textContent="Nepavyko įkelti data.json. Atidaryk puslapį per GitHub Pages arba vietinį serverį (python -m http.server).";console.error(e)});
 </script>
 </body>
 </html>
