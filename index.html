@@ -315,13 +315,23 @@ function avail(name){
   if(o==="Laisvas")return {cls:"f",txt:"Laisvas tavo lygoje",id};
   if(o==="Mano")return {cls:"m",txt:"Jau tavo žaidėjas",id};
   return {cls:"t",txt:"Paimtas: "+o,id}}
+function pasteBox(){
+  const d=el("details","how"),sm=el("summary","","Įklijuoti santrauką rankiniu būdu (jei automatinė nepasiekė puslapio)");d.append(sm);
+  d.append(el("p","","Programėlėje gautą JSON (nuo { iki }) įklijuok čia: puslapis jį išsaugos šioje naršyklėje ir parodys gražiai."));
+  const ta=el("textarea");ta.placeholder='{"generated":"…","waivers":[…],…}';const row=el("div","pickrow"),ok=el("button","btn","Išsaugoti ir rodyti"),no=el("button","btn ghost","Išvalyti"),st=el("span","mut");
+  ok.onclick=()=>{try{const m=ta.value.match(/\{[\s\S]*\}/);const j=JSON.parse(m?m[0]:ta.value);if(!j.generated)j.generated=new Date().toISOString();j.manual=true;lsSet2("digest_manual",JSON.stringify(j));DG=j;draw()}catch(e){st.textContent="Nepavyko perskaityti JSON: "+e.message}};
+  no.onclick=()=>{lsSet2("digest_manual","");location.reload()};
+  row.append(ok,no,st);d.append(ta,row);return d}
+function lsSet2(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}
 function vPulse(v){
   v.append(el("h3","","Kūrėjų pulsas"));
-  if(!DG||!DG.generated){v.append(el("p","empty","Santraukos dar nėra. Ji atsiranda, kai suplanuotas agentas pirmą kartą įrašo failą digest.json."));return}
+  if(!DG||!DG.generated){v.append(el("p","empty","Santraukos dar nėra. Ji atsiranda, kai suplanuotas agentas įrašo failą digest.json (arba įklijuok ją rankiniu būdu žemiau)."),pasteBox());return}
   const age=(Date.now()-new Date(DG.generated))/36e5,ck=DG.checked||{};
   v.append(el("p","hint",(DG.focus?DG.focus+" · ":"")+"atnaujinta "+new Date(DG.generated).toLocaleString("lt-LT")+(ck.read?" · perskaityta "+ck.read+" šaltinių, priimta "+(ck.accepted||0)+", atmesta "+(ck.rejected||0):"")));
   if(age>36)v.append(el("p","live","Dėmesio: santrauka senesnė nei 36 val., gali būti pasenusi."));
   if(DG.sample)v.append(el("p","live","Pavyzdinė santrauka (šablono peržiūra)."));
+  if(DG.manual)v.append(el("p","live","Rodoma rankiniu būdu įklijuota santrauka."));
+  if(DG.fresh_note)v.append(el("p","live",DG.fresh_note));
   v.append(el("h4","pgh","1. Waiver kandidatai"));
   const W=(DG.waivers||[]).slice(0,5);
   if(!W.length)v.append(el("p","empty","Šiandien aiškių waiver kandidatų nėra."));
@@ -335,9 +345,11 @@ function vPulse(v){
       const hd=el("div","pgt");hd.append(el("b","",x.name),el("span","mut",x.pos||""));if(mn)hd.append(el("span","av m","Tavo žaidėjas"));
       c.append(hd,el("div","pgw",x.note||""));col.append(c)});return col};
   two.append(mk("2a. Kyla",DG.rising||[],"up"),mk("2b. Krenta",DG.falling||[],"dn"));v.append(two);
+  if((DG.injuries||[]).length){const ij=el("p","live");ij.append(el("b","","Sužeisti / Out: "),document.createTextNode(DG.injuries.slice(0,10).join(", ")));v.append(ij)}
   v.append(el("h4","pgh","3. Santrauka"),el("div","pg sm",DG.summary||""));
   if((DG.sources||[]).length){const d=el("details","how"),sm=el("summary","","Šaltiniai ("+DG.sources.length+")");d.append(sm);
-    DG.sources.slice(0,10).forEach(x=>{const p=el("p");const a=el("a","",x.title||x.url);a.href=x.url;a.target="_blank";a.rel="noopener";p.append(a,document.createTextNode(x.date?" · "+x.date:""));d.append(p)});v.append(d)}}
+    DG.sources.slice(0,10).forEach(x=>{const p=el("p");const a=el("a","",x.title||x.url);a.href=x.url;a.target="_blank";a.rel="noopener";p.append(a,document.createTextNode(x.date?" · "+x.date:""));d.append(p)});v.append(d)}
+  v.append(pasteBox())}
 function vRoster(v){
   v.append(el("h3","","Sudėtis · "+L.team),el("p","hint","Juosta = projekcija artimiausiai savaitei (skalė 0–30). Kampe: 3 savaičių suma ir trys stulpeliai (kitos 3 savaitės); užvedus pelę (ar paspaudus) matai kiekvienos savaitės varžovą, projekciją ir komentarą. Dešinėje: paskutinių 5 savaičių forma. Lentelėje po eilute: žaidėjo komandos puolimas (rush/pass) ir varžovo gynyba, sezono vidurkis, L3 ir šių rungtynių projekcija (mėlyna = palanku, raudona = nepalanku)."),fmtLine(),how());
   L.roster.forEach(r=>v.append(plRow(r.id,r.slot,false)));
@@ -539,7 +551,7 @@ function init(d){
   const sel=$("league");d.leagues.forEach((l,i)=>{const o=el("option","",l.name);o.value=i;sel.append(o)});
   let saved=null;try{saved=localStorage.getItem("lyga")}catch(e){}
   const idx=Math.max(0,d.leagues.findIndex(l=>l.id===saved));sel.value=idx;sel.onchange=()=>pickLeague(+sel.value);pickLeague(idx)}
-Promise.all([fetch("data.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()),fetch("digest.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null)]).then(([d,g])=>{DG=g;init(d)}).catch(e=>{
+Promise.all([fetch("data.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()),fetch("digest.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null)]).then(([d,g])=>{DG=g;try{const m=JSON.parse(localStorage.getItem("digest_manual")||"null");if(m&&(!g||new Date(m.generated)>new Date(g.generated)))DG=m}catch(e){}init(d)}).catch(e=>{
   $("meta").textContent="Nepavyko įkelti data.json. Atidaryk puslapį per GitHub Pages arba vietinį serverį (python -m http.server).";console.error(e)});
 </script>
 </body>

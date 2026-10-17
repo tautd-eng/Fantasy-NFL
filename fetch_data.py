@@ -367,6 +367,21 @@ def main():
            "nfl_teams": nfl_team_table(c, nxt), "nfl_weeks": nfl_weeks_table(team_wk, sched), "imp_avg": round(c.imp_avg, 2), "sources": {"schedule": bool(sched), "sleeper_projections": bool(sp)}}
     with open(os.environ.get("DATA_OUT") or os.path.join(here, "data.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
+    # Mažas failas agentui (data.json per didelis, skaitant jis apkirpimas): mano sudėtis ir geriausi laisvi žaidėjai kiekvienoje lygoje
+    def brief(pid, slot=None):
+        x = S[pid]
+        return {"name": x["name"], "pos": x["pos"], "team": x["team"], "status": x.get("status") or "", "slot": slot, "avg": x["avg"], "l3": x["l3"], "p3": x["p3"], "sos": x.get("sosx")}
+    ai = {"updated": out["updated"], "season": season, "week": nxt, "stats_week": upto, "leagues": []}
+    for L_ in leagues:
+        owned = {p for t in L_["teams"] for p in t["players"]}
+        mine_ids = [r["id"] for r in L_["roster"]]
+        free = sorted((p for p in S if p not in owned and S[p]["pos"] in ("QB", "RB", "WR", "TE") and S[p]["p3"] > 0), key=lambda p: -S[p]["p3"])[:12]
+        ai["leagues"].append({"name": L_["name"], "format": L_["format"]["label"],
+                              "my_starters": [brief(r["id"], r["slot"]) for r in L_["roster"]],
+                              "my_bench": [brief(p, "BN") for p in L_["bench"] if p not in mine_ids],
+                              "top_free_agents": [brief(p) for p in free]})
+    with open(os.path.join(here, "agent_input.json"), "w", encoding="utf-8") as f:
+        json.dump(ai, f, ensure_ascii=False, separators=(",", ":"))
     print(f"OK: {len(leagues)} lygos, {len(S)} žaidėjų, komandų: {len(c.R)}, tvarkaraštis={bool(sched)}, Sleeper proj.={bool(sp)}")
 
 
