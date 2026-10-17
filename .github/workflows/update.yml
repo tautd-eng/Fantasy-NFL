@@ -1,0 +1,29 @@
+name: Atnaujinti duomenis
+
+on:
+  schedule:
+    - cron: "0 9 * * 2"   # antradienį po Monday Night Football (UTC)
+    - cron: "0 15 * * 6"  # šeštadienį prieš sekmadienio rungtynes (UTC)
+  workflow_dispatch:       # galima paleisti ranka
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python fetch_data.py
+      - name: Išsaugoti pakeitimus
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add data.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Atnaujinti duomenis"
+            git push
+          fi
