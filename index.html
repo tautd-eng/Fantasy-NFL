@@ -6,52 +6,95 @@
 <title>Mano fantasy savaitė</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#edf0ee;--ink:#13203a;--mute:#5b6578;--turf:#2b7a4b;--bench:#8d9bb5;--flag:#f2b91f;--chalk:#fff;--line:rgba(19,32,58,.16)}
+:root{color-scheme:dark;--bg:#050506;--s1:#101013;--s2:#17171c;--s3:#202027;--line:#2b2b34;--tx:#f3f5f8;--mu:#9aa3b2;--blue:#2f80ff;--navy:#0b3a7a;--red:#d50a0a;--white:#fff}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,sans-serif}
-h1,h3,.num,.tabs button,.seg button,th{font-family:"Barlow Condensed","Arial Narrow",sans-serif}
-.wrap{max-width:1080px;margin:0 auto}
-header{background:var(--ink);color:var(--chalk);padding:24px 20px 20px}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.5 Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto}
+header{background:#000;color:var(--white);padding:22px 20px 18px;border-bottom:3px solid var(--white);box-shadow:0 3px 0 var(--navy),0 6px 0 var(--blue)}
 .top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
-h1{margin:0;font-size:clamp(2rem,6vw,3rem);line-height:1;font-weight:700}
-.meta{margin:8px 0 0;color:#c4cde0;font-size:.95rem}
-.pick{display:flex;flex-direction:column;gap:2px;font-size:.9rem;color:#c4cde0}
-select,input[type=search]{font:500 1rem Barlow,sans-serif;color:var(--ink);background:var(--chalk);border:1px solid var(--line);padding:8px 10px;min-height:40px}
-.banner{background:var(--flag);color:var(--ink);padding:10px 20px;font-weight:500}
-main{padding:20px 20px 56px}
-.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;overflow-x:auto}
-.tabs button{background:none;border:0;padding:10px 14px;font-size:1.2rem;font-weight:700;color:var(--mute);cursor:pointer;white-space:nowrap}
-.tabs button[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -4px 0 var(--turf)}
-h3{margin:0 0 4px;font-size:1.35rem;font-weight:700}
-.hint{margin:0 0 12px;color:var(--mute);font-size:.9rem;max-width:70ch}
-.row{display:grid;grid-template-columns:minmax(0,15rem) 1fr 3.4rem;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
-.who b{font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-small{color:var(--mute)}
-.tag{display:inline-block;margin-left:6px;padding:0 6px;background:var(--flag);color:var(--ink);font-size:.75rem;font-weight:500}
-.track{position:relative;height:14px;background-color:var(--chalk);border:1px solid var(--line);
- background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),var(--line) calc(12.5% - 1px),var(--line) 12.5%)}
-.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--turf);transition:width .7s ease-out}
-.bench .fill{background:var(--bench)}
-.num{text-align:right;font-size:1.35rem;font-weight:700;line-height:1}
-.sub{margin:18px 0 0;font:600 1.05rem "Barlow Condensed",sans-serif;color:var(--mute)}
-.card{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:10px 0;border-top:1px solid var(--line)}
-.card .num{grid-row:span 3;align-self:center;color:var(--turf)}
-.card b{font-weight:500}
-.empty{color:var(--mute)}
+h1{margin:0;font-size:clamp(1.6rem,5vw,2.3rem);line-height:1.1;font-weight:700;letter-spacing:-.01em}
+.meta{margin:6px 0 0;color:var(--mu);font-size:.85rem}
+.pick{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--mu)}
+select,input[type=search]{font:500 .95rem Inter,sans-serif;color:var(--tx);background:var(--s2);border:1px solid var(--line);padding:8px 10px;min-height:40px;border-radius:0}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.banner{background:var(--navy);color:#fff;padding:9px 20px;font-weight:500;font-size:.9rem}
+main{padding:18px 20px 56px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:18px;overflow-x:auto}
+.tabs button{background:none;border:0;padding:11px 16px;font:700 .95rem Inter,sans-serif;color:var(--mu);cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected=true]{color:#fff;box-shadow:inset 0 -4px 0 var(--blue)}
+h3{margin:0 0 4px;font-size:1.2rem;font-weight:700}
+.hint{margin:0 0 12px;color:var(--mu);font-size:.85rem;max-width:80ch}
+small,.mut{color:var(--mu)}
+details.how{background:var(--s1);border:1px solid var(--line);border-left:5px solid var(--blue);padding:10px 14px;margin:0 0 16px;font-size:.88rem}
+details.how summary{cursor:pointer;font-weight:700}
+details.how p{margin:8px 0 0}details.how code{background:var(--s3);padding:1px 5px}
+.tag{display:inline-block;margin-left:6px;padding:0 6px;background:var(--red);color:#fff;font-size:.7rem;font-weight:700}
+.act{display:inline-block;padding:1px 8px;font:700 .72rem Inter,sans-serif;border:1px solid var(--mu);color:var(--tx);background:transparent;white-space:nowrap}
+.act.hold{border-color:var(--line);color:var(--mu)}
+.act.sell{background:var(--red);border-color:var(--red);color:#fff}
+.act.add,.act.buy{background:var(--blue);border-color:var(--blue);color:#fff}
+.act.trade{border-color:var(--blue);color:#8db8ff}
+button.act{cursor:pointer}button.act:hover{background:var(--white);color:#000;border-color:var(--white)}
+.pl,.card{background:var(--s1);border:1px solid var(--line);margin-bottom:8px;padding:10px 12px}
+.pl{display:grid;grid-template-columns:3.4rem minmax(0,1fr) 10rem 4.2rem 5rem;gap:4px 14px;align-items:center}
+.pl.bn{background:transparent}
+.slot{font-weight:700;font-size:.8rem;background:var(--s3);text-align:center;padding:2px 0}
+.who b{font-weight:700}.who small{display:block}
+.pj{display:grid;grid-template-columns:1fr 3rem;gap:8px;align-items:center}
+.track{height:14px;background:#000;border:1px solid var(--line);position:relative;
+ background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(16.66% - 1px),var(--line) calc(16.66% - 1px),var(--line) 16.66%)}
+.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--blue);border-right:2px solid #fff;transition:width .7s ease-out}
+.num{text-align:right;font-weight:700;font-size:1.25rem;line-height:1}
+.p3{text-align:right;line-height:1.1}.p3 b{font-size:1.1rem;display:block}.p3 small{font-size:.7rem}
+.spark{display:flex;align-items:end;gap:3px;height:30px}
+.spark i{flex:1;background:var(--s3);min-height:2px}.spark i:last-child{background:var(--blue)}
+.ins{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.85rem;border-top:1px dashed var(--line);padding-top:7px;margin-top:4px}
+.ins .bd{flex-basis:100%;color:var(--mu);font-size:.78rem}
+.ins .bd2{flex-basis:100%;color:#6f7888;font-size:.74rem}
+.chips{display:flex;gap:3px;margin-left:auto}
+.chips span{min-width:36px;text-align:center;font-size:.7rem;font-weight:700;padding:1px 4px;border:1px solid var(--line);background:var(--s3);color:var(--mu)}
+.chips .e{background:var(--blue);color:#fff;border-color:var(--blue)}.chips .t{background:var(--red);color:#fff;border-color:var(--red)}.chips .b{background:transparent;border-style:dashed}
+.sub{margin:20px 0 8px;font-weight:700;font-size:.9rem;color:var(--mu)}
+.card{display:grid;grid-template-columns:1fr auto;gap:3px 14px}
+.card .num{grid-row:span 2;align-self:center;color:#8db8ff}
+.live{font-size:.8rem;color:var(--mu);margin:0 0 10px}
+.empty{color:var(--mu)}
+.trade{background:var(--s1);border:1px solid var(--line);border-left:5px solid var(--blue);padding:12px 14px;margin-bottom:12px}
+.th{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:6px}
+.th h4{margin:0;font-size:1rem}
+.bal{margin-left:auto;font-size:.75rem;font-weight:700;padding:1px 8px;background:var(--s3)}
+.bal.ok{background:var(--navy);color:#fff}
+.sw{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.sw>div{background:var(--s2);padding:8px 10px}.sw h5{margin:0 0 4px;font-size:.75rem;color:var(--mu);font-weight:700}
+.sw p{margin:2px 0;font-size:.88rem}
+.hl{background:var(--navy);font-weight:700;padding:0 4px}
+.gain{font-size:.85rem;margin-top:4px}
+.builder{background:var(--s1);border:1px solid var(--line);padding:12px 14px;margin:0 0 16px;display:grid;gap:12px}
+.builder label{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--mu)}
+.pickrow{display:flex;flex-wrap:wrap;gap:6px}
+.pc{font:500 .8rem Inter,sans-serif;background:var(--s2);color:var(--tx);border:1px solid var(--line);padding:4px 9px;cursor:pointer}
+.pc[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.pc small{color:inherit;opacity:.7;margin-left:4px}
+.btn{font:700 .85rem Inter,sans-serif;background:var(--white);color:#000;border:0;padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.lk,.tog,.clr{font:700 .78rem Inter,sans-serif;background:transparent;border:1px solid var(--blue);color:#8db8ff;padding:3px 9px;cursor:pointer}
+.lk:hover,.clr:hover{background:var(--blue);color:#fff}
+.tog[aria-pressed=true]{background:var(--blue);color:#fff}
+.focus{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--navy);padding:8px 12px;margin:0 0 14px}
 .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 14px}
-.seg{display:flex}
-.seg button{background:var(--chalk);border:1px solid var(--line);margin-left:-1px;padding:6px 12px;font-size:1.05rem;font-weight:600;cursor:pointer;color:var(--ink)}
-.seg button[aria-pressed=true]{background:var(--ink);color:var(--chalk);border-color:var(--ink)}
-.tw{overflow-x:auto;background:var(--chalk);border:1px solid var(--line)}
-table{border-collapse:collapse;width:100%;min-width:720px;font-variant-numeric:tabular-nums}
-th,td{padding:7px 10px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}
-th{font-size:1.05rem;font-weight:700;cursor:pointer;border-top:0;background:var(--paper);user-select:none}
-th:first-child,td:first-child,th.l,td.l{text-align:left}
-td:first-child{font-weight:500}
-.count{margin-left:auto;color:var(--mute);font-size:.9rem}
-@media(max-width:760px){.row{grid-template-columns:1fr 3.4rem}.track{grid-column:1/3;grid-row:2}}
+.seg{display:flex}.seg button{background:var(--s2);border:1px solid var(--line);margin-left:-1px;padding:7px 13px;font:700 .85rem Inter,sans-serif;cursor:pointer;color:var(--tx)}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.count{margin-left:auto;color:var(--mu);font-size:.85rem}
+.tw{overflow-x:auto;background:var(--s1);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{padding:7px 10px;text-align:right;border-top:1px solid var(--line);white-space:nowrap;font-size:.88rem}
+th{font-weight:700;cursor:pointer;border-top:0;background:var(--s2);user-select:none}
+th.l,td.l{text-align:left}th[aria-sort]{box-shadow:inset 0 -3px 0 var(--blue)}
+td.pj2{font-weight:700;background:#0d2447}
+td.hi{color:#8db8ff;font-weight:700}td.lo{color:#ff7a7a}
+@media(max-width:820px){.pl{grid-template-columns:3rem 1fr 4rem}.pj,.spark{grid-column:1/-1}.p3{grid-column:3;grid-row:1}.sw{grid-template-columns:1fr}.chips{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.fill{transition:none}}
 </style>
 </head>
@@ -60,99 +103,263 @@ td:first-child{font-weight:500}
   <div><h1>Mano fantasy savaitė</h1><p class="meta" id="meta">Kraunama…</p></div>
   <label class="pick">Lyga<select id="league" aria-label="Pasirink lygą"></select></label>
 </div></header>
-<div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys. Paleisk „Atnaujinti duomenis“ per GitHub Actions, kad pamatytum savo lygas.</div>
-<main><div class="wrap">
-  <div class="tabs" role="tablist" id="tabs"></div>
-  <div id="view"></div>
-</div></main>
+<div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys: tai šablono peržiūra, skaičiai netikri.</div>
+<main><div class="wrap"><div class="tabs" role="tablist" id="tabs"></div><div id="view"></div></div></main>
 <script>
-const MAX=40, HEUR="Forma = 60 % paskutinių 3 savaičių vidurkio + 40 % sezono vidurkio. Skaičius prie žaidėjo rodo, kiek taškų per savaitę jis galėtų pagerinti tavo silpniausią tinkamą starterį. Tai euristika, o ne garantija.";
-const TABS=[["roster","Sudėtis"],["waiver","Waiver"],["trade","Trade tikslai"],["stats","Žaidėjų statistika"]];
-const COLS=[["name","Žaidėjas"],["pos","Poz."],["team","Komanda"],["owner","Savininkas"],["gp","GP"],["total","Viso"],["avg","Vid."],["l3","L3"],["last","Praėj."],["tgt","Tgt"],["att","Nešimai"],["adds","Pridėj. 24 val."]];
-let D,L,mine=new Set(),view="roster",F={pos:"",own:"",q:"",sort:"form",dir:-1};
+const MAXP=30;
+const TABS=[["roster","Sudėtis"],["waiver","Waiver"],["trade","Trade"],["stats","Žaidėjų statistika"],["teams","NFL komandos"]];
+const ACT={hold:"HOLD",sell:"SELL",trade:"SVARSTYTI TRADE",add:"PRIDĖTI",buy:"PIRKTI"};
+const HOW=`<p><b>Projekcija artimiausiai savaitei</b> = ½ × <b>Modelis</b> + ½ × <b>Sleeper projekcija</b> (jei vieno šaltinio nėra, naudojamas kitas). <b>3 sav.</b> = trijų artimiausių savaičių suma (toliau už pirmą savaitę naudojamas tik modelis).</p>
+<p><b>Modelis</b> = <code>Bazė × Matchup × Sveikata</code></p>
+<p><b>Bazė:</b> paskutinių 5 žaistų savaičių PPR vidurkis, naujesnės savaitės sveria daugiau (1; 0,7; 0,49; 0,34; 0,24). Jei žaista mažai, vidurkis traukiamas link pozicijos vidurkio, pakoreguoto komandos puolimu: gerą run puolimą turinčios komandos RB (ir gerą pass puolimą turinčios komandos QB/WR/TE) laikomi aukščiau.</p>
+<p><b>Komandų jardų projekcija:</b> komandos rush/pass jardai = jos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota žaidimo scenarijumi (spread: favoritai daugiau bėga, atsilikėliai daugiau meta) ir numatomais taškais (total). Tai ne lažybų kompanijų jardų prognozė (tokios nemokamai nėra), o jų linijomis paremtas mūsų modelis.</p>
+<p><b>Matchup:</b> pusė iš „varžovo leidžiami PPR taškai šiai pozicijai“, pusė iš komandos jardų projekcijos (RB: rush, WR/TE: pass, QB: daugiausia pass). Ribos 0,88–1,12.</p>
+<p><b>Sveikata:</b> IR/Sus/PUP = 0; Out: 0 / 0,4 / 0,8 per 3 savaites; Doubtful 0,4 / 0,8 / 1; Questionable 0,92; bye savaitė = 0.</p>
+<p><b>Kalendoriaus kvadratėliai:</b> kitų 4 savaičių varžovai pagal Matchup koeficientą. Mėlyna = lengvas (&gt; 1,04), raudona = sunkus (&lt; 0,96), pilka = vidutinis, punktyrinė = bye.</p>
+<p><b>Žymos:</b> skaičiuojamos pagal 3 savaičių sumą ir tavo starterių sudėtį. PRIDĖTI: laisvas žaidėjas pagerina tavo sudėtį bent 1 tšk. per 3 sav. SELL: paskutinių 3 sav. vidurkis &gt; 1,25 × sezono, o kalendorius sunkus arba vertė aukšta. SVARSTYTI TRADE: silpniausias starteris su sunkiu kalendoriumi, arba suolo žaidėjas su aukšta verte (mainų valiuta). Kitu atveju HOLD. Tai taisyklės, o ne garantija.</p>
+<p><b>Trade paieška:</b> sudaromi paketai (1–3 žaidėjai) iš tavo sudėties, vertės skirtumas ne didesnis kaip ±20 % (trade calculator vertės), o gerėjimas skaičiuojamas pagal pilną starterių sudėtį (įskaitant FLEX) 3 savaičių suma abiem pusėms.</p>`;
+let D,L,mine=new Set(),view="roster",F={pos:"",own:"",q:"",sort:"proj",dir:-1},liveTaken=null,liveAt=null,TR={partner:-1,get:[],give:[]},owners={},autoCache={};
 const $=id=>document.getElementById(id);
 function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-const fmt=v=>v==null?"–":Number(v).toFixed(1);
+const f1=v=>v==null?"–":Number(v).toFixed(1),i0=v=>v==null?"–":Math.round(v),p0=v=>v==null?"–":Math.round(v)+" %";
+const fd=v=>v==null?"–":(v>0?"+":"")+Number(v).toFixed(1);
+const div=(a,b)=>b?a/b:null,pct=(a,b)=>b?a/b*100:null;
 const nm=id=>D.stats[id]?D.stats[id].name:(!id||id==="0"?"tuščias slotas":id);
-const ownerOf=id=>mine.has(id)?"Mano":(L.owners[id]||"Laisvas");
+
+//LOGIC-START
+const ELIG={QB:["QB","SUPER_FLEX"],RB:["RB","FLEX","WRRB_FLEX","SUPER_FLEX"],WR:["WR","FLEX","WRRB_FLEX","REC_FLEX","SUPER_FLEX"],TE:["TE","FLEX","REC_FLEX","SUPER_FLEX"],K:["K"],DEF:["DEF"]};
+const SLOTW={FLEX:3,WRRB_FLEX:2,REC_FLEX:2,SUPER_FLEX:4};
+const OUTS=["Out","IR","Sus","PUP","NA"];
+function lineupSet(ids,key){
+  const sl=[...L.slots].sort((a,b)=>(SLOTW[a]||1)-(SLOTW[b]||1)),used=new Set(),pick=[];
+  const pool=ids.filter(i=>D.stats[i]).sort((a,b)=>D.stats[b][key]-D.stats[a][key]);
+  for(const s of sl){const p=pool.find(i=>!used.has(i)&&(ELIG[D.stats[i].pos]||[]).includes(s));if(p){used.add(p);pick.push(p)}}
+  return pick}
+function lineup(ids,key){return lineupSet(ids,key).reduce((a,i)=>a+D.stats[i][key],0)}
+const vl=i=>(L.values&&L.values[i]!=null)?L.values[i]:0;
+function myTeam(){return L.teams.find(t=>t.mine)}
+function myIds(){return myTeam().players}
+function vHi(){const a=L.teams.flatMap(t=>t.players).map(vl).sort((x,y)=>x-y);return a.length?a[Math.floor(a.length*.6)]:0}
+function waiversFor(taken){
+  const mi=myIds(),base=lineup(mi,"p3"),bs=lineupSet(mi,"p3");
+  const own=taken?new Set(Object.keys(taken)):new Set(L.teams.flatMap(t=>t.players)),out=[];
+  for(const id of Object.keys(D.stats)){
+    if(own.has(id))continue;const s=D.stats[id];if(OUTS.includes(s.status)||s.p3<=0)continue;
+    const arr=[...mi,id],g=lineup(arr,"p3")-base;if(g<1)continue;
+    const as=lineupSet(arr,"p3");out.push({id,gain:g,replaces:bs.find(x=>!as.includes(x))||null})}
+  return out.sort((x,y)=>y.gain-x.gain).slice(0,8)}
+function adviceFor(id){
+  const s=D.stats[id],mi=myIds(),isStart=L.roster.some(r=>r.id===id);
+  if(OUTS.includes(s.status))return{action:"hold",insight:"Sužeistas ("+s.status+"): "+(isStart?"reikia pakaitalo, ":"")+"sekti naujienas."};
+  const hot=s.gp>=4&&s.avg>0&&s.l3>1.25*s.avg,sx=s.sosx||1,hi=vl(id)>=vHi(),hard=sx<0.97,easy=sx>=1.03,sw=hard?"sunkus":(easy?"lengvas":"vidutinis");
+  if(!isStart){
+    if(hi&&s.p3>0)return{action:"trade",insight:"Suole, bet vertė aukšta: gera mainų valiuta."};
+    return{action:"hold",insight:"Atsarginis variantas, kalendorius "+sw+"."}}
+  if(hot&&(hard||hi))return{action:"sell",insight:"Karštas ruožas (L3 "+f1(s.l3)+" vs sezono "+f1(s.avg)+"), kalendorius "+sw+(hard?"":", vertė aukšta")+": verta pasiūlyti trade, kol forma gera."};
+  const all=lineup(mi,"p3"),contrib=i=>all-lineup(mi.filter(x=>x!==i),"p3"),mn=Math.min(...L.roster.map(r=>r.id).filter(i=>D.stats[i]).map(contrib));
+  if(contrib(id)<=mn*1.15+0.01&&hard)return{action:"trade",insight:"Silpniausias starteris ("+f1(s.p3)+" per 3 sav.), kalendorius sunkus: svarstyti mainus arba waiver pakaitalą."};
+  return{action:"hold",insight:easy?"Kalendorius lengvas, laikyti.":"Prognozė "+f1(s.p3)+" per 3 sav., kalendorius "+sw+". Laikyti."}}
+function situation(t){
+  const inj=t.starters.filter(i=>D.stats[i]&&OUTS.includes(D.stats[i].status)).map(nm),by=t.starters.filter(i=>D.stats[i]&&D.stats[i].opp==="BYE").map(nm);
+  return (inj.length?"Starteriai Out: "+inj.join(", ")+". ":"")+(by.length?"Bye šią savaitę: "+by.join(", ")+". ":"")||"Akivaizdžių sužeidimų ar bye bėdų nėra."}
+function combos(pool,max,forced){
+  const rest=pool.filter(i=>!forced.includes(i)),out=[];
+  const rec=(st,cur)=>{const n=cur.length+forced.length;if(n>=1&&n<=max)out.push([...forced,...cur]);if(n>=max)return;for(let k=st;k<rest.length;k++){cur.push(rest[k]);rec(k+1,cur);cur.pop()}};
+  rec(0,[]);return out}
+// o: {partners:[idx], get:[ids], give:[ids]}; mode: auto | give | get
+function findTrades(o){
+  const me=myTeam(),ids=me.players,base=lineup(ids,"p3"),tol=0.2;
+  const mode=o.get.length?"get":(o.give.length?"give":"auto");
+  const pool=[...new Set([...o.give,...ids.filter(i=>D.stats[i]).sort((a,b)=>vl(b)-vl(a)).slice(0,14)])];
+  const maxG=mode==="get"?Math.min(3,o.get.length+1):(mode==="give"?Math.max(2,o.give.length):2);
+  const need={auto:[1,1],give:[0.5,0.5],get:[-1e9,0]}[mode];
+  const cands=[];
+  L.teams.forEach((t,pi)=>{
+    if(t.mine||(o.partners.length&&!o.partners.includes(pi)))return;
+    const tb=lineup(t.players,"p3");
+    const targets=mode==="get"?[o.get]:t.players.filter(p=>D.stats[p]&&!OUTS.includes(D.stats[p].status)).sort((a,b)=>D.stats[b].p3-D.stats[a].p3).slice(0,12).map(p=>[p]);
+    for(const T of targets){
+      if(T.some(p=>!t.players.includes(p)))continue;
+      const rv=T.reduce((a,p)=>a+vl(p),0);if(!rv)continue;
+      for(const G of combos(pool,maxG,o.give)){
+        if(G.some(g=>T.includes(g)))continue;
+        const gv=G.reduce((a,p)=>a+vl(p),0);if(!gv)continue;
+        const bal=(rv-gv)/Math.max(gv,rv);if(Math.abs(bal)>tol)continue;
+        const gme=lineup(ids.filter(x=>!G.includes(x)).concat(T),"p3")-base;
+        const tg=lineup(t.players.filter(x=>!T.includes(x)).concat(G),"p3")-tb;
+        if(gme<need[0]||tg<need[1])continue;
+        cands.push({partner:t.name,pi,give:G,get:T,gv,rv,bal,gme,tg,score:gme+.6*tg-15*Math.abs(bal)})}}});
+  cands.sort((a,b)=>b.score-a.score);
+  const out=[],cp={},ct={},lim=mode==="get"?8:6;
+  for(const c of cands){
+    const tk=c.get.join(",");
+    if(mode!=="get"&&((cp[c.partner]||0)>=2||(ct[tk]||0)>=1))continue;
+    out.push(c);cp[c.partner]=(cp[c.partner]||0)+1;ct[tk]=(ct[tk]||0)+1;if(out.length>=lim)break}
+  return {mode,res:out}}
+//LOGIC-END
+
+const ownerOf=id=>mine.has(id)?"Mano":((liveTaken&&liveTaken[id])||owners[id]||"Laisvas");
+function fmtLine(){if(!L.format)return el("span");const p=el("p","live","Lygos formatas: "+L.format.label+" · trade vertės: "+L.format.source);if(L.format.notes&&L.format.notes.length)p.textContent+=" · Dėmesio: "+L.format.notes.join(" ");return p}
 function nameB(id){const b=el("b","",nm(id)),s=D.stats[id];if(s&&s.status)b.append(el("span","tag",s.status));return b}
-function info(s){return s.pos+" · "+s.team+" · forma "+fmt(s.form)+" (L3 "+fmt(s.l3)+", vid. "+fmt(s.avg)+")"}
+function goTrade(id){
+  const mi=myTeam().players.includes(id);
+  if(mi)TR={partner:-1,get:[],give:[id]};
+  else{const pi=L.teams.findIndex(t=>!t.mine&&t.players.includes(id));TR={partner:pi,get:[id],give:[]}}
+  view="trade";draw();window.scrollTo({top:0,behavior:"smooth"})}
+function badge(a,id){
+  if(id&&["trade","sell","buy"].includes(a)){const b=el("button","act "+a,(ACT[a]||a)+" →");b.title="Rodyti trade idėjas šiam žaidėjui";b.onclick=()=>goTrade(id);return b}
+  return el("span","act "+a,ACT[a]||a)}
+function chips(sos){const c=el("div","chips");(sos||[]).forEach(x=>{const s=el("span",x.d,x.o==="BYE"?"BYE":(x.h?"":"@")+x.o);s.title="Sav. "+x.w+(x.mu?" · matchup ×"+x.mu.toFixed(2):"")+" · "+({e:"lengvas",m:"vidutinis",t:"sunkus",b:"bye"}[x.d]);c.append(s)});return c}
+function spark(w){const s=el("div","spark");s.title="Paskutinės savaitės: "+w.map(f1).join(" · ");w.forEach(v=>{const b=el("i");b.style.height=Math.max(2,Math.min(v,40)/40*30)+"px";s.append(b)});return s}
+function bd(s){return "Proj. "+f1(s.proj)+" = ½ modelis "+f1(s.model)+" (forma × matchup ×"+(s.mu||1).toFixed(2)+") + ½ Sleeper "+f1(s.sl)+" · savaitės: "+(s.fut||[]).map(x=>"S"+x.w+" "+(x.o==="BYE"?"BYE":f1(x.p))).join(" · ")}
+const adv=id=>{L._adv=L._adv||{};return L._adv[id]||(L._adv[id]=adviceFor(id))};
+function how(){const d=el("details","how"),s=el("summary","","Kaip skaičiuojama projekcija, jardai ir žymos?");d.append(s);d.insertAdjacentHTML("beforeend",HOW);return d}
 
-function rosterRow(id,slot,bench){
-  const s=D.stats[id]||{},r=el("div","row"+(bench?" bench":"")),w=el("div","who");
-  w.append(nameB(id),el("small","",slot+" · "+(s.pos||"")+" · "+(s.team||"")+" · forma "+fmt(s.form)));
-  const t=el("div","track"),f=el("div","fill");f.dataset.w=Math.max(0,Math.min(s.last||0,MAX))/MAX*100;t.append(f);
-  r.append(w,t,el("div","num",fmt(s.last)));return r}
+function plRow(id,slot,bn){
+  const s=D.stats[id],r=el("div","pl"+(bn?" bn":"")),w=el("div","who");
+  w.append(nameB(id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")));
+  const p=el("div","pj"),t=el("div","track"),f=el("div","fill");f.dataset.w=Math.max(0,Math.min(s.proj,MAXP))/MAXP*100;t.append(f);p.append(t,el("div","num",f1(s.proj)));
+  const p3=el("div","p3");p3.append(el("b","",f1(s.p3)),el("small","","3 sav."));
+  const a=adv(id),ins=el("div","ins");ins.append(badge(a.action,id),el("span","",a.insight),chips(s.sos));
+  if(s.note3)ins.append(el("div","bd",s.note3));ins.append(el("div","bd2",bd(s)));
+  r.append(el("div","slot",slot),w,p,p3,spark(s.weeks),ins);return r}
+
 function vRoster(v){
-  v.append(el("h3","","Mano sudėtis"+(L.team?" · "+L.team:"")),el("p","hint","Praėjusios savaitės PPR taškai (skalė 0–40, linija kas 5)"));
-  L.roster.forEach(r=>v.append(rosterRow(r.id,r.slot,false)));
-  v.append(el("p","sub","Suolas"));L.bench.forEach(id=>v.append(rosterRow(id,"BN",true)))}
+  v.append(el("h3","","Sudėtis · "+L.team),el("p","hint","Juosta rodo projekciją artimiausiai savaitei (skalė 0–30), dešinėje 3 savaičių suma ir paskutinių 5 savaičių forma (mėlyna = naujausia). Kvadratėliai: kitų 4 savaičių varžovai."),fmtLine(),how());
+  L.roster.forEach(r=>v.append(plRow(r.id,r.slot,false)));
+  v.append(el("p","sub","Suolas"));L.bench.forEach(id=>v.append(plRow(id,"BN",true)))}
 
+async function live(){
+  liveTaken=null;liveAt=null;if(D.sample)return;
+  try{const [r,u]=await Promise.all([fetch("https://api.sleeper.app/v1/league/"+L.id+"/rosters"),fetch("https://api.sleeper.app/v1/league/"+L.id+"/users")]);
+    const rs=await r.json(),us=await u.json(),nmU={};us.forEach(x=>nmU[x.user_id]=(x.metadata&&x.metadata.team_name)||x.display_name);
+    liveTaken={};rs.forEach(x=>(x.players||[]).forEach(p=>liveTaken[p]=nmU[x.owner_id]||"Komanda "+x.roster_id));liveAt=new Date()}catch(e){liveTaken=null}}
 function vWaiver(v){
-  v.append(el("h3","","Waiver pasiūlymai"),el("p","hint",HEUR));
-  if(!L.waivers.length){v.append(el("p","empty","Šiuo metu laisvų žaidėjų, kurie pagerintų sudėtį, nėra."));return}
-  L.waivers.forEach(w=>{const s=D.stats[w.id],c=el("div","card");
-    c.append(nameB(w.id),el("div","num","+"+fmt(w.gain)),el("small","",info(s)+(s.adds?" · +"+s.adds.toLocaleString("lt-LT")+" pridėjimų":"")),
-      el("small","","Pakeistų: "+nm(w.replaces)+" (forma "+fmt(w.replaces_form)+")"));v.append(c)})}
+  v.append(el("h3","","Waiver pasiūlymai"),el("p","hint","Laisvi žaidėjai, kurie labiausiai pagerintų tavo starterių sudėtį pagal 3 savaičių projekcijų sumą. Skaičius = prieaugis tšk. per 3 sav."));
+  const st=D.sample?"Pavyzdiniai duomenys: gyvas patikrinimas veikia tik su tikrais.":liveAt?"Laisvumas patikrintas gyvai "+liveAt.toLocaleTimeString("lt-LT",{hour:"2-digit",minute:"2-digit"})+".":"Gyvo patikrinimo atlikti nepavyko, rodomi duomenys iš "+new Date(D.updated).toLocaleString("lt-LT")+".";
+  v.append(el("p","live",st),how());
+  const list=waiversFor(liveTaken);
+  if(!list.length){v.append(el("p","empty","Šiuo metu laisvų žaidėjų, kurie pagerintų sudėtį, nėra."));return}
+  list.forEach(w=>{const s=D.stats[w.id],c=el("div","card"),m=el("div","who");
+    m.append(nameB(w.id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")+" · proj. "+f1(s.proj)+" · 3 sav. "+f1(s.p3)+(s.adds?" · +"+s.adds.toLocaleString("lt-LT")+" pridėjimų":"")+(w.replaces?" · pakeistų: "+nm(w.replaces)+" ("+f1(D.stats[w.replaces].p3)+")":"")));
+    const ins=el("div","ins");ins.append(badge("add"),el("span","",s.note3||"Prognozė "+f1(s.p3)+" per 3 sav."),chips(s.sos),spark(s.weeks));ins.querySelector(".spark").style.width="70px";
+    c.append(m,el("div","num","+"+f1(w.gain)),ins);c.querySelector(".ins").style.gridColumn="1/-1";v.append(c)})}
 
+function tradeCard(t){
+  const ok=Math.abs(t.bal)<=0.12,c=el("div","trade"),hd=el("div","th");
+  hd.append(el("h4","","Partneris: "+t.partner),el("span","bal"+(ok?" ok":""),(ok?"Teisinga":(t.bal>0?"Tu gauni daugiau":"Tu duodi daugiau"))+" · vertė "+t.gv.toLocaleString("lt-LT")+" vs "+t.rv.toLocaleString("lt-LT")+" ("+(t.bal>0?"+":"")+(t.bal*100).toFixed(0)+" %)"));
+  const sw=el("div","sw"),side=(tt,ids)=>{const d=el("div");d.append(el("h5","",tt));ids.forEach(x=>{const s=D.stats[x];d.append(el("p",(TR.get.includes(x)||TR.give.includes(x))?"hl":"",s.name+" · "+s.pos+" · 3 sav. "+f1(s.p3)+" · vertė "+vl(x).toLocaleString("lt-LT")))});return d};
+  sw.append(side("TU DUODI",t.give),side("TU GAUNI",t.get));
+  c.append(hd,el("small","","Jų situacija: "+situation(L.teams[t.pi])),sw,
+    el("div","gain","Tavo starteriai: "+fd(t.gme)+" tšk. per 3 sav. · jų starteriai: "+fd(t.tg)+" tšk."+(t.give.length!==t.get.length?" · mainai ne 1:1, reikės numesti ar pridėti žaidėją":"")));
+  return c}
 function vTrade(v){
-  v.append(el("h3","","Trade tikslai"),el("p","hint","Rodomi kitų komandų suolo žaidėjai, kurie geriausiai pagerintų tavo sudėtį, nes jų savininkams jie nėra starteriai. "+HEUR));
-  if(!L.trades.length){v.append(el("p","empty","Šiuo metu aiškių trade tikslų nėra."));return}
-  L.trades.forEach(t=>{const s=D.stats[t.id],c=el("div","card");
-    c.append(nameB(t.id),el("div","num","+"+fmt(t.gain)),el("small","",info(s)+" · savininkas: "+t.owner),
-      el("small","","Pakeistų: "+nm(t.replaces)+" · galimas siūlymas iš suolo: "+(t.offer.length?t.offer.map(nm).join(", "):"nėra")));v.append(c)})}
+  v.append(el("h3","","Trade"),el("p","hint","Pasirink komandą ir žaidėją (ar kelis), kurio nori, ir pagal tai ieškome realistiškų paketų iš tavo sudėties. Gali nurodyti ir savo žaidėjus, kuriuos nori atiduoti. Gerėjimas skaičiuojamas pagal pilną starterių sudėtį 3 savaičių suma abiem pusėms, vertės skirtumas ne didesnis kaip ±20 %."),fmtLine());
+  const others=L.teams.map((t,i)=>[t,i]).filter(([t])=>!t.mine),bd_=el("div","builder");
+  const lab=el("label","","Partnerio komanda"),ps=el("select");
+  [[-1,"Visos komandos"],...others.map(([t,i])=>[i,t.name])].forEach(([k,t])=>{const o=el("option","",t);o.value=k;ps.append(o)});
+  ps.value=TR.partner;ps.onchange=()=>{TR.partner=+ps.value;TR.get=TR.get.filter(g=>TR.partner>=0&&L.teams[TR.partner].players.includes(g));draw()};lab.append(ps);bd_.append(lab);
+  const chip=(id,arr,max)=>{const b=el("button","pc",nm(id));b.append(el("small","",D.stats[id].pos+" · "+f1(D.stats[id].p3)));b.setAttribute("aria-pressed",arr.includes(id));
+    b.onclick=()=>{const k=arr.indexOf(id);if(k>=0)arr.splice(k,1);else if(arr.length<max)arr.push(id);draw()};return b};
+  if(TR.partner>=0){
+    const gl=el("div"),h=el("small","","Noriu gauti (iki 3 žaidėjų) · "+L.teams[TR.partner].name),q=el("input");q.type="search";q.placeholder="Filtruoti pagal vardą";q.style.margin="6px 0";q.style.display="block";
+    const row=el("div","pickrow");L.teams[TR.partner].players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).forEach(id=>row.append(chip(id,TR.get,3)));
+    q.oninput=()=>{const s=q.value.toLowerCase();row.querySelectorAll(".pc").forEach(b=>b.style.display=b.firstChild.textContent.toLowerCase().includes(s)?"":"none")};
+    gl.append(h,q,row);bd_.append(gl)}
+  const gv=el("div");gv.append(el("small","","Noriu atiduoti (neprivaloma, iki 3 žaidėjų) · mano komanda"));
+  const row2=el("div","pickrow");row2.style.marginTop="6px";myTeam().players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).forEach(id=>row2.append(chip(id,TR.give,3)));gv.append(row2);bd_.append(gv);
+  const act=el("div","pickrow"),clr=el("button","btn ghost","Išvalyti pasirinkimus");clr.onclick=()=>{TR={partner:-1,get:[],give:[]};draw()};act.append(clr);bd_.append(act);
+  v.append(bd_);
+  const o={partners:TR.partner>=0?[TR.partner]:[],get:TR.get,give:TR.give};
+  let r;
+  if(!o.get.length&&!o.give.length){if(!autoCache[L.id])autoCache[L.id]=findTrades({partners:[],get:[],give:[]});r=autoCache[L.id]}
+  else r=findTrades(o);
+  const title={auto:"Geriausios idėjos visose komandose",give:"Idėjos su tavo pasirinktais žaidėjais",get:"Paketai už pasirinktus žaidėjus"}[r.mode];
+  v.append(el("h3","",title+" ("+r.res.length+")"));
+  if(!r.res.length){v.append(el("p","empty",r.mode==="get"?"Paketų su panašia verte ir naudos partneriui nerasta. Pabandyk pasirinkti kitus savo žaidėjus ar sumažinti norimų žaidėjų skaičių.":"Realistiškų idėjų nerasta: nėra partnerio su abipusiu poreikiu ir panašia verte."));return}
+  r.res.forEach(t=>v.append(tradeCard(t)))}
+
+const C={gp:["GP",s=>s.gp,i0],total:["Viso",s=>s.total,f1],avg:["Vid.",s=>s.avg,f1],l3:["L3",s=>s.l3,f1],proj:["Proj.",s=>s.proj,f1],p3:["3 sav.",s=>s.p3,f1],
+ snap:["Snap %",s=>s.snap,p0],tgt:["Tgt",s=>s.tgt,i0],tshare:["Tgt %",s=>s.tshare,p0],tpg:["Tgt/g",s=>div(s.tgt,s.gp),f1],
+ rec:["Rec",s=>s.rec,i0],recyd:["Rec Yd",s=>s.recyd,i0],ypr:["Yd/Rec",s=>div(s.recyd,s.rec),f1],rectd:["Rec TD",s=>s.rectd,i0],
+ ratt:["Neš.",s=>s.ratt,i0],ryd:["Neš. Yd",s=>s.ryd,i0],ypc:["Yd/neš.",s=>div(s.ryd,s.ratt),f1],rtd:["Neš. TD",s=>s.rtd,i0],tch:["Lietim./g",s=>s.ratt==null&&s.rec==null?null:div((s.ratt||0)+(s.rec||0),s.gp),f1],
+ patt:["Perd.",s=>s.patt,i0],cmp:["Cmp %",s=>pct(s.cmp,s.patt),p0],pyd:["Perd. Yd",s=>s.pyd,i0],ptd:["Perd. TD",s=>s.ptd,i0],int:["INT",s=>s.int,i0],sx:["Kalend.",s=>s.sosx,v=>v==null?"–":v.toFixed(2)]};
+const SETS={"":["gp","total","avg","l3","proj","p3","sx","snap"],QB:["gp","patt","cmp","pyd","ptd","int","ratt","ryd","rtd","avg","l3","proj","p3","sx"],
+ RB:["gp","snap","ratt","ryd","ypc","rtd","tgt","rec","recyd","tch","avg","l3","proj","p3","sx"],WR:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","sx"],
+ TE:["gp","snap","tgt","tshare","tpg","rec","recyd","ypr","rectd","avg","l3","proj","p3","sx"],K:["gp","total","avg","l3","proj","p3","sx"],DEF:["gp","total","avg","l3","proj","p3","sx"]};
 
 function vStats(v){
-  v.append(el("h3","","Žaidėjų statistika"),el("p","hint","Sezono PPR taškai iki "+D.stats_week+" savaitės. L3 – paskutinių 3 savaičių vidurkis. Spausk stulpelio pavadinimą, kad rikiuotum."));
+  v.append(el("h3","","Žaidėjų statistika"),el("p","hint","Sezono statistika iki "+D.stats_week+" savaitės. Pasirinkus poziciją, stulpeliai pasikeičia. „Savininkas“ rodo, kurioje lygos komandoje žaidėjas; „Tik laisvi“ palieka nepaimtus. Kalend. = kitų 4 savaičių matchup koeficientas (&gt; 1 lengviau). „Veiksmas“ nuveda į trade konstruktorių ar waiver."));
+  const wv=new Set(waiversFor(liveTaken).map(w=>w.id));
   const bar=el("div","filters"),seg=el("div","seg"),btns=[];
-  ["","QB","RB","WR","TE","K","DEF"].forEach(p=>{const b=el("button","",p||"Visi");b.onclick=()=>{F.pos=p;fill()};b.dataset.p=p;btns.push(b);seg.append(b)});
-  const own=el("select");own.setAttribute("aria-label","Savininkas");
-  [["","Visi žaidėjai"],["Laisvas","Tik laisvi"],["Mano","Mano žaidėjai"],["kiti","Kitų komandų"]].forEach(([k,t])=>{const o=el("option","",t);o.value=k;own.append(o)});
+  ["","QB","RB","WR","TE","K","DEF"].forEach(p=>{const b=el("button","",p||"Visi");b.dataset.p=p;b.onclick=()=>{F.pos=p;if(!SETS[p].includes(F.sort)&&!["name","pos","team","owner"].includes(F.sort))F.sort="proj";fill()};btns.push(b);seg.append(b)});
+  const own=el("select");[["","Visi žaidėjai"],["Laisvas","Tik laisvi"],["Mano","Mano žaidėjai"],["kiti","Kitų komandų"]].forEach(([k,t])=>{const o=el("option","",t);o.value=k;own.append(o)});
   own.value=F.own;own.onchange=()=>{F.own=own.value;fill()};
+  const fr=el("button","tog","Tik laisvi");fr.onclick=()=>{F.own=F.own==="Laisvas"?"":"Laisvas";own.value=F.own;fill()};
   const q=el("input");q.type="search";q.placeholder="Ieškoti pagal vardą";q.value=F.q;q.oninput=()=>{F.q=q.value;fill()};
-  const cnt=el("span","count");bar.append(seg,own,q,cnt);
-  const tw=el("div","tw"),tb=el("table"),hd=el("thead"),hr=el("tr"),body=el("tbody");
-  COLS.forEach(([k,t])=>{const th=el("th",["name","pos","team","owner"].includes(k)?"l":"",t);th.dataset.k=k;th.onclick=()=>{F.dir=F.sort===k?-F.dir:(k==="name"||k==="pos"||k==="team"||k==="owner"?1:-1);F.sort=k;fill()};hr.append(th)});
-  const th=el("th","","Forma");th.dataset.k="form";th.onclick=()=>{F.dir=F.sort==="form"?-F.dir:-1;F.sort="form";fill()};hr.append(th);
-  hd.append(hr);tb.append(hd,body);tw.append(tb);v.append(bar,tw);
-  function val(id,k){const s=D.stats[id];return k==="name"?s.name:k==="owner"?ownerOf(id):s[k]}
+  const cnt=el("span","count");bar.append(seg,fr,own,q,cnt);
+  const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(bar,tw);
+  const val=(id,k)=>{const s=D.stats[id];return k==="name"?s.name:k==="owner"?ownerOf(id):k==="pos"||k==="team"?s[k]:C[k][1](s)};
   function fill(){
-    btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));
-    hr.querySelectorAll("th").forEach(h=>h.textContent=(COLS.find(c=>c[0]===h.dataset.k)||[0,"Forma"])[1]+(h.dataset.k===F.sort?(F.dir>0?" ▲":" ▼"):""));
-    let ids=Object.keys(D.stats).filter(id=>{const s=D.stats[id],o=ownerOf(id);
-      return (!F.pos||s.pos===F.pos)&&(!F.q||s.name.toLowerCase().includes(F.q.toLowerCase()))&&(!F.own||(F.own==="kiti"?(o!=="Mano"&&o!=="Laisvas"):o===F.own))});
-    ids.sort((a,b)=>{const x=val(a,F.sort),y=val(b,F.sort);
-      if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;
-      return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*F.dir});
+    btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));fr.setAttribute("aria-pressed",F.own==="Laisvas");
+    const cols=[["name","Žaidėjas"],["pos","Poz."],["team","Komanda"],["owner","Savininkas"],...SETS[F.pos].map(k=>[k,C[k][0]]),["act","Veiksmas"]];
+    hr.replaceChildren();cols.forEach(([k,t])=>{const th=el("th",["name","pos","team","owner","act"].includes(k)?"l":"",t);if(k===F.sort)th.setAttribute("aria-sort",F.dir>0?"ascending":"descending");
+      th.onclick=()=>{if(k==="act")return;F.dir=F.sort===k?-F.dir:(["name","pos","team","owner"].includes(k)?1:-1);F.sort=k;fill()};hr.append(th)});
+    let ids=Object.keys(D.stats).filter(id=>{const s=D.stats[id],o=ownerOf(id);return (!F.pos||s.pos===F.pos)&&(!F.q||s.name.toLowerCase().includes(F.q.toLowerCase()))&&(!F.own||(F.own==="kiti"?(o!=="Mano"&&o!=="Laisvas"):o===F.own))});
+    ids.sort((a,b)=>{const x=val(a,F.sort),y=val(b,F.sort);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*F.dir});
     cnt.textContent=ids.length+" žaidėjų";body.replaceChildren();
-    ids.forEach(id=>{const s=D.stats[id],tr=el("tr");const c0=el("td");c0.append(nameB(id));tr.append(c0);
-      [s.pos,s.team].forEach(x=>{const d=el("td","",x);d.style.textAlign="left";tr.append(d)});
-      const od=el("td","l",ownerOf(id));tr.append(od);
-      [s.gp,fmt(s.total),fmt(s.avg),fmt(s.l3),fmt(s.last),s.tgt,s.att,s.adds||"–",fmt(s.form)].forEach(x=>tr.append(el("td","",x)));
-      body.append(tr)})}
+    ids.forEach(id=>{const s=D.stats[id],tr=el("tr"),c0=el("td","l");c0.append(nameB(id));tr.append(c0,el("td","l",s.pos),el("td","l",s.team),el("td","l",ownerOf(id)));
+      SETS[F.pos].forEach(k=>{const td=el("td",k==="proj"||k==="p3"?"pj2":"",C[k][2](C[k][1](s)));if(k==="sx"){td.className=s.sosx>=1.04?"hi":(s.sosx<=0.96?"lo":"")}tr.append(td)});
+      const o=ownerOf(id),ad=el("td","l");
+      if(o==="Laisvas"){if(wv.has(id)){const b=el("button","lk","Waiver →");b.onclick=()=>{view="waiver";draw()};ad.append(b)}else ad.textContent="–"}
+      else{const b=el("button","lk","Trade →");b.onclick=()=>goTrade(id);ad.append(b)}
+      tr.append(ad);body.append(tr)})}
+  fill()}
+
+const TC={team:["Komanda",(t,k)=>k,null],opp:["Kita rungtynė",(t)=>t.next?t.next.opp:null,null],pr:["Proj. rush yd",t=>t.next?t.next.pr:null,i0],pp:["Proj. pass yd",t=>t.next?t.next.pp:null,i0],
+ spr:["Spread",t=>t.next?t.next.spr:null,fd],tot:["O/U",t=>t.next?t.next.tot:null,f1],ro:["Run puolimas yd/sav.",t=>t.ro,i0],po:["Pass puolimas yd/sav.",t=>t.po,i0],rd:["Run gynyba leidžia",t=>t.rd,i0],pd:["Pass gynyba leidžia",t=>t.pd,i0]};
+let TS={sort:"pr",dir:-1};
+function vTeams(v){
+  v.append(el("h3","","NFL komandos: jardai už ir prieš"),el("p","hint","Projekcija = komandos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota spread ir O/U. Reitingas skliausteliuose: puolimui 1 = geriausias, gynybai 1 = leidžia mažiausiai. Mėlyna = didelė projekcija (palanku RB/WR), raudona = maža. Tai mūsų modelis, paremtas lažybų linijomis, o ne lažybų kompanijų jardų prognozė."));
+  const teams=D.nfl_teams||{},keys=Object.keys(teams);if(!keys.length){v.append(el("p","empty","Komandų duomenų nėra (nepavyko gauti tvarkaraščio ar statistikos)."));return}
+  const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(tw);
+  const rk={ro:"rkro",po:"rkpo",rd:"rkrd",pd:"rkpd"};
+  const vals=k=>keys.map(t=>TC[k][1](teams[t],t)).filter(x=>typeof x==="number").sort((a,b)=>a-b);
+  const pr=vals("pr"),pp=vals("pp"),q=(a,p)=>a.length?a[Math.floor(a.length*p)]:0;
+  function fill(){
+    hr.replaceChildren();Object.entries(TC).forEach(([k,[t]])=>{const th=el("th",k==="team"||k==="opp"?"l":"",t);if(k===TS.sort)th.setAttribute("aria-sort",TS.dir>0?"ascending":"descending");
+      th.onclick=()=>{TS.dir=TS.sort===k?-TS.dir:(k==="team"||k==="opp"?1:-1);TS.sort=k;fill()};hr.append(th)});
+    const ks=keys.slice().sort((a,b)=>{const x=TC[TS.sort][1](teams[a],a),y=TC[TS.sort][1](teams[b],b);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*TS.dir});
+    body.replaceChildren();
+    ks.forEach(t=>{const T=teams[t],tr=el("tr");
+      Object.entries(TC).forEach(([k,[,g,f]])=>{
+        let x=g(T,t),txt;
+        if(k==="team")txt=t;else if(k==="opp")txt=T.next?(T.next.h?"vs ":"@ ")+T.next.opp:"BYE";else txt=x==null?"–":f(x);
+        if(rk[k])txt+=" (#"+T[rk[k]]+")";
+        const td=el("td",k==="team"||k==="opp"?"l":"",txt);
+        if(k==="pr"&&x!=null)td.className=x>=q(pr,.75)?"hi":(x<=q(pr,.25)?"lo":"");
+        if(k==="pp"&&x!=null)td.className=x>=q(pp,.75)?"hi":(x<=q(pp,.25)?"lo":"");
+        tr.append(td)});body.append(tr)})}
   fill()}
 
 function draw(){
   const tabs=$("tabs");tabs.replaceChildren();
   TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw()};tabs.append(b)});
-  const v=$("view");v.replaceChildren();
-  ({roster:vRoster,waiver:vWaiver,trade:vTrade,stats:vStats})[view](v);
+  const v=$("view");v.replaceChildren();({roster:vRoster,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")))}
-
-function pickLeague(i){
-  L=D.leagues[i];mine=new Set([...L.roster.map(r=>r.id),...L.bench]);
+async function pickLeague(i){
+  L=D.leagues[i];L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
+  L.teams.forEach(t=>{if(!t.mine)t.players.forEach(p=>owners[p]=t.name)});
+  TR={partner:-1,get:[],give:[]};
   try{localStorage.setItem("lyga",L.id)}catch(e){}
-  draw()}
-
+  draw();await live();draw()}
 function init(d){
   D=d;$("banner").hidden=!d.sample;
-  $("meta").textContent=d.season+" sezonas · "+d.week+" savaitė · taškai iki "+d.stats_week+" savaitės · atnaujinta "+new Date(d.updated).toLocaleString("lt-LT");
+  $("meta").textContent=d.season+" sezonas · "+d.week+" savaitė · statistika iki "+d.stats_week+" sav. · atnaujinta "+new Date(d.updated).toLocaleString("lt-LT");
   if(!d.leagues.length){$("view").append(el("p","empty","Šiame sezone nerasta nė vienos Sleeper lygos. Patikrink vartotojo vardą faile config.json."));return}
   const sel=$("league");d.leagues.forEach((l,i)=>{const o=el("option","",l.name);o.value=i;sel.append(o)});
   let saved=null;try{saved=localStorage.getItem("lyga")}catch(e){}
-  const idx=Math.max(0,d.leagues.findIndex(l=>l.id===saved));sel.value=idx;
-  sel.onchange=()=>pickLeague(+sel.value);pickLeague(idx)}
-
+  const idx=Math.max(0,d.leagues.findIndex(l=>l.id===saved));sel.value=idx;sel.onchange=()=>pickLeague(+sel.value);pickLeague(idx)}
 fetch("data.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(init).catch(e=>{
   $("meta").textContent="Nepavyko įkelti data.json. Atidaryk puslapį per GitHub Pages arba vietinį serverį (python -m http.server).";console.error(e)});
 </script>
