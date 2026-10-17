@@ -1,0 +1,25 @@
+{
+ "sample": true,
+ "updated": "2026-10-17T12:00+00:00",
+ "season": "2026", "week": 7, "stats_week": 6, "user": "pavyzdys",
+ "leagues": [{
+  "name": "Pavyzdinė lyga",
+  "starters": [
+   {"id":"1","name":"Pavyzdys QB","pos":"QB","team":"AAA","status":null,"pts":27.4},
+   {"id":"2","name":"Pavyzdys RB 1","pos":"RB","team":"BBB","status":null,"pts":18.2},
+   {"id":"3","name":"Pavyzdys RB 2","pos":"RB","team":"CCC","status":"Questionable","pts":9.6},
+   {"id":"4","name":"Pavyzdys WR 1","pos":"WR","team":"DDD","status":null,"pts":33.1},
+   {"id":"5","name":"Pavyzdys WR 2","pos":"WR","team":"EEE","status":null,"pts":6.3},
+   {"id":"6","name":"Pavyzdys TE","pos":"TE","team":"FFF","status":null,"pts":12.0}
+  ],
+  "bench": [
+   {"id":"7","name":"Pavyzdys WR 3","pos":"WR","team":"GGG","status":"Out","pts":0.0},
+   {"id":"8","name":"Pavyzdys RB 3","pos":"RB","team":"HHH","status":null,"pts":14.7}
+  ],
+  "waiver": [
+   {"id":"9","name":"Pavyzdys RB 4","pos":"RB","team":"III","status":null,"pts":16.8,"adds":4210},
+   {"id":"10","name":"Pavyzdys WR 4","pos":"WR","team":"JJJ","status":null,"pts":11.5,"adds":2975},
+   {"id":"11","name":"Pavyzdys TE 2","pos":"TE","team":"KKK","status":null,"pts":8.4,"adds":1330}
+  ]
+ }]
+}

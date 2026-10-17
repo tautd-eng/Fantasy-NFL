@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mano fantasy savaitė</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#edf0ee;--ink:#13203a;--mute:#5b6578;--turf:#2b7a4b;--bench:#8d9bb5;--flag:#f2b91f;--chalk:#fff;--line:rgba(19,32,58,.16)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 Barlow,system-ui,sans-serif}
+h1,h2,.num{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-weight:700}
+header{background:var(--ink);color:var(--chalk);padding:28px 20px 22px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{margin:0;font-size:clamp(2rem,6vw,3.2rem);line-height:1}
+.meta{margin:8px 0 0;color:#c4cde0;font-size:.95rem}
+.banner{background:var(--flag);color:var(--ink);padding:10px 20px;font-weight:500}
+main{padding:24px 20px 48px}
+.league{margin-bottom:40px}
+.league>h2{font-size:1.6rem;margin:0 0 14px}
+.cols{display:grid;grid-template-columns:3fr 2fr;gap:28px}
+section h3{margin:0 0 4px;font:700 1.25rem/1.2 "Barlow Condensed",sans-serif}
+.hint{margin:0 0 12px;color:var(--mute);font-size:.9rem}
+.row{display:grid;grid-template-columns:minmax(0,13rem) 1fr 3.4rem;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.who{min-width:0}
+.who b{font-weight:500;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who small{color:var(--mute)}
+.tag{display:inline-block;margin-left:6px;padding:0 6px;background:var(--flag);color:var(--ink);font-size:.75rem;font-weight:500}
+.track{position:relative;height:14px;background-color:var(--chalk);border:1px solid var(--line);
+ background-image:repeating-linear-gradient(90deg,transparent 0,transparent calc(12.5% - 1px),var(--line) calc(12.5% - 1px),var(--line) 12.5%)}
+.fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--turf);transition:width .7s ease-out}
+.bench .fill{background:var(--bench)}
+.num{text-align:right;font-size:1.3rem;line-height:1}
+.sub{margin:18px 0 0;font:600 1rem "Barlow Condensed",sans-serif;color:var(--mute)}
+.w{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 0;border-top:1px solid var(--line)}
+.w .num{grid-row:span 2;align-self:center;font-size:1.3rem}
+.w small{color:var(--mute)}
+.empty{color:var(--mute)}
+@media(max-width:760px){.cols{grid-template-columns:1fr}.row{grid-template-columns:1fr 3.4rem}.track{grid-column:1/3;grid-row:2}}
+@media(prefers-reduced-motion:reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Mano fantasy savaitė</h1>
+  <p class="meta" id="meta">Kraunama…</p>
+</div></header>
+<div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys. Paleisk „Atnaujinti duomenis“ per GitHub Actions, kad pamatytum savo lygą.</div>
+<main><div class="wrap" id="app"></div></main>
+<script>
+const MAX = 40; // juostos skalė: 0–40 PPR taškų, linija kas 5
+function el(tag, cls, text){const e=document.createElement(tag); if(cls)e.className=cls; if(text!=null)e.textContent=text; return e;}
+function pts(v){return v==null?"–":v.toFixed(1);}
+function status(p){return p.status?el("span","tag",p.status):null;}
+
+function playerRow(p, bench){
+  const r = el("div","row"+(bench?" bench":""));
+  const who = el("div","who"), name = el("b","",p.name); const s = status(p); if(s) name.append(s);
+  who.append(name, el("small","",p.pos+" · "+p.team));
+  const track = el("div","track"), fill = el("div","fill");
+  fill.dataset.w = Math.max(0, Math.min(p.pts||0, MAX)) / MAX * 100;
+  track.append(fill);
+  r.append(who, track, el("div","num",pts(p.pts)));
+  return r;
+}
+
+function render(d){
+  document.getElementById("meta").textContent =
+    d.season+" sezonas · "+d.week+" savaitė · taškai už "+d.stats_week+" savaitę · atnaujinta "+new Date(d.updated).toLocaleString("lt-LT");
+  document.getElementById("banner").hidden = !d.sample;
+  const app = document.getElementById("app");
+  if(!d.leagues.length){app.append(el("p","empty","Šiame sezone nerasta nė vienos Sleeper lygos. Patikrink vartotojo vardą faile config.json."));return;}
+  d.leagues.forEach(lg=>{
+    const box = el("div","league"); box.append(el("h2","",lg.name));
+    const cols = el("div","cols");
+    const left = el("section");
+    left.append(el("h3","","Mano sudėtis"), el("p","hint","Praėjusios savaitės PPR taškai (skalė 0–40, linija kas 5)"));
+    lg.starters.forEach(p=>left.append(playerRow(p,false)));
+    left.append(el("p","sub","Suolas"));
+    lg.bench.forEach(p=>left.append(playerRow(p,true)));
+    const right = el("section");
+    right.append(el("h3","","Waiver: populiaru ir laisva"), el("p","hint","Daugiausia pridėjimų per 24 val., kurių nėra jokioje lygos sudėtyje"));
+    if(!lg.waiver.length) right.append(el("p","empty","Šiuo metu nieko."));
+    lg.waiver.forEach(p=>{
+      const w = el("div","w"), n = el("b","",p.name); const s = status(p); if(s) n.append(s);
+      w.append(n, el("div","num",pts(p.pts)), el("small","",p.pos+" · "+p.team+" · +"+p.adds.toLocaleString("lt-LT")+" pridėjimų"));
+      right.append(w);
+    });
+    cols.append(left,right); box.append(cols); app.append(box);
+  });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")));
+}
+
+fetch("data.json").then(r=>r.json()).then(render).catch(()=>{
+  document.getElementById("meta").textContent = "Nepavyko įkelti data.json. Atidaryk puslapį per GitHub Pages arba vietinį serverį (python -m http.server).";
+});
+</script>
+</body>
+</html>
