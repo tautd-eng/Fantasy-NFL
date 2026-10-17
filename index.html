@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mano fantasy savaitė</title>
+<title>NFL Fantasy assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -113,11 +113,17 @@ td.hi{color:var(--blue);font-weight:700}td.lo{color:var(--red);font-weight:700}
 .tw-ctl{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:8px 0 14px}.tw-ctl input{width:5rem}
 @media(max-width:820px){.pl{grid-template-columns:3rem 1fr 5.6rem}.pj,.spark{grid-column:1/-1}.fp{grid-column:3;grid-row:1}.sw{grid-template-columns:1fr}.chips{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.fill{transition:none}}
+.tr1{display:inline-block;width:64px;height:8px;background:var(--s3);margin-right:7px;vertical-align:middle}.tr1 i{display:block;height:100%;background:var(--blue)}
+.gb{display:inline-block;width:56px;height:8px;background:var(--s3);margin-right:7px;vertical-align:middle}.gb i{display:block;height:100%;background:var(--red)}
+table.st th{cursor:default}table.st td small{display:block}table.st .chips{display:inline-flex}
+.tb{display:inline-block;margin:2px 6px 2px 0;padding:1px 7px;font-size:.74rem;font-weight:700;border:1px solid var(--line);background:var(--s2);color:var(--tx);white-space:normal}
+.tb.s3{background:var(--red);border-color:var(--red);color:#fff}.tb.s2{border-color:var(--red);color:var(--red);background:#fff}.tb.fx{outline:2px solid var(--blue)}
+.why{margin:2px 0 6px;font-size:.84rem}.fixl{margin-top:4px;color:var(--navy);font-weight:500}
 </style>
 </head>
 <body>
 <header><div class="wrap top">
-  <div><h1>Mano fantasy savaitė</h1><p class="meta" id="meta">Kraunama…</p></div>
+  <div><h1>NFL Fantasy assistant</h1><p class="meta" id="meta">Kraunama…</p></div>
   <label class="pick">Lyga<select id="league" aria-label="Pasirink lygą"></select></label>
 </div></header>
 <div class="banner" id="banner" hidden>Rodomi pavyzdiniai duomenys: tai šablono peržiūra, skaičiai netikri.</div>
@@ -180,6 +186,15 @@ function adviceFor(id){
 function situation(t){
   const inj=t.starters.filter(i=>D.stats[i]&&OUTS.includes(D.stats[i].status)).map(nm),by=t.starters.filter(i=>D.stats[i]&&D.stats[i].opp==="BYE").map(nm);
   return (inj.length?"Starteriai Out: "+inj.join(", ")+". ":"")+(by.length?"Bye šią savaitę: "+by.join(", ")+". ":"")||"Akivaizdžių sužeidimų ar bye bėdų nėra."}
+function troubles(t){
+  const out=[],seen=new Set(),thr={QB:14,RB:7,WR:7,TE:6};
+  t.starters.filter(i=>D.stats[i]).forEach(i=>{const s=D.stats[i];
+    if(OUTS.includes(s.status)){seen.add(i);out.push({k:"inj",pos:s.pos,sev:3,txt:s.pos+": "+s.name+" ("+s.status+")"})}
+    else if(s.status==="Doubtful"){seen.add(i);out.push({k:"inj",pos:s.pos,sev:2,txt:s.pos+": "+s.name+" (Doubtful)"})}
+    else if(s.opp==="BYE"){seen.add(i);out.push({k:"bye",pos:s.pos,sev:2,txt:s.pos+": "+s.name+" bye"})}});
+  lineupSet(t.players,"p3").forEach(i=>{const s=D.stats[i],per=s.p3/3;if(seen.has(i)||!thr[s.pos]||per>=thr[s.pos])return;
+    out.push({k:"weak",pos:s.pos,sev:1,per,txt:s.pos+": silpnas starteris "+s.name+" ("+f1(per)+"/sav.)"})});
+  return out.sort((a,b)=>b.sev-a.sev)}
 function combos(pool,max,forced){
   const rest=pool.filter(i=>!forced.includes(i)),out=[];
   const rec=(st,cur)=>{const n=cur.length+forced.length;if(n>=1&&n<=max)out.push([...forced,...cur]);if(n>=max)return;for(let k=st;k<rest.length;k++){cur.push(rest[k]);rec(k+1,cur);cur.pop()}};
@@ -194,8 +209,8 @@ function findTrades(o){
   const cands=[];
   L.teams.forEach((t,pi)=>{
     if(t.mine||(o.partners.length&&!o.partners.includes(pi)))return;
-    const tb=lineup(t.players,"p3");
-    const targets=mode==="get"?[o.get]:t.players.filter(p=>D.stats[p]&&!OUTS.includes(D.stats[p].status)).sort((a,b)=>D.stats[b].p3-D.stats[a].p3).slice(0,12).map(p=>[p]);
+    const tb=lineup(t.players,"p3"),TB=troubles(t);
+    const targets=mode==="get"?[o.get]:t.players.filter(p=>D.stats[p]&&!OUTS.includes(D.stats[p].status)&&(!o.pos||D.stats[p].pos===o.pos)).sort((a,b)=>D.stats[b].p3-D.stats[a].p3).slice(0,12).map(p=>[p]);
     for(const T of targets){
       if(T.some(p=>!t.players.includes(p)))continue;
       const rv=T.reduce((a,p)=>a+vl(p),0);if(!rv)continue;
@@ -206,7 +221,9 @@ function findTrades(o){
         const gme=lineup(ids.filter(x=>!G.includes(x)).concat(T),"p3")-base;
         const tg=lineup(t.players.filter(x=>!T.includes(x)).concat(G),"p3")-tb;
         if(gme<need[0]||tg<need[1])continue;
-        cands.push({partner:t.name,pi,give:G,get:T,gv,rv,bal,gme,tg,score:gme+.6*tg-15*Math.abs(bal)})}}});
+        const fix=TB.filter(x=>G.some(g=>D.stats[g].pos===x.pos&&!OUTS.includes(D.stats[g].status)&&(x.k!=="weak"||D.stats[g].p3/3>x.per+1)));
+        if(o.fixOnly&&mode==="auto"&&!fix.length)continue;
+        cands.push({partner:t.name,pi,give:G,get:T,gv,rv,bal,gme,tg,fix,score:gme+.6*tg-15*Math.abs(bal)+1.5*fix.reduce((a,x)=>a+x.sev,0)})}}});
   cands.sort((a,b)=>b.score-a.score);
   const out=[],cp={},ct={},lim=mode==="get"?8:6;
   for(const c of cands){
@@ -235,10 +252,10 @@ function how(){const d=el("details","how"),s=el("summary","","Kaip skaičiuojama
 
 const tip=el("div","tip");document.body.append(tip);
 document.addEventListener("click",ev=>{if(!ev.target.closest(".hv"))tip.style.display="none"});
-function hover(e,fn){e.classList.add("hv");e.tabIndex=0;
+function hover(e,fn,nc){e.classList.add("hv");e.tabIndex=0;
   const show=()=>{tip.replaceChildren(fn());tip.style.display="block";const r=e.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
     const x=Math.min(Math.max(8,r.right-w),innerWidth-w-8);let y=r.bottom+6;if(y+h>innerHeight-8)y=Math.max(8,r.top-h-6);tip.style.left=x+"px";tip.style.top=y+"px"};
-  e.onmouseenter=show;e.onfocus=show;e.onmouseleave=e.onblur=()=>{tip.style.display="none"};e.onclick=show}
+  e.onmouseenter=show;e.onfocus=show;e.onmouseleave=e.onblur=()=>{tip.style.display="none"};if(!nc)e.onclick=show}
 const MUTXT={e:"palankus varžovas",m:"vidutinis varžovas",t:"sunkus varžovas",b:"bye, taškų nebus"};
 function fpTip(s){
   const d=el("div");d.append(el("h5","","Ateinančios savaitės · "+s.name+" · 3 sav. suma "+f1(s.p3)));
@@ -293,76 +310,73 @@ async function live(){
     const rs=await r.json(),us=await u.json(),nmU={};us.forEach(x=>nmU[x.user_id]=(x.metadata&&x.metadata.team_name)||x.display_name);
     liveTaken={};rs.forEach(x=>(x.players||[]).forEach(p=>liveTaken[p]=nmU[x.owner_id]||"Komanda "+x.roster_id));liveAt=new Date()}catch(e){liveTaken=null}}
 function vWaiver(v){
-  v.append(el("h3","","Waiver pasiūlymai"),el("p","hint","Laisvi žaidėjai, kurie labiausiai pagerintų tavo starterių sudėtį pagal 3 savaičių projekcijų sumą. Skaičius = prieaugis tšk. per 3 sav."));
+  v.append(el("h3","","Waiver pasiūlymai"),el("p","hint","Laisvi žaidėjai, kurie labiausiai pagerintų tavo starterių sudėtį pagal 3 savaičių projekcijų sumą. Prieaugis = tšk. per 3 sav. Užvesk pelę ant žaidėjo ar ⓘ ir pamatysi komentarą; ant 3 sav. stulpelio – kiekvienos savaitės prognozę."));
   const st=D.sample?"Pavyzdiniai duomenys: gyvas patikrinimas veikia tik su tikrais.":liveAt?"Laisvumas patikrintas gyvai "+liveAt.toLocaleTimeString("lt-LT",{hour:"2-digit",minute:"2-digit"})+".":"Gyvo patikrinimo atlikti nepavyko, rodomi duomenys iš "+new Date(D.updated).toLocaleString("lt-LT")+".";
   v.append(el("p","live",st),how());
   const list=waiversFor(liveTaken);
   if(!list.length){v.append(el("p","empty","Šiuo metu laisvų žaidėjų, kurie pagerintų sudėtį, nėra."));return}
-  list.forEach(w=>{const s=D.stats[w.id],c=el("div","card"),m=el("div","who");
-    m.append(nameB(w.id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")+" · proj. "+f1(s.proj)+" · 3 sav. "+f1(s.p3)+(s.adds?" · +"+s.adds.toLocaleString("lt-LT")+" pridėjimų":"")+(w.replaces?" · pakeistų: "+nm(w.replaces)+" ("+f1(D.stats[w.replaces].p3)+")":"")));
-    const ins=el("div","ins");ins.append(badge("add"),el("span","",s.note3||"Prognozė "+f1(s.p3)+" per 3 sav."),chips(s.sos),spark(s.weeks));ins.querySelector(".spark").style.width="70px";
-    c.append(m,el("div","num","+"+f1(w.gain)),ins);c.querySelector(".ins").style.gridColumn="1/-1";v.append(c)})}
+  const tw=el("div","tw"),tb=el("table","st"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);
+  [["Žaidėjas","l"],["Proj. sav.",""],["3 sav.",""],["Prieaugis",""],["Forma",""],["Kalendorius","l"],["Pridėjimai",""],["Keičia","l"],["","l"]].forEach(([t,c])=>hr.append(el("th",c,t)));
+  const mg=Math.max(...list.map(w=>w.gain));
+  list.forEach(w=>{const s=D.stats[w.id],tr=el("tr");
+    const tipf=()=>{const d=el("div");d.append(el("h5","",s.name+" · "+s.pos+" · "+s.team));d.append(el("p","",s.note3||("Prognozė "+f1(s.p3)+" per 3 sav.")));
+      if(w.replaces)d.append(el("p","","Pakeistų "+nm(w.replaces)+" ("+f1(D.stats[w.replaces].p3)+" per 3 sav.): tavo starterių suma išaugtų "+fd(w.gain)+"."));d.append(el("p","",bd(s)));return d};
+    const c1=el("td","l");c1.append(nameB(w.id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")));c1.style.cursor="help";hover(c1,tipf);
+    const c2=el("td");const t1=el("span","tr1"),f=el("i");f.style.width=Math.min(100,Math.max(0,s.proj)/MAXP*100)+"%";t1.append(f);c2.append(t1,document.createTextNode(f1(s.proj)));
+    const c3=el("td","pj2 hv",f1(s.p3));hover(c3,()=>fpTip(s));
+    const c4=el("td");const gb=el("span","gb"),gi=el("i");gi.style.width=Math.max(8,w.gain/mg*100)+"%";gb.append(gi);c4.append(gb,el("b","","+"+f1(w.gain)));
+    const c5=el("td");const sp=spark(s.weeks);sp.style.width="64px";sp.style.display="inline-flex";c5.append(sp);
+    const c6=el("td","l");c6.append(chips(s.sos));c6.firstChild.style.marginLeft="0";
+    const c7=el("td","",s.adds?"+"+s.adds.toLocaleString("lt-LT"):"–");
+    const c8=el("td","l",w.replaces?nm(w.replaces):"–");
+    const c9=el("td","l"),ib=el("button","lk","ⓘ");ib.setAttribute("aria-label","Komentaras");hover(ib,tipf);c9.append(ib);
+    tr.append(c1,c2,c3,c4,c5,c6,c7,c8,c9);body.append(tr)});
+  v.append(tw)}
 
 function tradeCard(t){
   const ok=Math.abs(t.bal)<=0.12,c=el("div","trade"),hd=el("div","th");
   hd.append(el("h4","","Partneris: "+t.partner),el("span","bal"+(ok?" ok":""),(ok?"Teisinga":(t.bal>0?"Tu gauni daugiau":"Tu duodi daugiau"))+" · vertė "+t.gv.toLocaleString("lt-LT")+" vs "+t.rv.toLocaleString("lt-LT")+" ("+(t.bal>0?"+":"")+(t.bal*100).toFixed(0)+" %)"));
   const sw=el("div","sw"),side=(tt,ids)=>{const d=el("div");d.append(el("h5","",tt));ids.forEach(x=>{const s=D.stats[x];d.append(el("p",(TR.get.includes(x)||TR.give.includes(x))?"hl":"",s.name+" · "+s.pos+" · 3 sav. "+f1(s.p3)+" · vertė "+vl(x).toLocaleString("lt-LT")))});return d};
   sw.append(side("TU DUODI",t.give),side("TU GAUNI",t.get));
-  c.append(hd,el("small","","Jų situacija: "+situation(L.teams[t.pi])),sw,
+  const why=el("div","why"),tb=troubles(L.teams[t.pi]);why.append(el("b","","Jų bėdos: "));
+  if(tb.length)tb.slice(0,4).forEach(x=>why.append(el("span","tb s"+x.sev+((t.fix||[]).includes(x)?" fx":""),((t.fix||[]).includes(x)?"✔ ":"")+x.txt)));else why.append(el("span","mut","ryškių bėdų nėra"));
+  if(t.fix&&t.fix.length)why.append(el("div","fixl","Kodėl jie sutiks: tavo siūlomas žaidėjas užpildo jų skylę ("+t.fix.map(x=>x.pos).filter((p,i,a)=>a.indexOf(p)===i).join(", ")+"), o tu gauni "+fd(t.gme)+" tšk. per 3 sav."));
+  c.append(hd,why,sw,
     el("div","gain","Tavo starteriai: "+fd(t.gme)+" tšk. per 3 sav. · jų starteriai: "+fd(t.tg)+" tšk."+(t.give.length!==t.get.length?" · mainai ne 1:1, reikės numesti ar pridėti žaidėją":"")));
   return c}
-/* ---------- AI trade asistentas ---------- */
-let AI={msgs:[],busy:false,draft:""};
-function aiMode(){return (window.claude&&window.claude.use)?"claude":(lsGet("anthropic_key")?"key":"none")}
-function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
-function lsSet(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}
-function aiContext(){
-  const P=id=>{const s=D.stats[id];return id+"|"+s.name+"|"+s.pos+"|"+s.team+(s.status?"|"+s.status:"")+"|vid "+f1(s.avg)+"|3sav "+f1(s.p3)+"|vertė "+vl(id)};
-  const my=myTeam();let c="LYGA: "+L.name+(L.format?" ("+L.format.label+")":"")+". Savaitė "+D.week+". Eilutės formatas: id|vardas|poz|komanda|[statusas]|sezono vid. PPR|3 sav. projekcija|trade vertė.\n";
-  c+="MANO KOMANDA ("+my.name+"):\n"+my.players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).map(P).join("\n")+"\n";
-  L.teams.forEach((t,i)=>{if(t.mine)return;c+="\nKOMANDA #"+i+" "+t.name+" · "+situation(t)+"\n"+t.players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).slice(0,16).map(P).join("\n")+"\n"});
-  return c}
-async function callAI(text){
-  if(aiMode()==="claude"){const s=await window.claude.use("sample");if(!s)throw new Error("AI šiame lange neprieinamas (leidimas nesuteiktas).");const r=await s(text,{cache:false});return r.text}
-  const key=lsGet("anthropic_key");if(!key)throw new Error("Nėra API rakto.");
-  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"content-type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:"claude-sonnet-4-5",max_tokens:1500,messages:[{role:"user",content:text}]})});
-  const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||"API klaida "+r.status);return j.content.map(x=>x.text||"").join("")}
-function parseAI(t){
-  let j=null;const m=t.match(/\{[\s\S]*\}/);if(m){try{j=JSON.parse(m[0])}catch(e){}}
-  if(!j||typeof j.reply!=="string")return {reply:t.trim()};
-  const valid=id=>D.stats[id];const my=new Set(myTeam().players);
-  const get=(j.get||[]).map(String).filter(id=>valid(id)&&!my.has(id)).slice(0,3),give=(j.give||[]).map(String).filter(id=>valid(id)&&my.has(id)).slice(0,3);
-  let partner=Number.isInteger(j.partner)&&L.teams[j.partner]&&!L.teams[j.partner].mine?j.partner:-1;
-  if(get.length){const pi=L.teams.findIndex(t=>!t.mine&&t.players.includes(get[0]));if(pi>=0)partner=pi}
-  const get2=partner>=0?get.filter(id=>L.teams[partner].players.includes(id)):[];
-  return {reply:j.reply,partner,get:get2,give}}
-function aiPanel(){
-  const box=el("div","aibox"),mode=aiMode();
-  box.append(el("h4","","Trade asistentas (AI)"),el("p","hint","Parašyk, ką nori parduoti, ką pirkti ir kokiu kampu ieškoti (pvz. „parduodu RB su sunkiu kalendoriumi, noriu WR1 iš komandos, kuriai trūksta RB“). Asistentas mato tavo ir kitų komandų sudėtis bei vertes, atsako ir gali įkelti konkretų paketą į paiešką aukščiau."));
-  if(mode==="none"){
-    const k=el("input");k.type="password";k.placeholder="Anthropic API raktas (sk-ant-…)";k.style.maxWidth="360px";
-    const b=el("button","btn","Išsaugoti raktą šioje naršyklėje");b.onclick=()=>{if(k.value.trim()){lsSet("anthropic_key",k.value.trim());draw()}};
-    box.append(el("p","hint","Šiame puslapyje (GitHub Pages) AI veikia tik su tavo paties API raktu. Raktas saugomas tik šios naršyklės localStorage, niekada nededamas į GitHub, o užklausos eina tiesiai į Anthropic. Naudok raktą su mažu išlaidų limitu."),k,b);return box}
-  const log=el("div","msgs"),draw1=()=>{log.replaceChildren();AI.msgs.forEach(m=>{const d=el("div","cm "+(m.role==="user"?"u":"a"),m.content);log.append(d);
-      if(m.apply){const bt=el("button","btn","Rodyti šį paketą paieškoje");bt.style.marginTop="6px";bt.onclick=()=>{TR={partner:m.apply.partner,get:m.apply.get,give:m.apply.give};draw();window.scrollTo({top:0,behavior:"smooth"})};d.append(document.createElement("br"),bt)}});log.scrollTop=log.scrollHeight};
-  if(AI.msgs.length)box.append(log);draw1();
-  const ta=el("textarea");ta.placeholder="Ką parduodi, ką nori gauti, kokį kampą pasirinkti?";ta.value=AI.draft;ta.oninput=()=>{AI.draft=ta.value};
-  const row=el("div","pickrow"),go=el("button","btn","Klausti"),clr=el("button","btn ghost","Valyti pokalbį"),st=el("span","mut");
-  clr.onclick=()=>{AI.msgs=[];draw()};
-  go.onclick=async()=>{const q=ta.value.trim();if(!q||AI.busy)return;AI.busy=true;go.disabled=true;st.textContent="Galvoju…";
-    AI.msgs.push({role:"user",content:q});AI.draft="";ta.value="";draw1();
-    const hist=AI.msgs.slice(-7,-1).map(m=>(m.role==="user"?"Vartotojas: ":"Asistentas: ")+m.content).join("\n");
-    const prompt="Tu esi fantasy NFL (Sleeper, PPR) trade patarėjas. Atsakyk lietuviškai, trumpai ir konkrečiai (iki ~150 žodžių). Siūlyk tik realistiškus mainus: vertės panašios (±20 %), partneris turi poreikį, kurį tavo duodamas žaidėjas užpildo. Naudok tik žemiau esančius žaidėjus ir jų id. Įvertink kalendorių ir komandų puolimą/gynybą tik pagal pateiktus skaičius, nieko neišgalvok.\n\n"+aiContext()+"\nANKSTESNIS POKALBIS:\n"+(hist||"(nėra)")+"\n\nNAUJAS VARTOTOJO PRAŠYMAS: "+q+"\n\nGrąžink TIK JSON: {\"reply\":\"tekstas\",\"partner\":<komandos # arba -1>,\"get\":[id,...iki 3 kitų komandų žaidėjų],\"give\":[id,...iki 3 mano žaidėjų]}. Jei konkretaus paketo neturi, get ir give palik tuščius.";
-    try{const out=parseAI(await callAI(prompt)),m={role:"assistant",content:out.reply};if(out.get&&out.get.length)m.apply={partner:out.partner,get:out.get,give:out.give};AI.msgs.push(m);st.textContent=""}
-    catch(e){AI.msgs.push({role:"assistant",content:"Nepavyko gauti atsakymo: "+(e.message||e.code||e)});st.textContent=""}
-    AI.busy=false;go.disabled=false;draw1()};
-  row.append(go,clr,st);box.append(ta,row);
-  if(mode==="key"){const x=el("button","clr","Pašalinti API raktą");x.onclick=()=>{lsSet("anthropic_key","");draw()};box.append(x)}
-  return box}
-
+function bedos(){
+  const box=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);box.append(tb);
+  ["Komanda","Jų bėdos","Ką gali pasiūlyti tu",""].forEach((t,i)=>hr.append(el("th",i<3?"l":"",t)));
+  const mi=myTeam().players,st=new Set(lineupSet(mi,"p3")),rows=L.teams.map((t,i)=>[t,i]).filter(([t])=>!t.mine).map(([t,i])=>({t,i,tb:troubles(t)})).sort((a,b)=>b.tb.reduce((x,y)=>x+y.sev,0)-a.tb.reduce((x,y)=>x+y.sev,0));
+  rows.forEach(({t,i,tb:T})=>{const tr=el("tr"),c1=el("td","l",t.name),c2=el("td","l"),c3=el("td","l"),c4=el("td","l");
+    if(T.length)T.slice(0,4).forEach(x=>c2.append(el("span","tb s"+x.sev,x.txt)));else c2.append(el("span","mut","ryškių bėdų nėra"));
+    const seenp=new Set(),offer=[];T.forEach(x=>{if(seenp.has(x.pos))return;seenp.add(x.pos);
+      const c=mi.filter(p=>D.stats[p]&&D.stats[p].pos===x.pos&&!st.has(p)&&!OUTS.includes(D.stats[p].status)).sort((a,b)=>D.stats[b].p3-D.stats[a].p3)[0];if(c)offer.push(D.stats[c].name+" ("+x.pos+", "+f1(D.stats[c].p3)+" per 3 sav.)")});
+    c3.textContent=offer.length?offer.join("; "):"nėra laisvo suolo žaidėjo šiai bėdai";
+    const b=el("button","lk","Ieškoti idėjų →");b.onclick=()=>{TR={partner:i,get:[],give:[]};draw()};c4.append(b);tr.append(c1,c2,c3,c4);body.append(tr)});
+  const w=el("div");w.append(el("h3","","Kitų komandų bėdos"),el("p","hint","Čia matai, kam ko trūksta: sužeisti ar bye starteriai (raudona/oranžinė) ir labai silpni starteriai. Šalia – ką gali pasiūlyti iš savo suolo. Automatinės idėjos pirmiausia ieško mainų, kurie užpildo būtent šias skyles."),box);return w}
+const OPEN=new Set();
+function offersFor(id){L._off=L._off||{};return L._off[id]||(L._off[id]=findTrades({partners:[],get:[],give:[id],pos:"",fixOnly:false}).res.slice(0,3))}
+function myPanel(){
+  const w=el("div");w.append(el("h3","","Mano žaidėjai ir galimi pasiūlymai"),el("p","hint","Visi tavo žaidėjai su verte ir žyma. „Pasiūlymai“ išskleidžia 3 geriausius paketus šiam žaidėjui (vertės ±20 %, gerėja abi pusės); „Atiduoti“ įdeda jį į paiešką žemiau."));
+  const tw=el("div","tw"),tb=el("table","st"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);
+  [["Žaidėjas","l"],["Vaidmuo","l"],["3 sav.",""],["Vertė",""],["Žyma","l"],["","l"]].forEach(([t,c])=>hr.append(el("th",c,t)));
+  const st=new Set(L.roster.map(r=>r.id));
+  myTeam().players.filter(i=>D.stats[i]).sort((a,b)=>vl(b)-vl(a)).forEach(id=>{const s=D.stats[id],tr=el("tr"),a=adv(id);
+    const c1=el("td","l");c1.append(nameB(id),el("small","",s.pos+" · "+s.team));
+    const c3=el("td","pj2 hv",f1(s.p3));hover(c3,()=>fpTip(s));
+    const c5=el("td","l");c5.append(badge(a.action));c5.firstChild.title=a.insight;hover(c5.firstChild,()=>{const d=el("div");d.append(el("p","",a.insight));return d});
+    const c6=el("td","l"),b1=el("button","lk",OPEN.has(id)?"Slėpti":"Pasiūlymai"),b2=el("button","lk","Atiduoti");b2.style.marginLeft="6px";
+    b1.onclick=()=>{OPEN.has(id)?OPEN.delete(id):OPEN.add(id);draw()};
+    b2.onclick=()=>{if(!TR.give.includes(id)&&TR.give.length<3)TR.give.push(id);draw()};c6.append(b1,b2);
+    tr.append(c1,el("td","l",st.has(id)?"Starteris":"Suolas"),c3,el("td","",vl(id)?vl(id).toLocaleString("lt-LT"):"–"),c5,c6);body.append(tr);
+    if(OPEN.has(id)){const r2=el("tr"),td=el("td","l");td.colSpan=6;td.style.whiteSpace="normal";const offs=offersFor(id);
+      if(!offs.length)td.append(el("span","mut","Realių paketų šiam žaidėjui nerasta."));
+      offs.forEach(t=>{const p=el("p","fixl");p.style.margin="3px 0";p.textContent=L.teams[t.pi].name+": tu duodi "+t.give.map(nm).join(" + ")+", gauni "+t.get.map(nm).join(" + ")+" · tavo starteriai "+fd(t.gme)+", jų "+fd(t.tg)+(t.fix&&t.fix.length?" · sprendžia jų bėdą ("+t.fix.map(x=>x.pos).filter((q,i,A)=>A.indexOf(q)===i).join(", ")+")":"");td.append(p)});
+      r2.append(td);body.append(r2)}});
+  w.append(tw);return w}
 function vTrade(v){
-  v.append(el("h3","","Trade"),el("p","hint","Pasirink komandą ir žaidėją (ar kelis), kurio nori, ir pagal tai ieškome realistiškų paketų iš tavo sudėties. Gali nurodyti ir savo žaidėjus, kuriuos nori atiduoti. Gerėjimas skaičiuojamas pagal pilną starterių sudėtį 3 savaičių suma abiem pusėms, vertės skirtumas ne didesnis kaip ±20 %."),fmtLine());
+  v.append(el("h3","","Trade"),el("p","hint","Pagrindinis fokusas: kitų komandų bėdos (sužeisti, bye ir silpni starteriai) ir tavo suolo žaidėjai, kurie jas užpildo. Pasirink komandą ir žaidėją (ar kelis), kurio nori, ir pagal tai ieškome realistiškų paketų iš tavo sudėties. Gali nurodyti ir savo žaidėjus, kuriuos nori atiduoti. Gerėjimas skaičiuojamas pagal pilną starterių sudėtį 3 savaičių suma abiem pusėms, vertės skirtumas ne didesnis kaip ±20 %."),fmtLine());
   const others=L.teams.map((t,i)=>[t,i]).filter(([t])=>!t.mine),bd_=el("div","builder");
   const lab=el("label","","Partnerio komanda"),ps=el("select");
   [[-1,"Visos komandos"],...others.map(([t,i])=>[i,t.name])].forEach(([k,t])=>{const o=el("option","",t);o.value=k;ps.append(o)});
@@ -376,12 +390,17 @@ function vTrade(v){
     gl.append(h,q,row);bd_.append(gl)}
   const gv=el("div");gv.append(el("small","","Noriu atiduoti (neprivaloma, iki 3 žaidėjų) · mano komanda"));
   const row2=el("div","pickrow");row2.style.marginTop="6px";myTeam().players.slice().sort((a,b)=>D.stats[b].p3-D.stats[a].p3).forEach(id=>row2.append(chip(id,TR.give,3)));gv.append(row2);bd_.append(gv);
+  const ang=el("div","pickrow"),ps2=el("select");[["","Bet kuri pozicija"],["QB","Noriu stiprinti QB"],["RB","Noriu stiprinti RB"],["WR","Noriu stiprinti WR"],["TE","Noriu stiprinti TE"]].forEach(([k,t])=>{const o2=el("option","",t);o2.value=k;ps2.append(o2)});
+  ps2.value=TR.pos||"";ps2.onchange=()=>{TR.pos=ps2.value;draw()};
+  const fx=el("button","tog","Tik mainai, sprendžiantys jų bėdą");fx.setAttribute("aria-pressed",TR.fix!==false);fx.onclick=()=>{TR.fix=TR.fix===false;draw()};
+  ang.append(ps2,fx);bd_.append(el("small","","Kampas automatinei paieškai (kai nepasirinkti konkretūs žaidėjai)"),ang);
   const act=el("div","pickrow"),clr=el("button","btn ghost","Išvalyti pasirinkimus");clr.onclick=()=>{TR={partner:-1,get:[],give:[]};draw()};act.append(clr);bd_.append(act);
-  v.append(bd_,aiPanel());
-  const o={partners:TR.partner>=0?[TR.partner]:[],get:TR.get,give:TR.give};
-  let r;
-  if(!o.get.length&&!o.give.length){if(!autoCache[L.id])autoCache[L.id]=findTrades({partners:[],get:[],give:[]});r=autoCache[L.id]}
-  else r=findTrades(o);
+  v.append(bedos(),myPanel(),bd_);
+  const o={partners:TR.partner>=0?[TR.partner]:[],get:TR.get,give:TR.give,pos:TR.pos||"",fixOnly:TR.fix!==false};
+  let r,fb=false;
+  const run=oo=>{if(!oo.get.length&&!oo.give.length){const k=L.id+"|"+oo.partners+"|"+oo.pos+"|"+oo.fixOnly;if(!autoCache[k])autoCache[k]=findTrades(oo);return autoCache[k]}return findTrades(oo)};
+  r=run(o);if(!r.res.length&&o.fixOnly&&r.mode==="auto"){r=run(Object.assign({},o,{fixOnly:false}));fb=true}
+  if(fb)v.append(el("p","live","Mainų, kurie tiesiogiai užpildo jų bėdas, nerasta: rodomos bendros idėjos."));
   const title={auto:"Geriausios idėjos visose komandose",give:"Idėjos su tavo pasirinktais žaidėjais",get:"Paketai už pasirinktus žaidėjus"}[r.mode];
   v.append(el("h3","",title+" ("+r.res.length+")"));
   if(!r.res.length){v.append(el("p","empty",r.mode==="get"?"Paketų su panašia verte ir naudos partneriui nerasta. Pabandyk pasirinkti kitus savo žaidėjus ar sumažinti norimų žaidėjų skaičių.":"Realistiškų idėjų nerasta: nėra partnerio su abipusiu poreikiu ir panašia verte."));return}
@@ -429,6 +448,7 @@ function vStats(v){
 
 const TC={team:["Komanda",(t,k)=>k,null],opp:["Kita rungtynė",(t)=>t.next?t.next.opp:null,null],pr:["Proj. rush yd",t=>t.next?t.next.pr:null,i0],pp:["Proj. pass yd",t=>t.next?t.next.pp:null,i0],
  spr:["Spread",t=>t.next?t.next.spr:null,fd],tot:["O/U",t=>t.next?t.next.tot:null,f1],ro:["Run puolimas yd/sav.",t=>t.ro,i0],po:["Pass puolimas yd/sav.",t=>t.po,i0],rd:["Run gynyba leidžia",t=>t.rd,i0],pd:["Pass gynyba leidžia",t=>t.pd,i0]};
+const TDESC={"team": "NFL komanda.", "opp": "Kito turo varžovas: vs = namuose, @ = išvykoje.", "pr": "Projektuojami komandos bėgimo (rush) jardai kitose rungtynėse = komandos rush vidurkis × varžovo leidžiami rush jardai ÷ lygos vidurkis × spread koeficientas (1 + 0,012 × spread, ribos 0,88–1,12; favoritai bėga daugiau) × √(numatomi taškai ÷ lygos vidurkis, ribos 0,85–1,2). Vidurkiai imami iš pasirinkto savaičių lango.", "pp": "Projektuojami komandos metimo (pass) jardai kitose rungtynėse = komandos pass vidurkis × varžovo leidžiami pass jardai ÷ lygos vidurkis × spread koeficientas (1 − 0,012 × spread; atsilikėliai meta daugiau) × √(numatomi taškai ÷ lygos vidurkis). Vidurkiai iš pasirinkto lango.", "spr": "Lažybų spread (nflverse): teigiamas = komanda favoritė tiek taškų, neigiamas = underdog. Naudojamas žaidimo scenarijui: favoritai daugiau bėga, atsilikėliai daugiau meta.", "tot": "O/U: bendras numatomas abiejų komandų taškų skaičius. Didesnis = daugiau tempo ir galimybių taškams; iš jo skaičiuojami numatomi komandos taškai.", "ro": "Komandos vidutiniai bėgimo jardai per rungtynes pasirinktame lange. (#) = reitingas tarp komandų, 1 = geriausias puolimas.", "po": "Komandos vidutiniai metimo jardai per rungtynes pasirinktame lange. (#) = reitingas, 1 = geriausias puolimas.", "rd": "Kiek bėgimo jardų komandos gynyba vidutiniškai leidžia varžovams per rungtynes pasirinktame lange. (#) = reitingas, 1 = leidžia mažiausiai (sunkiausia gynyba); didelis numeris = silpna gynyba, gera RB.", "pd": "Kiek metimo jardų komandos gynyba vidutiniškai leidžia varžovams per rungtynes pasirinktame lange. (#) = reitingas, 1 = leidžia mažiausiai; didelis numeris = silpna gynyba, gera QB/WR/TE."};
 let TS={sort:"pr",dir:-1,n:0};
 function vTeams(v){
   v.append(el("h3","","NFL komandos: jardai už ir prieš"),el("p","hint","Pasirink, kiek paskutinių rungtynių vertinti (3 / 5 / 10 arba savo skaičius); vidurkiai, reitingai ir projekcija perskaičiuojami. Projekcija = komandos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota spread ir O/U. Reitingas skliausteliuose: puolimui 1 = geriausias, gynybai 1 = leidžia mažiausiai. Mėlyna = didelė projekcija (palanku RB/WR), raudona = maža. Tai mūsų modelis, paremtas lažybų linijomis, o ne lažybų kompanijų jardų prognozė."));
@@ -448,7 +468,7 @@ function vTeams(v){
     if(hasW)info.textContent=TS.n?"Vertinamos paskutinės "+Math.min(TS.n,tv.games||TS.n)+" rungtynės (iki "+D.stats_week+" sav.).":"Vertinamas visas sezonas iki "+D.stats_week+" sav.";
     const vals=k=>keys.map(t=>TC[k][1](teams[t],t)).filter(x=>typeof x==="number").sort((a,b)=>a-b),pr=vals("pr"),pp=vals("pp");
     hr.replaceChildren();Object.entries(TC).forEach(([k,[t]])=>{const th=el("th",k==="team"||k==="opp"?"l":"",t);if(k===TS.sort)th.setAttribute("aria-sort",TS.dir>0?"ascending":"descending");
-      th.onclick=()=>{TS.dir=TS.sort===k?-TS.dir:(k==="team"||k==="opp"?1:-1);TS.sort=k;fill()};hr.append(th)});
+      th.onclick=()=>{TS.dir=TS.sort===k?-TS.dir:(k==="team"||k==="opp"?1:-1);TS.sort=k;fill()};hover(th,()=>{const d=el("div");d.append(el("h5","",TC[k][0]+(["ro","po","rd","pd","pr","pp"].includes(k)?(TS.n?" · paskutinės "+TS.n+" rungt.":" · visas sezonas"):"")),el("p","",TDESC[k]),el("p","","Paspaudus rūšiuoja."));return d},true);hr.append(th)});
     const ks=keys.slice().sort((a,b)=>{const x=TC[TS.sort][1](teams[a],a),y=TC[TS.sort][1](teams[b],b);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;return (typeof x==="string"?x.localeCompare(y,"lt"):x-y)*TS.dir});
     body.replaceChildren();
     ks.forEach(t=>{const T=teams[t],tr=el("tr");
@@ -470,7 +490,7 @@ function draw(){
 async function pickLeague(i){
   L=D.leagues[i];L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
   L.teams.forEach(t=>{if(!t.mine)t.players.forEach(p=>owners[p]=t.name)});
-  TR={partner:-1,get:[],give:[]};AI.msgs=[];AI.draft="";
+  TR={partner:-1,get:[],give:[]};
   try{localStorage.setItem("lyga",L.id)}catch(e){}
   draw();await live();draw()}
 function init(d){
