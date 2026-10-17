@@ -127,6 +127,9 @@ table.st th{cursor:default}table.st td small{display:block}table.st .chips{displ
 .vd.y{background:var(--blue);border-color:var(--blue);color:#fff}.vd.n{background:var(--s3);color:var(--mu)}.vd.w{color:var(--navy);border-color:var(--navy)}
 .av.f{background:#dbe8ff;color:var(--navy);border-color:#9ebcf2}.av.t{background:#fde0e4;color:var(--red);border-color:#f0a3ae}.av.m{background:#000;color:#fff;border-color:#000}.av.u{color:var(--mu)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:820px){.two{grid-template-columns:1fr}}
+.scl{border-left:3px solid var(--blue);padding:4px 10px;background:#f4f8ff;color:var(--tx)}.lsum{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}.lbox{border:1px solid var(--line);border-top:3px solid var(--blue);padding:6px 14px;background:#fff}.lbox small{display:block;color:var(--mu);font-size:.72rem}.lbox b{font-size:1.15rem}.lbox b.up{color:var(--blue)}
+.lchg{margin:0 0 10px}.dfc{display:block;white-space:nowrap;font-size:.76rem;padding:1px 6px;margin-bottom:2px;border-left:3px solid var(--line)}.dfc.key{font-weight:700}.dfc.dh{border-left-color:var(--blue);background:#e4eeff}.dfc.dl{border-left-color:var(--red);background:#fde0e4}.dfc small{display:inline;margin-left:6px;color:var(--mu)}
+table.st td.why{white-space:normal!important;word-break:normal;font-size:.78rem;min-width:220px;max-width:30ch;line-height:1.35}td b.up{color:var(--blue)}td b.dn{color:var(--red)}
 </style>
 </head>
 <body>
@@ -138,9 +141,9 @@ table.st th{cursor:default}table.st td small{display:block}table.st .chips{displ
 <main><div class="wrap"><div class="tabs" role="tablist" id="tabs"></div><div id="view"></div></div></main>
 <script>
 const MAXP=30;
-const TABS=[["roster","Sudėtis"],["waiver","Waiver"],["trade","Trade"],["stats","Žaidėjų statistika"],["teams","NFL komandos"]];
+const TABS=[["roster","Sudėtis"],["lineup","Siūloma sudėtis"],["waiver","Waiver"],["trade","Trade"],["stats","Žaidėjų statistika"],["teams","NFL komandos"]];
 const ACT={hold:"HOLD",sell:"SELL",trade:"SVARSTYTI TRADE",add:"PRIDĖTI",buy:"PIRKTI"};
-const HOW=`<p><b>Projekcija artimiausiai savaitei</b> = ½ × <b>Modelis</b> + ½ × <b>Sleeper projekcija</b> (jei vieno šaltinio nėra, naudojamas kitas). <b>3 sav.</b> = trijų artimiausių savaičių suma (toliau už pirmą savaitę naudojamas tik modelis).</p>
+const HOW=`<p><b>Projekcija artimiausiai savaitei</b> = ½ × <b>Modelis</b> + ½ × <b>Sleeper projekcija</b> (jei vieno šaltinio nėra, naudojamas kitas). <b>3 sav.</b> = trijų artimiausių savaičių suma (toliau už pirmą savaitę naudojamas tik modelis).</p><p><b>Taškų sistema.</b> Duomenys skaičiuojami pagal standartinį PPR, o puslapis kiekvienai lygai juos perskaičiuoja pagal jos Sleeper nustatymus (priėmimas, QB TD, INT, jardai, TE/RB/WR premijos). Skirtumas skaičiuojamas pagal žaidėjo sezono vidurkį per rungtynes, todėl tai apytikslis pataisymas. Jardų bonusai (100/200/300 yd) ir pirmų downų taškai neįvertinami.</p>
 <p><b>Modelis</b> = <code>Bazė × Matchup × Sveikata</code></p>
 <p><b>Bazė:</b> paskutinių 5 žaistų savaičių PPR vidurkis, naujesnės savaitės sveria daugiau (1; 0,7; 0,49; 0,34; 0,24). Jei žaista mažai, vidurkis traukiamas link pozicijos vidurkio, pakoreguoto komandos puolimu: gerą run puolimą turinčios komandos RB (ir gerą pass puolimą turinčios komandos QB/WR/TE) laikomi aukščiau.</p>
 <p><b>Komandų jardų projekcija:</b> komandos rush/pass jardai = jos vidurkis × varžovo leidžiami jardai ÷ lygos vidurkis, pakoreguota žaidimo scenarijumi (spread: favoritai daugiau bėga, atsilikėliai daugiau meta) ir numatomais taškais (total). Tai ne lažybų kompanijų jardų prognozė (tokios nemokamai nėra), o jų linijomis paremtas mūsų modelis.</p>
@@ -319,6 +322,101 @@ function vRoster(v){
   v.append(el("h3","","Sudėtis · "+L.team),el("p","hint","Juosta = projekcija artimiausiai savaitei (skalė 0–30). Kampe: 3 savaičių suma ir trys stulpeliai (kitos 3 savaitės); užvedus pelę (ar paspaudus) matai kiekvienos savaitės varžovą, projekciją ir komentarą. Dešinėje: paskutinių 5 savaičių forma. Lentelėje po eilute: žaidėjo komandos puolimas (rush/pass) ir varžovo gynyba, sezono vidurkis, L3 ir šių rungtynių projekcija (mėlyna = palanku, raudona = nepalanku)."),fmtLine(),how());
   L.roster.forEach(r=>v.append(plRow(r.id,r.slot,false)));
   v.append(el("p","sub","Suolas"));L.bench.forEach(id=>v.append(plRow(id,"BN",true)))}
+
+/* ===== Siūloma sudėtis ===== */
+const STF=s=>OUTS.includes(s.status)?0:(s.status==="Doubtful"?.4:(s.status==="Questionable"?.93:1));
+const eff=id=>{const s=D.stats[id];return s?(s.opp==="BYE"?0:s.proj*STF(s)):0};
+function assignSlots(ids){
+  const order=L.slots.map((s,i)=>({s,i})).sort((a,b)=>(SLOTW[a.s]||1)-(SLOTW[b.s]||1)),used=new Set(),res={};
+  const pool=ids.filter(i=>D.stats[i]).sort((a,b)=>eff(b)-eff(a));
+  order.forEach(({s,i})=>{const p=pool.find(x=>!used.has(x)&&(ELIG[D.stats[x].pos]||[]).includes(s));if(p){used.add(p);res[i]=p}});
+  return L.slots.map((s,i)=>res[i]?{slot:s,id:res[i]}:null).filter(Boolean)}
+function nxOf(s){const T=(D.nfl_teams||{})[s.team];return T&&T.next?Object.assign({T},T.next):null}
+function defCell(s){
+  const nx=nxOf(s),td=el("td","l");if(!nx||!(D.nfl_teams||{})[nx.opp]){td.textContent="–";return td}
+  const O=D.nfl_teams[nx.opp],N=Object.keys(D.nfl_teams).length,l3=teamView(3).v[nx.opp]||{};
+  const cls=r=>r==null?"":(r>=N*3/4?"dh":(r<=N/4?"dl":""));
+  const rel=s.pos==="RB"?"rd":"pd";
+  const mk=(lab,k,rk,l)=>{const sp=el("span","dfc "+cls(O[rk])+(rel===k?" key":""),lab+" #"+(O[rk]||"?")+" · "+i0(O[k])+" yd");
+    if(l3[k]!=null)sp.append(el("small","","L3 "+i0(l3[k])));return sp};
+  td.append(mk("Bėg.","rd","rkrd",l3.rd),mk("Met.","pd","rkpd",l3.pd));
+  return td}
+function teamPtsCell(s){
+  const nx=nxOf(s),td=el("td");if(!nx||nx.imp==null){td.textContent="–";return td}
+  const ia=D.imp_avg||22,d=nx.imp-ia;
+  td.append(el("b",d>=1.5?"up":(d<=-1.5?"dn":""),f1(nx.imp)),el("small","","vid. "+f1(ia)+" · "+(nx.spr>0?"favoritas +"+f1(nx.spr):(nx.spr<0?"outsider "+f1(-nx.spr):"lygu"))+(nx.tot?" · total "+f1(nx.tot):"")));return td}
+function whyText(id,alt){
+  const s=D.stats[id],nx=nxOf(s),p=[];
+  if(s.status&&s.status!=="Active"&&s.status!=="")p.push("Statusas: "+s.status+(STF(s)<1?" (projekcija sumažinta)":""));
+  p.push("proj. "+f1(s.proj)+(s.avg?" (sezono vid. "+f1(s.avg)+", L3 "+f1(s.l3)+")":""));
+  const x=s.fut&&s.fut[0];if(x&&x.o!=="BYE")p.push(MUTXT[x.d]+(x.mu?" ×"+x.mu.toFixed(2):""));
+  if(nx&&D.nfl_teams[nx.opp]){const O=D.nfl_teams[nx.opp],rk=s.pos==="RB"?O.rkrd:O.rkpd,N=Object.keys(D.nfl_teams).length;
+    if(rk)p.push((s.pos==="RB"?"bėgimo":"metimo")+" gynyba #"+rk+(rk>=N*3/4?" (silpna)":(rk<=N/4?" (stipri)":"")))}
+  if(nx&&nx.imp!=null){const d=nx.imp-(D.imp_avg||22);if(Math.abs(d)>=1.5)p.push("komandos laukiami taškai "+f1(nx.imp)+(d>0?" (aukšti)":" (žemi)"))}
+  if(alt)p.push("geriau nei "+alt.name+" ("+f1(eff(alt.id))+")");
+  return p.join(" · ")}
+function vLineup(v){
+  const all=[...L.roster.map(r=>r.id),...L.bench].filter(i=>D.stats[i]),rec=assignSlots(all),cur=L.roster.map(r=>r.id).filter(i=>D.stats[i]);
+  const recIds=new Set(rec.map(r=>r.id)),curIds=new Set(cur),sumR=rec.reduce((a,r)=>a+eff(r.id),0),sumC=cur.reduce((a,i)=>a+eff(i),0);
+  const ins=rec.filter(r=>!curIds.has(r.id)),outs=cur.filter(i=>!recIds.has(i));
+  v.append(el("h3","","Siūloma sudėtis · "+L.team+" · "+D.week+" savaitė"));
+  v.append(el("p","hint","Sudėtis parinkta pagal šios savaitės projekciją: Out/IR žaidėjai neįskaičiuojami, Doubtful skaičiuojama ×0,4, Questionable ×0,93, bye = 0. Šalia matai varžovo gynybą (sezono vieta ir jardai, L3 = paskutinės 3 rungtynės) bei komandos laukiamus taškus pagal spread/total. Pirmiausia vertink „Kodėl“ stulpelį."));
+  const sum=el("div","lsum");
+  [["Siūloma suma",f1(sumR)+" tšk.",""],["Dabartinė (Sleeper)",f1(sumC)+" tšk.",""],["Skirtumas",(sumR-sumC>=0.05?"+":"")+f1(Math.abs(sumR-sumC)<0.05?0:sumR-sumC)+" tšk.",sumR-sumC>0.05?"up":""]].forEach(([a,b,c])=>{const d=el("div","lbox");d.append(el("small","",a),el("b",c,b));sum.append(d)});
+  v.append(sum);
+  if(!ins.length&&!outs.length)v.append(el("p","live","Dabartinė sudėtis jau yra optimali pagal šią projekciją, keisti nieko nereikia."));
+  else{const bx=el("div","lchg");bx.append(el("b","","Siūlomi pakeitimai: "));
+    const pu=new Set();ins.forEach(r=>{const fr=outs.filter(i=>!pu.has(i)),o=fr.find(i=>D.stats[i].pos===D.stats[r.id].pos)||fr[0];if(o)pu.add(o);const sp=el("span","tb s2");sp.textContent="＋ "+nm(r.id)+(o?" vietoj "+nm(o)+" ("+(eff(r.id)-eff(o)>=0?"+":"")+f1(eff(r.id)-eff(o))+" tšk.)":"");bx.append(sp)});
+    outs.filter(i=>!ins.length).forEach(i=>bx.append(el("span","tb s3","− "+nm(i))));v.append(bx)}
+  const warn=cur.filter(i=>STF(D.stats[i])<1||D.stats[i].opp==="BYE");
+  if(warn.length)v.append(el("p","live","Dėmesio dabartiniame starteryje: "+warn.map(i=>nm(i)+" ("+(D.stats[i].opp==="BYE"?"bye":D.stats[i].status)+")").join(", ")+"."));
+  const tw=el("div","tw"),tb=el("table","st"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);
+  const H={"Proj.":"Šios savaitės projekcija (modelis ir Sleeper pusiau), pritaikyta pagal sužeidimo statusą.","Varžovo gynyba":"Kiek jardų per rungtynes varžovas leidžia bėgimu (Bėg.) ir metimu (Met.), # = vieta tarp komandų (aukštesnė = silpnesnė gynyba). Mėlyna = silpna gynyba (gerai tau), raudona = stipri. Paryškinta eilutė svarbiausia tavo žaidėjo pozicijai. L3 = paskutinės 3 rungtynės.","Laukiami taškai":"Komandos laukiami taškai (implied team total) iš spread ir total: kuo daugiau, tuo daugiau galimybių žaidėjui. Palyginta su lygos vidurkiu."};
+  [["Slotas","l"],["Žaidėjas","l"],["Proj.",""],["Varžovo gynyba","l"],["Laukiami taškai",""],["Kodėl","l"],["Dabar","l"]].forEach(([t,c])=>{const th=el("th",c,t);if(H[t]){th.style.cursor="help";hover(th,()=>{const d=el("div");d.append(el("h5","",t),el("p","",H[t]));return d})}hr.append(th)});
+  const benchSorted=all.filter(i=>!recIds.has(i)).sort((a,b)=>eff(b)-eff(a));
+  rec.forEach(r=>{const s=D.stats[r.id],tr=el("tr"),isNew=!curIds.has(r.id);
+    const alt=benchSorted.find(i=>(ELIG[D.stats[i].pos]||[]).includes(r.slot));
+    const c1=el("td","l",r.slot),c2=el("td","l");c2.append(nameB(r.id),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")));
+    const c3=el("td");const t1=el("span","tr1"),f=el("i");f.style.width=Math.min(100,Math.max(0,eff(r.id))/MAXP*100+"%");t1.append(f);c3.append(t1,document.createTextNode(f1(eff(r.id))));
+    c3.className="hv";hover(c3,()=>fpTip(s));
+    const c6=el("td","l why",whyText(r.id,alt&&eff(alt)>0&&eff(alt)<eff(r.id)?{name:D.stats[alt].name,id:alt}:null));
+    const c7=el("td","l");c7.append(isNew?el("span","tb s2","naujas"):el("span","tb","jau starteryje"));
+    tr.append(c1,c2,c3,defCell(s),teamPtsCell(s),c6,c7);body.append(tr)});
+  v.append(tw);
+  v.append(el("p","sub","Suolas · kodėl nepaimti"));
+  const bw=el("div","tw"),bt=el("table","st"),bh=el("tr"),bb=el("tbody");bt.append(el("thead"),bb);bt.firstChild.append(bh);bw.append(bt);
+  [["Žaidėjas","l"],["Proj.",""],["Varžovo gynyba","l"],["Laukiami taškai",""],["Priežastis","l"]].forEach(([t,c])=>bh.append(el("th",c,t)));
+  benchSorted.slice(0,6).forEach(i=>{const s=D.stats[i],tr=el("tr");
+    const slotRec=rec.filter(r=>(ELIG[s.pos]||[]).includes(r.slot)).sort((a,b)=>eff(a.id)-eff(b.id))[0];
+    let why;if(s.opp==="BYE")why="Bye savaitė.";else if(OUTS.includes(s.status))why="Sužeistas ("+s.status+").";
+    else if(slotRec)why="Silpniausias tinkamas starteris "+nm(slotRec.id)+" turi "+f1(eff(slotRec.id))+" vs "+f1(eff(i))+(STF(s)<1?" (sumažinta dėl statuso "+s.status+")":"")+".";else why="Nėra laisvo tinkamo sloto.";
+    const c1=el("td","l");c1.append(nameB(i),el("small","",s.pos+" · "+s.team+" · "+(s.opp||"")));
+    tr.append(c1,el("td","",f1(eff(i))),defCell(s),teamPtsCell(s),el("td","l why",why));bb.append(tr)});
+  v.append(bw)}
+
+
+/* ===== Lygos taškų sistema: perskaičiuoja visus žaidėjų taškus pagal pasirinktos lygos Sleeper nustatymus ===== */
+const SFIELD={pass_yd:"pyd",pass_td:"ptd",pass_int:"int",rush_yd:"ryd",rush_td:"rtd",rec:"rec",rec_yd:"recyd",rec_td:"rectd",pass_cmp:"cmp",pass_att:"patt"};
+function adjG(s,sc){
+  if(!s.gp)return 0;let t=0;
+  for(const [k,v] of Object.entries(sc.d||{}))t+=v*(k==="pass_inc"?((s.patt||0)-(s.cmp||0)):(s[SFIELD[k]]||0));
+  t+=((sc.recpos||{})[s.pos]||0)*(s.rec||0);return t/s.gp}
+function applyScoring(){
+  if(!D._orig)D._orig=JSON.parse(JSON.stringify(D.stats));
+  D.stats=JSON.parse(JSON.stringify(D._orig));
+  const sc=L.score;if(!sc||(!Object.keys(sc.d||{}).length&&!Object.keys(sc.recpos||{}).length))return;
+  const r1=x=>Math.round(x*10)/10;
+  Object.values(D.stats).forEach(s=>{const a=adjG(s,sc);if(!a)return;
+    s.avg=r1(s.avg+a);s.l3=r1(s.l3+a);s.total=r1(s.total+a*s.gp);if(s.last)s.last=r1(s.last+a);
+    s.weeks=(s.weeks||[]).map(w=>w?r1(w+a):w);
+    (s.fut||[]).forEach(x=>{if(x.p>0)x.p=Math.max(0,r1(x.p+a))});
+    if(s.model>0)s.model=Math.max(0,r1(s.model+a));if(s.sl>0)s.sl=Math.max(0,r1(s.sl+a));
+    s.proj=s.fut&&s.fut[0]?s.fut[0].p:s.proj;s.p3=r1((s.fut||[]).reduce((q,x)=>q+x.p,0))})}
+function scoreLine(){
+  const sc=L.score;if(!sc)return null;const p=el("p","live scl");
+  const t=(sc.txt||[]);p.append(el("b","","Taškų sistema (iš Sleeper): "),document.createTextNode(L.format?L.format.label+" · ":""));
+  p.append(document.createTextNode(t.length?"nuo standartinio PPR skiriasi: "+t.join(", ")+". Visos projekcijos, vidurkiai ir sudėtys šiame skirtuke perskaičiuoti pagal šią sistemą.":"standartinis PPR (QB TD 4, INT −2, priėmimas 1), perskaičiuoti nereikia."));
+  if((sc.ignored||[]).length)p.append(document.createTextNode(" Neįvertinta: "+sc.ignored.join(", ")+"."));return p}
 
 async function live(){
   liveTaken=null;liveAt=null;if(D.sample)return;
@@ -501,10 +599,10 @@ function vTeams(v){
 function draw(){
   const tabs=$("tabs");tabs.replaceChildren();
   TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw()};tabs.append(b)});
-  const v=$("view");v.replaceChildren();({roster:vRoster,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);
+  const v=$("view");v.replaceChildren();if(view!=="teams"){const sl=scoreLine();if(sl)v.append(sl)}({roster:vRoster,lineup:vLineup,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")))}
 async function pickLeague(i){
-  L=D.leagues[i];L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
+  L=D.leagues[i];applyScoring();L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
   L.teams.forEach(t=>{if(!t.mine)t.players.forEach(p=>owners[p]=t.name)});
   TR={partner:-1,get:[],give:[]};
   try{localStorage.setItem("lyga",L.id)}catch(e){}

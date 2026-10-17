@@ -282,6 +282,45 @@ def nfl_weeks_table(team_wk, sched):
     return out
 
 
+# Sleeper "pts_ppr" bazė (standartinis PPR): nuo jos skaičiuojami kiekvienos lygos taškų skirtumai
+BASE_SCORE = {"pass_yd": .04, "pass_td": 4, "pass_int": -2, "rush_yd": .1, "rush_td": 6, "rec": 1, "rec_yd": .1, "rec_td": 6,
+              "pass_cmp": 0, "pass_att": 0, "pass_inc": 0}
+SCORE_LBL = {"rec": "priėmimas", "pass_td": "QB TD", "pass_int": "INT", "pass_yd": "metimo jardas", "rush_yd": "bėgimo jardas",
+             "rec_yd": "priėmimo jardas", "rush_td": "bėgimo TD", "rec_td": "priėmimo TD", "pass_cmp": "pataikymas",
+             "pass_att": "metimo bandymas", "pass_inc": "nepataikymas"}
+# stat laukas data.json (žaidėjo sezono suma), pagal kurį skaičiuojamas taškų skirtumas
+STAT_FIELD = {"pass_yd": "pyd", "pass_td": "ptd", "pass_int": "int", "rush_yd": "ryd", "rush_td": "rtd", "rec": "rec",
+              "rec_yd": "recyd", "rec_td": "rectd", "pass_cmp": "cmp", "pass_att": "patt"}
+
+
+def league_score(lg):
+    """Lygos taškų sistemos skirtumai nuo standartinio PPR ir žmonėms suprantamas sąrašas."""
+    ss = lg.get("scoring_settings") or {}
+    d = {k: round(float(ss.get(k) or 0) - b, 4) for k, b in BASE_SCORE.items()}
+    d = {k: v for k, v in d.items() if v}
+    recpos = {p: round(float(ss.get("bonus_rec_" + p.lower()) or 0), 4) for p in ("RB", "WR", "TE") if ss.get("bonus_rec_" + p.lower())}
+    num = lambda x: ("%g" % x).replace(".", ",")
+    txt = [f"{SCORE_LBL[k]} {num(float(ss.get(k) or 0))}" for k in d]
+    txt += [f"{p} priėmimo premija +{num(v)}" for p, v in recpos.items()]
+    ignored = []
+    if any((ss.get(k) or 0) for k in ss if k.startswith("bonus_") and not k.startswith("bonus_rec_") or k.startswith("bonus_rec_yd")):
+        ignored.append("jardų bonusai (pvz. 100/200/300 yd)")
+    if any((ss.get(k) or 0) for k in ("rush_fd", "rec_fd", "pass_fd")): ignored.append("pirmų downų taškai")
+    return {"d": d, "recpos": recpos, "txt": txt, "ignored": ignored}
+
+
+def adj_per_game(x, sc):
+    """Taškų skirtumas per rungtynes (lyga minus standartinis PPR) pagal žaidėjo sezono sumas."""
+    gp = x.get("gp") or 0
+    if not gp: return 0.0
+    t = 0.0
+    for k, v in sc["d"].items():
+        if k == "pass_inc": t += v * ((x.get("patt") or 0) - (x.get("cmp") or 0))
+        else: t += v * (x.get(STAT_FIELD[k]) or 0)
+    t += sc["recpos"].get(x.get("pos"), 0) * (x.get("rec") or 0)
+    return t / gp
+
+
 def league_format(lg):
     ss, rp = lg.get("scoring_settings") or {}, lg.get("roster_positions") or []
     rec = ss.get("rec", 0) or 0
@@ -289,10 +328,8 @@ def league_format(lg):
     teams = int(lg.get("total_rosters") or 12)
     ppr = min((0, 0.5, 1), key=lambda x: abs(x - rec))
     notes = []
-    if rec not in (0, 0.5, 1): notes.append("Priėmimo taškai nestandartiniai, vertės apytikslės.")
-    if rec != 1: notes.append("Taškai skaičiuojami PPR sistema, o tavo lyga turi kitus priėmimo taškus.")
-    if (ss.get("pass_td") or 4) != 4: notes.append("QB TD ne 4 taškai: QB vertės gali būti netikslios.")
-    if (ss.get("bonus_rec_te") or 0) > 0: notes.append("Lygoje TE premija, kurios trade šaltinis neįvertina.")
+    if rec not in (0, 0.5, 1): notes.append("Priėmimo taškai nestandartiniai: trade vertės (FantasyCalc) apytikslės.")
+    if (ss.get("bonus_rec_te") or 0) > 0: notes.append("Lygoje TE premija: projekcijos ją įskaito, bet trade šaltinis (FantasyCalc) ne.")
     label = {0: "Standard", 0.5: "Half PPR", 1: "PPR"}[ppr] + f" · {'Superflex/2QB' if qbs == 2 else '1QB'} · {teams} komandų"
     return {"label": label, "qbs": qbs, "teams": teams, "ppr": ppr, "notes": notes}
 
@@ -360,7 +397,7 @@ def main():
                         "roster": [{"id": pid, "slot": slots[i] if i < len(slots) else "?"} for i, pid in enumerate(order) if pid and pid != "0" and pid in S],
                         "bench": [p for p in me["players"] if p not in me["starters"]],
                         "teams": teams, "values": {p: val(p) for p in S},
-                        "format": {"label": fmt["label"], "source": source, "notes": fmt["notes"]}})
+                        "format": {"label": fmt["label"], "source": source, "notes": fmt["notes"]}, "score": league_score(lg)})
 
     out = {"sample": False, "updated": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="minutes"),
            "season": season, "week": nxt, "stats_week": upto, "user": username, "stats": S, "leagues": leagues,
@@ -368,18 +405,23 @@ def main():
     with open(os.environ.get("DATA_OUT") or os.path.join(here, "data.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
     # Mažas failas agentui (data.json per didelis, skaitant jis apkirpimas): mano sudėtis ir geriausi laisvi žaidėjai kiekvienoje lygoje
-    def brief(pid, slot=None):
-        x = S[pid]
-        return {"name": x["name"], "pos": x["pos"], "team": x["team"], "status": x.get("status") or "", "slot": slot, "avg": x["avg"], "l3": x["l3"], "p3": x["p3"], "sos": x.get("sosx")}
+    def brief(pid, sc, slot=None):
+        x = S[pid]; adj = adj_per_game(x, sc)
+        n3 = sum(1 for f in x.get("fut", []) if f["p"] > 0)
+        return {"name": x["name"], "pos": x["pos"], "team": x["team"], "status": x.get("status") or "", "slot": slot,
+                "avg": round(x["avg"] + adj, 1) if x["gp"] else x["avg"], "l3": round(x["l3"] + adj, 1) if x["gp"] else x["l3"],
+                "p3": round(max(0.0, x["p3"] + adj * n3), 1), "sos": x.get("sosx")}
     ai = {"updated": out["updated"], "season": season, "week": nxt, "stats_week": upto, "leagues": []}
     for L_ in leagues:
+        sc = L_["score"]
         owned = {p for t in L_["teams"] for p in t["players"]}
         mine_ids = [r["id"] for r in L_["roster"]]
-        free = sorted((p for p in S if p not in owned and S[p]["pos"] in ("QB", "RB", "WR", "TE") and S[p]["p3"] > 0), key=lambda p: -S[p]["p3"])[:12]
-        ai["leagues"].append({"name": L_["name"], "format": L_["format"]["label"],
-                              "my_starters": [brief(r["id"], r["slot"]) for r in L_["roster"]],
-                              "my_bench": [brief(p, "BN") for p in L_["bench"] if p not in mine_ids],
-                              "top_free_agents": [brief(p) for p in free]})
+        bf = {p: brief(p, sc) for p in S if p not in owned and S[p]["pos"] in ("QB", "RB", "WR", "TE")}
+        free = sorted((p for p in bf if bf[p]["p3"] > 0), key=lambda p: -bf[p]["p3"])[:12]
+        ai["leagues"].append({"name": L_["name"], "format": L_["format"]["label"], "scoring": sc["txt"] or ["standartinis PPR"],
+                              "my_starters": [brief(r["id"], sc, r["slot"]) for r in L_["roster"]],
+                              "my_bench": [brief(p, sc, "BN") for p in L_["bench"] if p not in mine_ids],
+                              "top_free_agents": [bf[p] for p in free]})
     with open(os.path.join(here, "agent_input.json"), "w", encoding="utf-8") as f:
         json.dump(ai, f, ensure_ascii=False, separators=(",", ":"))
     print(f"OK: {len(leagues)} lygos, {len(S)} žaidėjų, komandų: {len(c.R)}, tvarkaraštis={bool(sched)}, Sleeper proj.={bool(sp)}")
