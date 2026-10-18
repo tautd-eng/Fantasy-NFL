@@ -2,7 +2,7 @@ name: Atnaujinti duomenis
 
 on:
   schedule:
-    - cron: "30 8 * * *"   # kasdien (UTC)
+    - cron: "45 5 * * *"   # kasdien 05:45 UTC (~08:45 Vilniaus vasarą, ~07:45 žiemą) – prieš naujienų agentą 09:48
     - cron: "0 12 * * 3"   # trečiadienį po waiver apdorojimo
     - cron: "0 15 * * 6"   # šeštadienį prieš sekmadienio rungtynes
     - cron: "0 10 * * 0"   # sekmadienio rytą prieš rungtynes
