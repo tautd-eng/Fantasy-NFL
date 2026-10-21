@@ -145,6 +145,7 @@ a{color:var(--blue2)}
         const n = (N.players || {})[r.player];
         const tags = [h('span', {class: 'tag' + (/Elitas|virš OVR/.test(r.auto) ? ' g' : /žemiau/i.test(r.auto) ? ' r' : '')}, r.auto)];
         if (n) tags.push(h('span', {class: 'tag k'}, n.action));
+        if (vmap[r.player] && vmap[r.player].flag) tags.push(h('span', {class: 'tag r'}, `${vmap[r.player].flag} · atributai #${vmap[r.player].predRank}`));
         const card = h('div', {class: 'pl'},
           h('div', {class: 'top'}, h('span', {class: 'nm'}, r.player), h('span', {class: 'ovr'}, r.ovr)),
           h('div', {class: 'meta'}, `${r.pos}${r.depth > 1 ? ' #' + r.depth : ''} · ${r.age} m. · ${devName[r.dev] || r.dev} · $${f1(r.capHitM)}M, ${r.yearsLeft} m.${r.releaseSaveM > 0 ? ' · atleidus +$' + f1(r.releaseSaveM) + 'M' : ''}`),
@@ -236,6 +237,7 @@ a{color:var(--blue2)}
           h('span', {}, 'Lygos vidurkis'), h('span', {}, String(b.mean)), h('span', {}, 'Pakaitinis lygis'), h('span', {}, `${b.repl} (20-as procentilis tarp startuolių)`),
           h('span', {}, 'Mažos imties korekcija'), h('span', {}, `+${b.K} vidutinių galimybių`),
           ...(b.ctx ? [h('span', {}, 'Konteksto korekcija'), h('span', {}, `${b.ctx.label}: ${b.ctx.perPoint >= 0.01 ? '±' + b.ctx.perPoint + ' per reitingo tašką' : 'poveikio beveik nėra'}`)] : []),
+          ...(b.sys ? [h('span', {}, 'Gynybos sistema'), h('span', {}, `atimtas komandos schemos efektas (atributais nepaaiškinta komandos gynėjų dalis; sklaida ±${b.sys.spread} SD)`)] : []),
           ...(b.volAdj ? [h('span', {}, 'Apimtis'), h('span', {}, 'žaidimo laikas normalizuotas pagal komandos ' + (g === 'HB' ? 'nešimų' : g === 'QB' ? 'metimų + sack\'ų' : 'metimų') + ' kiekį')] : []),
           h('span', {}, 'OVR paaiškina'), h('span', {}, `${Math.round(b.r2ovr * 100)}% efektyvumo skirtumų`))));
       // lyderiai
@@ -250,12 +252,23 @@ a{color:var(--blue2)}
         h('div', {class: 'stats'}, p.line),
         h('div', {class: 'tags'}, h('span', {class: 'tag'}, `efekt. ${p.eff}${p.effAdj !== p.eff ? ' → ' + p.effAdj : ''}`), g !== 'K' && !['EDGE', 'DT', 'LB', 'CB', 'S'].includes(g) ? h('span', {class: 'tag'}, `${p.oppPg}/rungt.`) : null,
           p.ctx && Math.abs(p.ctx) >= 0.05 ? h('span', {class: 'tag'}, `kontekstas ${f2s(p.ctx)}`) : null,
+          p.sys && Math.abs(p.sys) >= 0.3 ? h('span', {class: 'tag'}, `sistema ${f2s(-p.sys)}`) : null,
+          p.flag ? h('span', {class: 'tag r'}, `${p.flag} · atributai #${p.predRank}`) : null,
           h('span', {class: 'tag ' + (p.perGame >= 0 ? 'g' : 'r')}, `${f2s(p.perGame)}/rungt.`), h('span', {class: 'tag k'}, `sezonas ${p.season >= 0 ? '+' : ''}${Math.round(p.season)}`),
           h('span', {class: 'tag ' + (p.overOvr >= 0.5 ? 'g' : p.overOvr <= -0.5 ? 'r' : '')}, `virš OVR ${f2s(p.overOvr)}`))))); };
       render(showN);
       const more = h('button', {class: 'chip', style: 'width:100%;margin-top:4px'}, 'Rodyti daugiau'); let n = showN; more.onclick = () => { n += 15; render(n); };
-      lc.append(h('p', {class: 'note'}, 'Mėlynu rėmeliu – tavo komandos žaidėjai (rodomi visada). „efekt. A → B“: tikras efektyvumas → po mažos imties ir konteksto korekcijos. „kontekstas“ – kiek pridėta / atimta dėl QB kokybės.'), list, more);
+      lc.append(h('p', {class: 'note'}, 'Mėlynu rėmeliu – tavo komandos žaidėjai (rodomi visada). „efekt. A → B“: tikras efektyvumas → po mažos imties ir konteksto korekcijos. „kontekstas“ – kiek pridėta / atimta dėl QB kokybės, „sistema“ – dėl komandos gynybos schemos.'), list, more);
       box.append(lc);
+      if (b.hidden && b.hidden.length) {
+        const hc = h('div', {class: 'card'}, h('h3', {}, 'Paslėpti talentai'), h('p', {class: 'note'}, 'Atributai žada lygos viršų (top 35 %), bet produkcija apatinėje pusėje, o žaidimo laikas mažas: atsarginis, rotacija ar praleistos rungtynės. Dažnai tai vaidmens, ne gebėjimų problema – pigūs mainų taikiniai.'));
+        b.hidden.map(nm => rowsAll.find(p => p.player === nm)).filter(Boolean).forEach(p => hc.append(h('div', {class: 'pl', style: p.mine ? 'border-color:var(--blue2);background:#f5f8ff' : ''},
+          h('div', {class: 'top'}, h('span', {class: 'nm'}, p.player), h('span', {class: 'ovr'}, p.ovr)),
+          h('div', {class: 'meta'}, `${p.pos} · ${p.team}${p.nowTeam !== p.team ? ' → ' + p.nowTeam : ''} · ${p.age} m. · $${f1(p.capHitM)}M · ${p.games} rungt.`),
+          h('div', {class: 'tags'}, h('span', {class: 'tag g'}, `atributai #${p.predRank}`), h('span', {class: 'tag r'}, `produkcija #${p.rank}`), h('span', {class: 'tag'}, `vaidmuo ${Math.round(p.role * 100)}% startuolio`)),
+          h('div', {class: 'stats'}, p.line))));
+        box.append(hc);
+      }
       // atributai
       const ac = h('div', {class: 'card'}, h('h3', {}, 'Kas lemia vertę'));
       const sk = ['QB', 'HB', 'WR', 'TE', 'P'].includes(g);

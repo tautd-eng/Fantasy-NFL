@@ -13,7 +13,7 @@ GROUP = {"QB": "QB", "HB": "HB", "WR": "WR", "TE": "TE", "LEDGE": "EDGE", "REDGE
          "MIKE": "LB", "WILL": "LB", "SAM": "LB", "CB": "CB", "FS": "S", "SS": "S", "K": "K", "P": "P"}
 ATT = {
     "QB": "aware,throwAccShort,throwAccMid,throwAccDeep,throwPower,throwUnderPressure,throwOnRun,playAction,breakSack,speed,agility",
-    "HB": "speed,accel,agility,changeOfDirection,breakTackle,bCV,jukeMove,spinMove,stiffArm,truck,carry,aware,catch,strength",
+    "HB": "speed,accel,agility,changeOfDirection,breakTackle,bCV,jukeMove,spinMove,stiffArm,truck,carry,aware,catch,strength,tough,injury",
     "WR": "speed,accel,agility,changeOfDirection,release,routeRunShort,routeRunMed,routeRunDeep,catch,cIT,specCatch,jump,aware",
     "TE": "speed,release,routeRunShort,routeRunMed,routeRunDeep,catch,cIT,specCatch,aware,strength,breakTackle,jump",
     "EDGE": "speed,accel,agility,strength,powerMoves,finesseMoves,blockShed,pursuit,tackle,playRec,aware,hitPower",
@@ -32,7 +32,7 @@ NAMES = {"aware": "Awareness", "throwAccShort": "Short Acc", "throwAccMid": "Mid
          "routeRunDeep": "Deep Route", "cIT": "Catch in Traffic", "specCatch": "Spectacular Catch", "jump": "Jumping", "powerMoves": "Power Moves",
          "finesseMoves": "Finesse Moves", "blockShed": "Block Shedding", "pursuit": "Pursuit", "tackle": "Tackle", "playRec": "Play Recognition",
          "hitPower": "Hit Power", "zoneCover": "Zone Coverage", "manCover": "Man Coverage", "press": "Press", "height": "Ūgis",
-         "weight": "Svoris", "age": "Amžius", "kickPower": "Kick Power", "kickAcc": "Kick Accuracy"}
+         "weight": "Svoris", "age": "Amžius", "kickPower": "Kick Power", "kickAcc": "Kick Accuracy", "tough": "Toughness", "injury": "Injury"}
 DEV = ["N", "Star", "SS", "XF"]
 
 # formulės (rodomos puslapyje)
@@ -109,7 +109,7 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
                      rcOvr=np.mean([f((P.get(str(x.get("player__rosterId"))) or {}).get("playerBestOvr")) for x in rc]) if rc else np.nan,
                      passAtt=sum(f(x.get("passTotalAtt")) for x in ps) / gms,
                      db=sum(f(x.get("passTotalAtt")) + f(x.get("passTotalSacks")) for x in ps) / gms,
-                     rushAtt=sum(f(x.get("rushTotalAtt")) for x in rs) / gms)
+                     rushAtt=sum(f(x.get("rushTotalAtt")) for x in rs) / gms, games=gms)
     lgv = {k: np.nanmean([v[k] for v in TC.values()]) for k in ["passAtt", "db", "rushAtt"]} if TC else {}
     CTXKEY = {"QB": ("rcOvr", "receiverių (top 3) OVR"), "WR": ("qbRat", "QB Awareness + Mid Acc"), "TE": ("qbRat", "QB Awareness + Mid Acc"),
               "HB": ("qbRat", "QB Awareness + Mid Acc")}
@@ -179,6 +179,7 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
                    + 20 * g(de, "defTotalFumRec") + 20 * g(de, "defTotalTDs") + 30 * g(de, "defTotalSafeties")
                    - (4 * g(de, "defTotalCatchAllowed") if G in ("CB", "S") else 0))
             opp = games
+            r["tpg"] = g(de, "defTotalTackles") / max(games, 1)
             comps = {"Tackle'ai/rungt.": g(de, "defTotalTackles") / max(games, 1), "Sack'ai/rungt.": g(de, "defTotalSacks") / max(games, 1),
                      "INT+PD/rungt.": (g(de, "defTotalInts") + g(de, "defTotalDeflections")) / max(games, 1),
                      "FF/rungt.": g(de, "defTotalForcedFum") / max(games, 1)}
@@ -223,6 +224,54 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
         for r in ks:
             r["val"] = 3 * ((r["fgm"] - r["f50m"]) - (r["fga"] - r["f50a"]) * fg) + 4.5 * (r["f50m"] - r["f50a"] * f50) + (r["xpm"] - r["xpa"] * xp)
 
+    def attr_matrix(rows, G):
+        atts = ATT[G].split(",")
+        X = np.array([[f(r["p"].get(a + "Rating")) for a in atts] + [f(r["p"].get("height")), f(r["p"].get("weight")), f(r["p"].get("age"))] for r in rows])
+        names = atts + ["height", "weight", "age"]
+        keep = X.std(0) > 0
+        return X[:, keep], [n for n, k in zip(names, keep) if k]
+
+    def cv_pred(X, y, w, lam):
+        n = len(y)
+        idx = np.random.default_rng(3).permutation(n)
+        pred = np.zeros(n)
+        for k in range(5):
+            te = idx[k::5]
+            tr = np.setdiff1d(idx, te)
+            mu_ = np.average(X[tr], 0, w[tr])
+            sd_ = np.sqrt(np.average((X[tr] - mu_) ** 2, 0, w[tr]))
+            sd_[sd_ == 0] = 1
+            b_ = wridge(X[tr], y[tr], w[tr], lam)
+            pred[te] = np.average(y[tr], weights=w[tr]) + ((X[te] - mu_) / sd_) @ b_
+        return pred
+
+    def base_shr(rows, G):
+        K = FORMULA[G][3]
+        opp = np.array([r["opp"] for r in rows])
+        val = np.array([r["val"] for r in rows])
+        mu = val.sum() / opp.sum()
+        return (val + K * mu) / (opp + K), opp / (opp + K)
+
+    # gynybos sistemos (komandos) efektas: atributais nepaaiškinta dalis, sujungta per visas gynybos pozicijas
+    DEF = ("EDGE", "DT", "LB", "CB", "S")
+    team_eff, sys_spread = {}, None
+    if ctx:
+        pooled = {}
+        for G in DEF:
+            rows = raw.get(G, [])
+            if len(rows) < 20:
+                continue
+            shr0, rel0 = base_shr(rows, G)
+            X0, _ = attr_matrix(rows, G)
+            pr = cv_pred(X0, shr0, rel0, max(3.0, len(rows) * 0.05))
+            sd0 = float(np.sqrt(np.average((shr0 - np.average(shr0, weights=rel0)) ** 2, weights=rel0))) or 1
+            for i, r in enumerate(rows):
+                if rel0[i] >= 0.6:
+                    pooled.setdefault(r["team"], []).append((shr0[i] - pr[i]) / sd0)
+        team_eff = {t: sum(v) / (len(v) + 6) for t, v in pooled.items()}  # sutraukta link 0
+        if team_eff:
+            sys_spread = round(float(np.std(list(team_eff.values()))), 2)
+
     for G, rows in raw.items():
         if len(rows) < 8:
             continue
@@ -252,6 +301,11 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
             vk = VOLKEY[G]
             fac = np.array([lgv[vk] / max(TC.get(r["team"], {}).get(vk, lgv[vk]), 1) for r in rows])
             opg = opg * fac
+        sys_adj = np.zeros(len(rows))
+        if ctx and G in DEF and team_eff:
+            sd_g = float(np.sqrt(np.average((shr - np.average(shr, weights=rel)) ** 2, weights=rel))) or 1
+            sys_adj = np.array([team_eff.get(r["team"], 0.0) * sd_g for r in rows])
+            shr = shr - sys_adj
         # pakaitinis: 20 procentilis tarp startuolių (daugiausia galimybių turintys N×komandų)
         n_start = starters_per_team.get(G, 1) * 32
         order = np.argsort(-opp)[:n_start]
@@ -274,15 +328,34 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
                               games=int(games[i]), opp=round(float(opp[i]), 1), oppPg=round(float(opp[i] / games[i]), 1),
                               eff=round(float(val[i] / opp[i]), 2), effAdj=round(float(shr[i]), 2), perGame=round(float(pgv[i]), 2),
                               season=round(float(sv[i]), 1), rank=int(rank_sv[i]), overOvr=round(float(over[i] / sd_shr), 2),
-                              rel=round(float(rel[i]), 2), line=r["line"], mine=now_team(p) == myteam, ctx=round(float(-ctx_adj[i]), 2)))
+                              rel=round(float(rel[i]), 2), line=r["line"], mine=now_team(p) == myteam, ctx=round(float(-ctx_adj[i]), 2),
+                              sys=round(float(sys_adj[i]), 2)))
         prows.sort(key=lambda x: -x["season"])
         # atributai
-        atts = ATT[G].split(",")
-        X = np.array([[f(r["p"].get(a + "Rating")) for a in atts] + [f(r["p"].get("height")), f(r["p"].get("weight")), f(r["p"].get("age"))] for r in rows])
-        names = atts + ["height", "weight", "age"]
-        keep = X.std(0) > 0
-        X, names = X[:, keep], [n for n, k in zip(names, keep) if k]
+        X, names = attr_matrix(rows, G)
         lam = max(3.0, len(rows) * 0.05)
+        # paslėpti talentai: atributai žada daug, bet vaidmuo / žaidimo laikas mažas
+        hidden = []
+        if G not in ("K", "P") and len(rows) >= 20:
+            pred = cv_pred(X, shr, rel, lam)
+            pred_rank = np.argsort(np.argsort(-pred)) + 1
+            if G in DEF:
+                inv = np.array([r.get("tpg", 0) for r in rows])
+            else:
+                inv = opp / games
+            top_idx = np.argsort(-(inv * games))[:starters_per_team.get(G, 1) * 32]
+            role = inv / (np.median(inv[top_idx]) or 1)
+            gsh = np.array([min(1.0, games[i] / max(TC.get(r["team"], {}).get("games", 17), 1)) for i, r in enumerate(rows)])
+            n_ = len(rows)
+            for i, r in enumerate(rows):
+                pi = next(x for x in prows if x["player"] == r["p"].get("fullName") and x["team"] == r["team"])
+                pi["predRank"] = int(pred_rank[i])
+                pi["role"] = round(float(role[i]), 2)
+                limited = role[i] < 0.6 or gsh[i] < 0.75
+                if pred_rank[i] <= 0.35 * n_ and pi["rank"] >= 0.5 * n_ and limited:
+                    pi["flag"] = "ribotas vaidmuo"
+                    hidden.append(pi["player"])
+            hidden.sort(key=lambda nm: next(x["predRank"] for x in prows if x["player"] == nm))
         beta = wridge(X, shr, rel, lam)
         rng = np.random.default_rng(1)
         cnt = np.zeros(len(names))
@@ -318,7 +391,8 @@ def build(players, stats, myteam, starters_per_team, ctx=True):
                 continue
             cs = sorted([(NAMES.get(n, n), wcorr(X[:, k], y, rel)) for k, n in enumerate(names)], key=lambda t: -abs(t[1]))[:3]
             comps.append(dict(metric=cname, drivers=" · ".join(f"{n} {c:+.2f}" for n, c in cs), withEff=round(wcorr(y, shr, rel), 2)))
-        out[G] = dict(ctx=ctxinfo, volAdj=bool(ctx and G in VOLKEY), label=label, oppLabel=oplabel, formula=formula, K=K, mean=round(float(mu), 2), repl=round(repl, 2),
+        out[G] = dict(hidden=hidden, sys=dict(spread=sys_spread, teams={t: round(float(v), 2) for t, v in sorted(team_eff.items(), key=lambda kv: -kv[1])}) if (ctx and G in DEF and team_eff) else None,
+                      ctx=ctxinfo, volAdj=bool(ctx and G in VOLKEY), label=label, oppLabel=oplabel, formula=formula, K=K, mean=round(float(mu), 2), repl=round(repl, 2),
                       n=len(rows), r2ovr=round(wcorr(ovr, shr, rel) ** 2, 2), players=prows, attrs=attrs, tierAttr=top["attribute"],
                       tiers=tiers, comps=comps)
     return out
