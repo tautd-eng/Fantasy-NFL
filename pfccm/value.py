@@ -44,7 +44,7 @@ FORMULA = {
     "EDGE": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
     "DT": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
     "LB": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
-    "CB": ("sutaupyti jardai per rungtynes", "rungtynės", "INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3; tackle 2, leistas sugavimas −4 (tackle pakoreguotas pagal komandos apimtį)", 4),
+    "CB": ("sutaupyti jardai per rungtynes", "rungtynės", "INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 2, leistas sugavimas −4 (tackle pakoreguotas pagal komandos apimtį)", 4),
     "S": ("sutaupyti jardai per rungtynes", "rungtynės", "INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3; leistas sugavimas −4 (tackle pakoreguotas pagal komandos apimtį)", 4),
     "K": ("taškai per rungtynes virš vidurkio", "rungtynės", "FG pataikymas virš lygos vidurkio × 3 (50+ jardų ×1.5) + XP virš vidurkio", 4),
     "P": ("grynieji jardai per spyrį", "spyriai/rungt.", "grynieji jardai per spyrį + 5 × spyriai į 20 jardų zoną / spyriai", 30),
