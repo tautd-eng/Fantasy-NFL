@@ -130,6 +130,37 @@ table.st th{cursor:default}table.st td small{display:block}table.st .chips{displ
 .scl{border-left:3px solid var(--blue);padding:4px 10px;background:#f4f8ff;color:var(--tx)}.lsum{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 12px}.lbox{border:1px solid var(--line);border-top:3px solid var(--blue);padding:6px 14px;background:#fff}.lbox small{display:block;color:var(--mu);font-size:.72rem}.lbox b{font-size:1.15rem}.lbox b.up{color:var(--blue)}
 .lchg{margin:0 0 10px}.dfc{display:block;white-space:nowrap;font-size:.76rem;padding:1px 6px;margin-bottom:2px;border-left:3px solid var(--line)}.dfc.key{font-weight:700}.dfc.dh{border-left-color:var(--blue);background:#e4eeff}.dfc.dl{border-left-color:var(--red);background:#fde0e4}.dfc small{display:inline;margin-left:6px;color:var(--mu)}
 table.st td.why{white-space:normal!important;word-break:normal;font-size:.78rem;min-width:220px;max-width:30ch;line-height:1.35}td b.up{color:var(--blue)}td b.dn{color:var(--red)}
+
+@media(max-width:700px){
+body{font-size:14.5px}
+header{padding:12px 14px 10px}h1{font-size:1.3rem}.meta{font-size:.72rem;margin-top:3px}
+.top{gap:8px}.pick{width:100%}.pick select{width:100%}
+.banner{padding:8px 14px;font-size:.8rem}
+main{padding:0 14px 40px}
+.tabs{position:sticky;top:0;z-index:30;background:#fff;margin:0 -14px 12px;padding:0 4px;scrollbar-width:none;scroll-snap-type:x proximity}.tabs::-webkit-scrollbar{display:none}
+.tabs button{padding:12px 11px;font-size:.86rem;scroll-snap-align:center}
+select,input[type=search],input[type=number],input[type=password],textarea{font-size:16px}
+h3{font-size:1.05rem;margin-top:4px}
+details.how{padding:8px 11px;margin:0 0 10px;font-size:.82rem}details.how>.hint{margin:6px 0 0;max-width:none}
+.live{font-size:.76rem}
+.seg{flex-wrap:wrap}.filters{gap:8px}
+.mx th,.mx td{padding:2px 4px;font-size:.7rem;white-space:normal}.mx td small{display:block;margin-left:0}.mx{table-layout:fixed}
+.lsum{gap:6px}.lbox{padding:5px 10px;flex:1 1 30%}.lbox b{font-size:1rem}
+.tw:has(table.cards){border:0;background:none;overflow:visible}
+table.cards{min-width:0;width:100%}table.cards thead{display:none}
+table.cards,table.cards tbody,table.cards tr{display:block;width:100%}
+table.cards tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:8px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);margin:0 0 10px;padding:8px 10px}
+table.cards td{display:block;width:100%;padding:4px 0;border:0;text-align:left!important;white-space:normal;background:none!important;box-shadow:none}
+table.cards td::before{content:attr(data-label);display:block;color:var(--mu);font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+table.cards td[data-label=""]::before{display:none}
+table.cards td.ttl{font-size:1rem;border-bottom:1px solid var(--line);padding-bottom:6px;margin-bottom:4px}table.cards td.ttl::before{display:none}
+table.cards td{width:auto!important;max-width:none!important}table.cards td .tb{max-width:100%}table.cards td:not(.sh){grid-column:1/-1}table.cards td.sh{width:auto}table.cards td.ttl{order:-1}
+table.cards td.why{max-width:none;min-width:0;font-size:.8rem}
+table.cards td small{display:inline;margin-left:6px}
+table.cards .tr1{width:44px}
+table.dense th:first-child,table.dense td:first-child{position:sticky;left:0;z-index:2;background:#fff}table.dense th:first-child{background:#000}
+.tip{font-size:.78rem}
+}
 </style>
 </head>
 <body>
@@ -418,6 +449,22 @@ function scoreLine(){
   p.append(document.createTextNode(t.length?"nuo standartinio PPR skiriasi: "+t.join(", ")+". Visos projekcijos, vidurkiai ir sudėtys šiame skirtuke perskaičiuoti pagal šią sistemą.":"standartinis PPR (QB TD 4, INT −2, priėmimas 1), perskaičiuoti nereikia."));
   if((sc.ignored||[]).length)p.append(document.createTextNode(" Neįvertinta: "+sc.ignored.join(", ")+"."));return p}
 
+/* ===== Telefono režimas ===== */
+const MOB=()=>matchMedia("(max-width:700px)").matches;
+function mobilize(v){
+  if(!MOB())return;
+  v.querySelectorAll(".tw table").forEach(t=>{
+    if(t.classList.contains("dense"))return;
+    const th=[...t.querySelectorAll("thead th")].map(x=>x.textContent.trim());t.classList.add("cards");
+    t.querySelectorAll("tbody tr").forEach(tr=>[...tr.children].forEach((td,i)=>{
+      const lab=th[i]||"";td.dataset.label=lab;
+      if(/^(Žaidėjas|Komanda)$/.test(lab))td.classList.add("ttl");
+      else if(td.textContent.trim().length<=16&&!td.querySelector(".chips,.dfc,.spark"))td.classList.add("sh")}))});
+  v.querySelectorAll(":scope>p.hint").forEach(h=>{const d=el("details","how");h.replaceWith(d);d.append(el("summary","","Kaip tai skaityti"),h)});
+  v.querySelectorAll(":scope>p.scl").forEach(h=>{const d=el("details","how");h.replaceWith(d);
+    const t=(L.score&&L.score.txt)||[];d.append(el("summary","","Taškų sistema: "+(t.length?"skiriasi nuo PPR ("+t.length+")":"standartinis PPR")),h)})}
+matchMedia("(max-width:700px)").addEventListener("change",()=>{if(typeof L!=="undefined"&&L)draw()});
+
 async function live(){
   liveTaken=null;liveAt=null;if(D.sample)return;
   try{const [r,u]=await Promise.all([fetch("https://api.sleeper.app/v1/league/"+L.id+"/rosters"),fetch("https://api.sleeper.app/v1/league/"+L.id+"/users")]);
@@ -542,7 +589,7 @@ function vStats(v){
   const q=el("input");q.type="search";q.placeholder="Ieškoti pagal vardą";q.value=F.q;q.oninput=()=>{F.q=q.value;fill()};
   const bm=el("button","tog","Boom kandidatai");bm.title="Prognozė per savaitę ≥ 1 tšk. virš sezono vidurkio (stulpelis Kilimas), žaidėjas ne Out/IR";bm.onclick=()=>{F.boom=!F.boom;if(F.boom){F.sort="up";F.dir=-1}fill()};
   const cnt=el("span","count");bar.append(seg,fr,bm,own,q,cnt);
-  const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(bar,tw);
+  const tw=el("div","tw"),tb=el("table","dense"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(bar,tw);
   const val=(id,k)=>{const s=D.stats[id];return k==="name"?s.name:k==="owner"?ownerOf(id):k==="pos"||k==="team"?s[k]:C[k][1](s)};
   function fill(){
     btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.p===F.pos));bm.setAttribute("aria-pressed",!!F.boom);fr.setAttribute("aria-pressed",F.own==="Laisvas");
@@ -574,7 +621,7 @@ function vTeams(v){
   const info=el("span","mut");ctl.append(seg,el("span","mut","arba savaičių:"),ni,info);
   if(!hasW){ctl.querySelectorAll("button,input").forEach(x=>x.disabled=true);info.textContent="Savaitinių duomenų dar nėra: paleisk Actions workflow, kad data.json gautų nfl_weeks."}
   v.append(ctl);
-  const tw=el("div","tw"),tb=el("table"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(tw);
+  const tw=el("div","tw"),tb=el("table","dense"),hr=el("tr"),body=el("tbody");tb.append(el("thead"),body);tb.firstChild.append(hr);tw.append(tb);v.append(tw);
   const rk={ro:"rkro",po:"rkpo",rd:"rkrd",pd:"rkpd"},q=(a,p)=>a.length?a[Math.floor(a.length*p)]:0;
   function fill(){
     const tv=teamView(hasW?TS.n:0),teams=tv.v;
@@ -598,8 +645,8 @@ function vTeams(v){
 
 function draw(){
   const tabs=$("tabs");tabs.replaceChildren();
-  TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw()};tabs.append(b)});
-  const v=$("view");v.replaceChildren();if(view!=="teams"){const sl=scoreLine();if(sl)v.append(sl)}({roster:vRoster,lineup:vLineup,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);
+  TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw();if(MOB())window.scrollTo(0,0)};tabs.append(b)});const sel=tabs.querySelector("[aria-selected=true]");if(sel&&MOB())sel.scrollIntoView({inline:"center",block:"nearest"});
+  const v=$("view");v.replaceChildren();if(view!=="teams"){const sl=scoreLine();if(sl)v.append(sl)}({roster:vRoster,lineup:vLineup,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);mobilize(v);
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")))}
 async function pickLeague(i){
   L=D.leagues[i];applyScoring();L._adv={};mine=new Set([...L.roster.map(r=>r.id),...L.bench]);owners={};
