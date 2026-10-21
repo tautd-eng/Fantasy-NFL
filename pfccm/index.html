@@ -234,7 +234,10 @@ a{color:var(--blue2)}
       box.append(h('div', {class: 'card'}, h('h3', {}, `${g}: kaip skaičiuojama`),
         h('div', {class: 'kv'}, h('span', {}, 'Efektyvumas'), h('span', {}, `${b.label}: ${b.formula}`), h('span', {}, 'Žaidimo laikas'), h('span', {}, b.oppLabel),
           h('span', {}, 'Lygos vidurkis'), h('span', {}, String(b.mean)), h('span', {}, 'Pakaitinis lygis'), h('span', {}, `${b.repl} (20-as procentilis tarp startuolių)`),
-          h('span', {}, 'Mažos imties korekcija'), h('span', {}, `+${b.K} vidutinių galimybių`), h('span', {}, 'OVR paaiškina'), h('span', {}, `${Math.round(b.r2ovr * 100)}% efektyvumo skirtumų`))));
+          h('span', {}, 'Mažos imties korekcija'), h('span', {}, `+${b.K} vidutinių galimybių`),
+          ...(b.ctx ? [h('span', {}, 'Konteksto korekcija'), h('span', {}, `${b.ctx.label}: ${b.ctx.perPoint >= 0.01 ? '±' + b.ctx.perPoint + ' per reitingo tašką' : 'poveikio beveik nėra'}`)] : []),
+          ...(b.volAdj ? [h('span', {}, 'Apimtis'), h('span', {}, 'žaidimo laikas normalizuotas pagal komandos ' + (g === 'HB' ? 'nešimų' : g === 'QB' ? 'metimų + sack\'ų' : 'metimų') + ' kiekį')] : []),
+          h('span', {}, 'OVR paaiškina'), h('span', {}, `${Math.round(b.r2ovr * 100)}% efektyvumo skirtumų`))));
       // lyderiai
       const lc = h('div', {class: 'card'}, h('h3', {}, 'Sezono vertė virš pakaitinio'));
       const showN = store.get('valShow', 10);
@@ -246,11 +249,12 @@ a{color:var(--blue2)}
         h('div', {class: 'meta'}, `${p.pos} · ${p.team}${p.nowTeam !== p.team ? ' → ' + p.nowTeam : ''} · ${p.age} m. · ${devName[p.dev] || p.dev} · $${f1(p.capHitM)}M · ${p.games} rungt.`),
         h('div', {class: 'stats'}, p.line),
         h('div', {class: 'tags'}, h('span', {class: 'tag'}, `efekt. ${p.eff}${p.effAdj !== p.eff ? ' → ' + p.effAdj : ''}`), g !== 'K' && !['EDGE', 'DT', 'LB', 'CB', 'S'].includes(g) ? h('span', {class: 'tag'}, `${p.oppPg}/rungt.`) : null,
+          p.ctx && Math.abs(p.ctx) >= 0.05 ? h('span', {class: 'tag'}, `kontekstas ${f2s(p.ctx)}`) : null,
           h('span', {class: 'tag ' + (p.perGame >= 0 ? 'g' : 'r')}, `${f2s(p.perGame)}/rungt.`), h('span', {class: 'tag k'}, `sezonas ${p.season >= 0 ? '+' : ''}${Math.round(p.season)}`),
           h('span', {class: 'tag ' + (p.overOvr >= 0.5 ? 'g' : p.overOvr <= -0.5 ? 'r' : '')}, `virš OVR ${f2s(p.overOvr)}`))))); };
       render(showN);
       const more = h('button', {class: 'chip', style: 'width:100%;margin-top:4px'}, 'Rodyti daugiau'); let n = showN; more.onclick = () => { n += 15; render(n); };
-      lc.append(h('p', {class: 'note'}, 'Mėlynu rėmeliu – tavo komandos žaidėjai (rodomi visada). „efekt. A → B“: tikras efektyvumas → po mažos imties korekcijos.'), list, more);
+      lc.append(h('p', {class: 'note'}, 'Mėlynu rėmeliu – tavo komandos žaidėjai (rodomi visada). „efekt. A → B“: tikras efektyvumas → po mažos imties ir konteksto korekcijos. „kontekstas“ – kiek pridėta / atimta dėl QB kokybės.'), list, more);
       box.append(lc);
       // atributai
       const ac = h('div', {class: 'card'}, h('h3', {}, 'Kas lemia vertę'));
