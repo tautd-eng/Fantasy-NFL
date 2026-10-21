@@ -161,6 +161,57 @@ table.cards .tr1{width:44px}
 table.dense th:first-child,table.dense td:first-child{position:sticky;left:0;z-index:2;background:#fff}table.dense th:first-child{background:#000}
 .tip{font-size:.78rem}
 }
+
+/* ---- mobile theme (PFCCM-style) ---- */
+.tabs button svg,.tabs button .sh{display:none}
+@media(max-width:700px){
+:root{--bg:#f6f7fb;--line:#e3e6ee;--blue:#0b3d91;--blue2:#2563eb;--navy:#0b3d91;--s2:#eef2fb;--s3:#e3e9f6}
+body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,Inter,"Segoe UI",Roboto,sans-serif}
+header{background:var(--blue);border-bottom:0;padding:calc(14px + env(safe-area-inset-top)) 16px 12px}
+h1{font-size:20px;letter-spacing:.2px}
+header .meta{color:#fff;opacity:.85;font-size:12.5px;margin-top:2px}
+header .pick{color:#fff;opacity:1;font-size:.72rem;margin-top:2px}
+header .pick select{border-radius:10px;border:0;min-height:38px}
+.banner{background:#1e3a8a}
+main{padding:12px 12px calc(86px + env(safe-area-inset-bottom))}
+select,input[type=search],input[type=number],input[type=password],textarea{border:1px solid var(--line);border-radius:10px}
+/* bottom tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;top:auto;margin:0;padding:0 0 env(safe-area-inset-bottom);background:#fff;border-top:1px solid var(--line);border-bottom:0;z-index:40;overflow:visible;justify-content:space-around;gap:0}
+.tabs button{flex:1;min-width:0;padding:8px 0 9px;font:500 10.5px/1.1 -apple-system,Inter,sans-serif;color:var(--mu);display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:none!important}
+.tabs button svg{display:block;width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected=true]{color:var(--blue);font-weight:700}
+.tabs button .lg{display:none}.tabs button .sh{display:inline}
+/* cards */
+h3{font-size:17px;margin:6px 4px 8px}
+.hint{margin:0 4px 10px}
+details.how{border-radius:12px;border:1px solid var(--line);border-left:1px solid var(--line);background:#fff;font-size:.8rem}
+details.how summary{color:var(--blue2);font-weight:600}
+.tw,.pl,.card,.trade,.pg,.builder,.aibox,.lbox,.sw>div,.focus,.cm,.scl{border-radius:12px}
+.pl,.card,.trade,.pg,.builder,.aibox{border:1px solid var(--line);border-left:1px solid var(--line);background:#fff}
+.pl.bn{background:#fff}
+.pg{border-left:4px solid var(--blue)}.pg.dn{border-left:4px solid var(--red)}
+table.cards tr{border:1px solid var(--line);border-left:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fff}
+table.cards tbody tr:nth-child(even){background:#fff}
+table.cards td.ttl{font-size:15.5px;font-weight:650}
+table.cards td::before{font-size:.64rem;color:var(--mu);letter-spacing:.03em}
+.tw:has(table.dense){border-radius:12px}
+th{background:var(--blue)}
+/* pills */
+.seg{gap:6px}.seg button,.pc,.lk,.tog,.clr,.btn,.act,.tb,.vd,.av,.tag,.slot,.bal,.chips span,.hl{border-radius:999px}
+.seg button{margin:0;padding:6px 13px;font:500 13px -apple-system,Inter,sans-serif;border:1px solid var(--line);background:#fff;color:var(--tx)}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.pc{border-color:var(--line);padding:5px 11px}
+.btn{background:var(--blue);padding:9px 16px}
+.tb{background:var(--s2);color:var(--blue);border:1px solid #dbe3f6;font-weight:500;padding:2px 9px}
+.tb.s3{background:#fdecef;color:var(--red);border-color:#f6c9d1}.tb.s2{background:#fdecef;color:var(--red);border-color:#f6c9d1}
+.act{padding:2px 10px}.act.add,.act.buy{background:var(--blue)}
+.slot{background:var(--blue);padding:2px 8px}
+.lbox{border-top:1px solid var(--line);padding:8px 12px}.lbox b{color:var(--blue)}
+.fp{border-radius:10px}
+.track,.tr1,.gb,.fill{border-radius:99px}
+.lsum{margin:4px 0 10px}
+.filters{margin:6px 0 10px}
+}
 </style>
 </head>
 <body>
@@ -172,6 +223,8 @@ table.dense th:first-child,table.dense td:first-child{position:sticky;left:0;z-i
 <main><div class="wrap"><div class="tabs" role="tablist" id="tabs"></div><div id="view"></div></div></main>
 <script>
 const MAXP=30;
+const SHORT={roster:"Sudėtis",lineup:"Startas",waiver:"Waiver",trade:"Trade",stats:"Statistika",teams:"NFL"};
+const ICO={roster:'<svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',lineup:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',waiver:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',trade:'<svg viewBox="0 0 24 24"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>',stats:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',teams:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16"/></svg>'};
 const TABS=[["roster","Sudėtis"],["lineup","Siūloma sudėtis"],["waiver","Waiver"],["trade","Trade"],["stats","Žaidėjų statistika"],["teams","NFL komandos"]];
 const ACT={hold:"HOLD",sell:"SELL",trade:"SVARSTYTI TRADE",add:"PRIDĖTI",buy:"PIRKTI"};
 const HOW=`<p><b>Projekcija artimiausiai savaitei</b> = ½ × <b>Modelis</b> + ½ × <b>Sleeper projekcija</b> (jei vieno šaltinio nėra, naudojamas kitas). <b>3 sav.</b> = trijų artimiausių savaičių suma (toliau už pirmą savaitę naudojamas tik modelis).</p><p><b>Taškų sistema.</b> Duomenys skaičiuojami pagal standartinį PPR, o puslapis kiekvienai lygai juos perskaičiuoja pagal jos Sleeper nustatymus (priėmimas, QB TD, INT, jardai, TE/RB/WR premijos). Skirtumas skaičiuojamas pagal žaidėjo sezono vidurkį per rungtynes, todėl tai apytikslis pataisymas. Jardų bonusai (100/200/300 yd) ir pirmų downų taškai neįvertinami.</p>
@@ -645,7 +698,7 @@ function vTeams(v){
 
 function draw(){
   const tabs=$("tabs");tabs.replaceChildren();
-  TABS.forEach(([k,t])=>{const b=el("button","",t);b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw();if(MOB())window.scrollTo(0,0)};tabs.append(b)});const sel=tabs.querySelector("[aria-selected=true]");if(sel&&MOB())sel.scrollIntoView({inline:"center",block:"nearest"});
+  TABS.forEach(([k,t])=>{const b=el("button","");b.innerHTML=(ICO[k]||"")+'<span class="lg">'+t+'</span><span class="sh">'+(SHORT[k]||t)+'</span>';b.title=t;b.setAttribute("role","tab");b.setAttribute("aria-selected",k===view);b.onclick=()=>{view=k;draw();if(MOB())window.scrollTo(0,0)};tabs.append(b)});const sel=tabs.querySelector("[aria-selected=true]");
   const v=$("view");v.replaceChildren();if(view!=="teams"){const sl=scoreLine();if(sl)v.append(sl)}({roster:vRoster,lineup:vLineup,waiver:vWaiver,trade:vTrade,stats:vStats,teams:vTeams})[view](v);mobilize(v);
   requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll(".fill").forEach(f=>f.style.width=f.dataset.w+"%")))}
 async function pickLeague(i){
