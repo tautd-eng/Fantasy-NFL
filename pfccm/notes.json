@@ -1,0 +1,265 @@
+{
+ "date": "2026-10-18",
+ "players": {
+  "Will Anderson Jr": {
+   "verdict": "Šerdis",
+   "action": "Laikyti",
+   "note": "Lygos elitas: 35% komandos sack'ų, 98 procentilis. Kaina atitinka."
+  },
+  "Derek Stingley Jr": {
+   "verdict": "Šerdis",
+   "action": "Laikyti",
+   "note": "97 procentilis tarp DB, daug kamuolio žaidimų."
+  },
+  "Nico Collins": {
+   "verdict": "Šerdis",
+   "action": "Laikyti",
+   "note": "33% komandos gaunamų jardų, 94 procentilis. Vienintelis tikras WR ginklas."
+  },
+  "Christian McCaffrey": {
+   "verdict": "Parduoti brangiai",
+   "action": "Mainyti",
+   "note": "95 procentilis, bet 31 m., liko 1 m., trade value 1045. Montgomery per bandymą dar efektyvesnis – parduoti už LT/REDGE, atlaisvina $16.9M."
+  },
+  "Kamari Lassiter": {
+   "verdict": "Šerdis, pigus",
+   "action": "Pratęsti",
+   "note": "91 procentilis už $2.9M, liko 1 m. – pratęsti dabar, kol pigu."
+  },
+  "Dre Greenlaw": {
+   "verdict": "Žemiau OVR",
+   "action": "Į rotaciją / mainyti",
+   "note": "87 OVR, bet 31 procentilis ir −0.93 virš konteksto: minimali produkcija. Atleidimas sutaupo tik $1.3M."
+  },
+  "Calen Bullock": {
+   "verdict": "Vidutiniškai",
+   "action": "Pratęsti pigiai",
+   "note": "57 procentilis, mažai INT. Jaunas ir pigus, liko 1 m."
+  },
+  "Jalen Pitre": {
+   "verdict": "Brangus gylis",
+   "action": "Mainyti / atleisti",
+   "note": "CB3 už $14.6M, vidutinė produkcija (52). Stingley + Lassiter dengia. Atleidimas sutaupo $9.5M."
+  },
+  "Azeez Al-Shaair": {
+   "verdict": "Gerai",
+   "action": "Laikyti",
+   "note": "71 procentilis, bet $22.3M; atleisti neapsimoka (bauda $52.5M)."
+  },
+  "Dalton Schultz": {
+   "verdict": "Silpniausia puolimo grandis",
+   "action": "Leisti išeiti",
+   "note": "14 procentilis, 7.9 jardo per sugavimą. Sutartis baigiasi, atleidimas nieko nesutaupo."
+  },
+  "Braden Smith": {
+   "verdict": "Gerai",
+   "action": "Laikyti sezonui",
+   "note": "RT 9-as lygoje, bet 31 m. ir PB 79. Atleidimas sutaupytų $8M – tik jei rasite pakaitalą."
+  },
+  "Ka'imi Fairbairn": {
+   "verdict": "Gerai",
+   "action": "Laikyti",
+   "note": "K 8-as lygoje."
+  },
+  "Reed Blankenship": {
+   "verdict": "Virš OVR",
+   "action": "Laikyti",
+   "note": "OVR tik 80, bet 77 procentilis ir +0.45 virš konteksto."
+  },
+  "Tank Dell": {
+   "verdict": "Žemiau OVR",
+   "action": "Rotacija",
+   "note": "24 procentilis, 10.7 jardo per sugavimą – WR2 grandis silpna."
+  },
+  "David Montgomery": {
+   "verdict": "Žaidžia virš OVR",
+   "action": "Pagrindinis HB, pratęsti trumpai",
+   "note": "96 procentilis, +1.54 virš konteksto – geriausias jūsų „OP“. 80 OVR už $9.3M."
+  },
+  "C.J. Stroud": {
+   "verdict": "Vidutiniškai",
+   "action": "Neskubėti su dideliu pratęsimu",
+   "note": "42 procentilis, bet atmetus silpną OL +0.46. Sack% 9.4 – vienas blogiausių; awareness 78 (QB vid. 82), breakSack 72 (vid. 80)."
+  },
+  "Jayden Higgins": {
+   "verdict": "Žemiau OVR",
+   "action": "Rotacija",
+   "note": "21 procentilis; 24 m., dar gali augti."
+  },
+  "Keylan Rutledge": {
+   "verdict": "Gerai",
+   "action": "Laikyti",
+   "note": "PB 86 – geriausias jūsų OL pass blokas."
+  },
+  "Wyatt Teller": {
+   "verdict": "Senstantis",
+   "action": "Pakeisti po sezono",
+   "note": "32 m., PB 75, liko 1 m."
+  },
+  "Renardo Green": {
+   "verdict": "Žemiau OVR",
+   "action": "Gylis",
+   "note": "11 procentilis, bet pigus CB4."
+  },
+  "Kayden McDonald": {
+   "verdict": "Žemiau OVR",
+   "action": "Rotacija",
+   "note": "14 procentilis; speed 65 – DL produkciją sim'e labiausiai lemia greitis. 22 m."
+  },
+  "Ed Ingram": {
+   "verdict": "Silpnas pass blokas",
+   "action": "Į suolą",
+   "note": "PB 74 – blogiausias tarp startuolių; Nwaiwu PB 83."
+  },
+  "Sheldon Rankins": {
+   "verdict": "Vidutiniškai",
+   "action": "Laikyti sezonui",
+   "note": "47 procentilis, 33 m., liko 1 m."
+  },
+  "Henry To'oTo'o": {
+   "verdict": "Virš OVR",
+   "action": "Startuoti WILL",
+   "note": "54 procentilis, +0.24 virš konteksto, XF, $4.1M – produktyvesnis už Greenlaw."
+  },
+  "Febechi Nwaiwu": {
+   "verdict": "Neišnaudotas",
+   "action": "Startuoti RG",
+   "note": "PB 83 > Ingram 74. Nemokamas pagerinimas."
+  },
+  "Uchenna Nwosu": {
+   "verdict": "Silpna grandis",
+   "action": "Pakeisti / atleisti",
+   "note": "REDGE 27-as lygoje. Atleidimas sutaupo $4.1M."
+  },
+  "Christian Wilkins": {
+   "verdict": "Mažai žaidė",
+   "action": "Atleisti",
+   "note": "<8 rungt. statistikos, 31 m. Atleidimas sutaupo $4.7M."
+  },
+  "Logan Hall": {
+   "verdict": "Brangus gylis",
+   "action": "Laikyti (atleisti neapsimoka)",
+   "note": "$9.1M, atleidimas nieko nesutaupo."
+  },
+  "E.J. Speed": {
+   "verdict": "Žemiau",
+   "action": "Gylis",
+   "note": "8 procentilis, bet SAM vaidmuo mažas."
+  },
+  "Aireontae Ersery": {
+   "verdict": "Silpniausia grandis",
+   "action": "Pakeisti",
+   "note": "LT 72 OVR – 30-as iš 32. Prioritetas Nr. 1."
+  }
+ },
+ "moves": [
+  {
+   "priority": "1",
+   "kind": "Nemokama",
+   "pos": "RG",
+   "move": "Nwaiwu startuoja vietoj Ingram",
+   "targets": "—",
+   "why": "PB 83 vs 74. Pastaba: komandų lygiu OL Pass Block sack'ų beveik nelemia – pagerinimas nemokamas, bet nedidelis",
+   "capM": "0"
+  },
+  {
+   "priority": "2",
+   "kind": "Nemokama",
+   "pos": "WILL",
+   "move": "To'oTo'o startuoja; Greenlaw į rotaciją",
+   "targets": "—",
+   "why": "To'oTo'o +0.24 virš konteksto; Greenlaw −0.93",
+   "capM": "0"
+  },
+  {
+   "priority": "3",
+   "kind": "Sprendimas",
+   "pos": "QB",
+   "move": "QB Awareness – pagrindinė pass puolimo problema",
+   "targets": "Bo Nix DEN 83 $5.9M 4 m. (CPU) · Caleb Williams CHI 92XF $12.6M · Michael Penix ATL 77 $7.3M (pasitikrinti Awareness)",
+   "why": "Stroud Awareness 78 (QB vid. 82). QB Awareness lemia ir ANY/A, ir sack% (r −0.59) labiau nei OL; Stroud sutartis baigiasi – geras momentas spręsti",
+   "capM": "—"
+  },
+  {
+   "priority": "4",
+   "kind": "Parduoti",
+   "pos": "HB",
+   "move": "Mainyti McCaffrey (31 m., 1 m. sutartis)",
+   "targets": "Už QB / REDGE + pick'ą",
+   "why": "Trade value 1045; Montgomery per bandymą dar geresnis (96 procentilis); atlaisvina $16.9M",
+   "capM": "+16.9"
+  },
+  {
+   "priority": "5",
+   "kind": "Mainai / FA",
+   "pos": "REDGE",
+   "move": "Antras pass rusher'is šalia Anderson",
+   "targets": "Malachi Lawrence DAL 85SS $4.6M (CPU) · Rueben Bain Jr. TB 84SS $5.4M · R Mason Thomas KC 82 $2.8M · Trey Moore MIA 73 $1.3M · FA: A.J. Epenesa 76 Star (prašo $4.9M) · FA: K'Lavon Chaisson 76 ($4.9M)",
+   "why": "REDGE 27-as; DL produkciją sim'e labiausiai lemia Speed ir Play Recognition (ir šiek tiek ūgis)",
+   "capM": "-1…-6"
+  },
+  {
+   "priority": "6",
+   "kind": "Mainai",
+   "pos": "LT",
+   "move": "Naujas LT – rinktis pagal Awareness, ne vien Pass Block",
+   "targets": "Will Campbell NE 81 (CPU) · Josh Simmons KC 83 · Patrick Paul MIA 81 · Spencer Fano CLE 80 · Armand Membou NYJ RT 86 (CPU)",
+   "why": "LT 72 OVR – 30-as iš 32. Bet komandų duomenys: sack'us lemia QB Awareness ir OL Awareness (r −0.39), o OL Pass Block ar LT atskirai – beveik ne",
+   "capM": "-2…-12"
+  },
+  {
+   "priority": "7",
+   "kind": "Atleisti",
+   "pos": "REDGE/DT",
+   "move": "Atleisti Nwosu ir Wilkins",
+   "targets": "—",
+   "why": "Sutaupo $4.1M + $4.7M; abu 30+ ir mažai prisidėjo",
+   "capM": "+8.8"
+  },
+  {
+   "priority": "8",
+   "kind": "Mainai",
+   "pos": "DT",
+   "move": "Greitesnis DT",
+   "targets": "Braden Fiske LV 81SS $2.1M · Landon Jackson BUF 79 $1.8M · Zach Harrison IND 74 $5.8M · Gervon Dexter CHI 81 $5.4M",
+   "why": "DT 24-as; McDonald speed 65 ir 14 procentilis",
+   "capM": "-2…-6"
+  },
+  {
+   "priority": "9",
+   "kind": "Parduoti / atleisti",
+   "pos": "CB",
+   "move": "Pitre (CB3 už $14.6M)",
+   "targets": "Mainyti į SS/DT ar atleisti",
+   "why": "CB grupė 1-a lygoje; atleidimas sutaupo $9.5M",
+   "capM": "+9.5"
+  },
+  {
+   "priority": "10",
+   "kind": "Mainai",
+   "pos": "TE",
+   "move": "TE1 vietoj Schultz",
+   "targets": "Oscar Delp NO 73 $1.6M (CPU) · Theo Johnson NYG 78 $1.4M · Brenton Strange JAX 80 $6.0M (divizijos varžovas)",
+   "why": "Schultz 14 procentilis; sutartis baigiasi",
+   "capM": "-1…-6"
+  },
+  {
+   "priority": "11",
+   "kind": "Mainai",
+   "pos": "WR",
+   "move": "WR2 šalia Collins",
+   "targets": "Troy Franklin DEN 83 $1.4M (CPU) · Malachi Fields NYG 78 $1.6M · Tez Johnson TB 75 $1.1M · Trey Palmer NO 73 $3.1M (CPU)",
+   "why": "Dell ir Higgins 21–24 procentilis",
+   "capM": "-1…-3"
+  },
+  {
+   "priority": "12",
+   "kind": "Pratęsti",
+   "pos": "CB/HB/FS",
+   "move": "Pratęsti Lassiter, Montgomery (trumpai), Bullock",
+   "targets": "—",
+   "why": "Visi pigūs ir žaidžia gerai; sutartys baigiasi",
+   "capM": "—"
+  }
+ ]
+}

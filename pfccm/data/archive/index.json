@@ -1,0 +1,45 @@
+[
+ {
+  "date": "2026-10-18",
+  "season": 0,
+  "hash": "seed",
+  "files": [
+   {
+    "file": "games.csv.gz",
+    "rows": 591
+   },
+   {
+    "file": "players.csv.gz",
+    "rows": 3139
+   },
+   {
+    "file": "stats_defense.csv.gz",
+    "rows": 1460
+   },
+   {
+    "file": "stats_kicking.csv.gz",
+    "rows": 110
+   },
+   {
+    "file": "stats_passing.csv.gz",
+    "rows": 202
+   },
+   {
+    "file": "stats_punting.csv.gz",
+    "rows": 66
+   },
+   {
+    "file": "stats_receiving.csv.gz",
+    "rows": 717
+   },
+   {
+    "file": "stats_rushing.csv.gz",
+    "rows": 728
+   },
+   {
+    "file": "teams.csv.gz",
+    "rows": 32
+   }
+  ]
+ }
+]

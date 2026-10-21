@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b3d91">
+<title>PFCCM analizė</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#5b6475;--line:#e3e6ee;--blue:#0b3d91;--blue2:#2563eb;--red:#c8102e;--ok:#15803d;--bad:#c8102e;--chip:#eef2fb}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+header{background:var(--blue);color:#fff;padding:14px 16px 12px;padding-top:calc(14px + env(safe-area-inset-top))}
+header h1{margin:0;font-size:20px;font-weight:700;letter-spacing:.2px}
+header .sub{opacity:.85;font-size:12.5px;margin-top:2px}
+main{padding:12px 12px calc(84px + env(safe-area-inset-bottom));max-width:860px;margin:0 auto}
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;border:0;background:none;padding:9px 2px 10px;font:inherit;font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8}
+nav button[aria-selected=true]{color:var(--blue);font-weight:600}
+section{display:none}section.on{display:block}
+h2{font-size:17px;margin:6px 4px 10px}
+h3{font-size:15px;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.note{color:var(--muted);font-size:12.5px;margin:4px 0 8px}
+.lede{font-size:14px;margin:0 4px 12px;color:#253047}
+.lede b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+@media(min-width:620px){.tiles{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.tile .l{font-size:12px;color:var(--muted)}.tile .v{font-size:22px;font-weight:700;margin-top:2px}.tile .s{font-size:12px;color:var(--muted)}
+.tile .v.bad{color:var(--red)}.tile .v.good{color:var(--ok)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.row{display:flex;align-items:center;gap:8px}
+.bar{position:relative;height:18px;flex:1;background:#f0f2f7;border-radius:4px;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;border-radius:4px}
+.bar .mid{position:absolute;top:0;bottom:0;left:50%;width:1px;background:#9aa3b5}
+.lbl{width:118px;flex:none;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val{width:52px;flex:none;text-align:right;font-variant-numeric:tabular-nums;font-size:13px}
+.list .row{padding:5px 0;border-bottom:1px solid #f1f2f6}.list .row:last-child{border:0}
+.pl{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px 12px;margin-bottom:8px}
+.pl .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.pl .nm{font-weight:650;font-size:15px}
+.pl .meta{font-size:12.5px;color:var(--muted)}
+.pl .stats{font-size:12.5px;color:#334155;margin-top:4px}
+.pl .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--blue);border:1px solid #dbe3f6}
+.tag.r{background:#fdecef;color:var(--red);border-color:#f6c9d1}.tag.g{background:#e9f7ee;color:var(--ok);border-color:#c7e9d2}.tag.k{background:#111827;color:#fff;border-color:#111827}
+.ovr{font-weight:700;font-variant-numeric:tabular-nums;color:var(--blue)}
+.num{font-variant-numeric:tabular-nums}
+.pos{color:var(--ok)}.neg{color:var(--red)}
+details{margin-top:6px}summary{font-size:12.5px;color:var(--blue2);cursor:pointer}
+details p{margin:6px 0 0;font-size:13px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:13px}
+.kv span:nth-child(odd){color:var(--muted)}
+select,input{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.ctrl{display:flex;gap:8px;margin-bottom:8px}.ctrl input{flex:1;min-width:0}
+.mv{border-left:4px solid var(--blue)}
+.mv.free{border-left-color:var(--ok)}.mv.sell{border-left-color:var(--red)}
+.mv .h{display:flex;gap:8px;align-items:baseline}.mv .n{font-weight:700;color:var(--blue);width:22px;flex:none}
+.mv .t{font-weight:650}
+a{color:var(--blue2)}
+.arch a{display:inline-block;margin:3px 8px 3px 0;font-size:13px}
+.empty{color:var(--muted);text-align:center;padding:20px}
+.err{background:#fdecef;color:var(--red);border:1px solid #f6c9d1;border-radius:12px;padding:12px;margin:12px}
+</style>
+</head>
+<body>
+<header><h1 id="hdr">PFCCM analizė</h1><div class="sub" id="upd">Kraunama…</div></header>
+<main>
+  <section id="s-team" class="on"></section>
+  <section id="s-moves"></section>
+  <section id="s-op"></section>
+  <section id="s-attr"></section>
+  <section id="s-arch"></section>
+</main>
+<nav>
+  <button data-s="s-team" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Komanda</button>
+  <button data-s="s-moves" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>Pasiūlymai</button>
+  <button data-s="s-op" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>OP</button>
+  <button data-s="s-attr" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Atributai</button>
+  <button data-s="s-arch" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM3 7l2-3h14l2 3M9 12h6"/></svg>Archyvas</button>
+</nav>
+<script>
+(async function () {
+  const $ = (s, el = document) => el.querySelector(s);
+  const h = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === 'class') e.className = v; else if (k === 'html') e.innerHTML = v; else e.setAttribute(k, v); } kids.flat().forEach(k => k != null && e.append(k instanceof Node ? k : document.createTextNode(k))); return e; };
+  const f1 = v => v == null ? '—' : Number(v).toFixed(1);
+  const f2s = v => v == null ? '—' : (v >= 0 ? '+' : '') + Number(v).toFixed(2);
+  const devName = {XF: 'X-Factor', SS: 'Superstar', Star: 'Star', N: 'Normal'};
+  const store = { get(k, d) { try { return JSON.parse(localStorage.getItem('pfccm.' + k)) ?? d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('pfccm.' + k, JSON.stringify(v)); } catch (e) {} } };
+
+  let S, N;
+  try {
+    [S, N] = await Promise.all([fetch('data/site.json', {cache: 'no-cache'}).then(r => r.json()), fetch('notes.json', {cache: 'no-cache'}).then(r => r.json()).catch(() => ({players: {}, moves: []}))]);
+  } catch (e) { document.querySelector('main').prepend(h('div', {class: 'err'}, 'Nepavyko užkrauti duomenų. Pabandyk atnaujinti puslapį.')); return; }
+
+  const me = S.me;
+  $('#hdr').textContent = `PFCCM · ${me.name || me.team}`;
+  $('#upd').textContent = `Duomenys atnaujinti ${S.meta.updated} · ${me.wins}–${me.losses}${me.seed ? ', ' + me.seed + ' seed' : ''}`;
+
+  // nav
+  const show = id => { document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-selected', b.dataset.s === id)); document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === id)); store.set('tab', id); window.scrollTo(0, 0); };
+  document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => show(b.dataset.s)));
+
+  const chips = (opts, cur, onPick) => { const box = h('div', {class: 'chips'}); opts.forEach(([v, l]) => { const b = h('button', {class: 'chip', 'aria-pressed': v === cur}, l); b.onclick = () => { box.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); onPick(v); }; box.append(b); }); return box; };
+  const divBar = (v, max, pos = 'var(--ok)', neg = 'var(--red)') => { const w = Math.min(50, Math.abs(v) / max * 50); return h('div', {class: 'bar'}, h('span', {class: 'mid'}), h('i', {style: `left:${v >= 0 ? 50 : 50 - w}%;width:${w}%;background:${v >= 0 ? pos : neg}`})); };
+  const pctBar = p => h('div', {class: 'bar', style: 'height:8px;max-width:120px'}, h('i', {style: `left:0;width:${p}%;background:${p >= 70 ? 'var(--ok)' : p >= 40 ? 'var(--blue2)' : 'var(--red)'}`}));
+  const rk = n => n == null ? '—' : n + '-a';
+
+  // ---------- TEAM ----------
+  (function () {
+    const s = $('#s-team');
+    const weak = S.posrank.filter(p => p.rank >= 22).sort((a, b) => b.rank - a.rank).map(p => `${p.pos} (${p.rank}-a)`);
+    const strong = S.posrank.filter(p => p.rank <= 5).sort((a, b) => a.rank - b.rank).map(p => `${p.pos} (${p.rank}-a)`);
+    s.append(h('p', {class: 'lede', html: `Pass puolimas <b>${rk(me.offPassYdsRank)}</b>, bėgimo <b>${rk(me.offRushYdsRank)}</b>; pass gynyba ${rk(me.defPassYdsRank)}, bėgimo gynyba ${rk(me.defRushYdsRank)}. Stipriausios grandys: <b>${strong.join(', ') || '—'}</b>. Silpniausios: <b>${weak.join(', ') || '—'}</b>.`}));
+    s.append(h('div', {class: 'tiles'},
+      h('div', {class: 'tile'}, h('div', {class: 'l'}, 'Rekordas'), h('div', {class: 'v'}, `${me.wins}–${me.losses}`), h('div', {class: 's'}, me.seed ? `${me.seed} seed` : '')),
+      h('div', {class: 'tile'}, h('div', {class: 'l'}, 'Pass puolimas'), h('div', {class: 'v' + (me.offPassYdsRank >= 22 ? ' bad' : me.offPassYdsRank <= 8 ? ' good' : '')}, rk(me.offPassYdsRank)), h('div', {class: 's'}, me.sackPct != null ? `sack% ${me.sackPct} (vid. ${me.lgSackPct})` : '')),
+      h('div', {class: 'tile'}, h('div', {class: 'l'}, 'Bėgimo puolimas'), h('div', {class: 'v' + (me.offRushYdsRank <= 8 ? ' good' : me.offRushYdsRank >= 22 ? ' bad' : '')}, rk(me.offRushYdsRank)), h('div', {class: 's'}, `taškų ${rk(me.ptsForRank)}`)),
+      h('div', {class: 'tile'}, h('div', {class: 'l'}, 'Laisvas cap'), h('div', {class: 'v'}, `$${f1(me.capAvailableM)}M`), h('div', {class: 's'}, `išleista $${f1(me.capSpentM)}M`))));
+    const pr = h('div', {class: 'card'}, h('h3', {}, 'Startuolių OVR prieš lygos vidurkį'), h('p', {class: 'note'}, 'Skliaustuose – vieta lygoje (WR 3, DT 2, CB 3 startuoliai; kitur 1).'));
+    const lst = h('div', {class: 'list'});
+    [...S.posrank].map(p => ({...p, d: p.myOvr - p.lgAvg})).sort((a, b) => b.d - a.d).forEach(p => lst.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, `${p.pos} (${p.rank})`), divBar(p.d, 15), h('span', {class: 'val ' + (p.d >= 0 ? 'pos' : 'neg')}, (p.d >= 0 ? '+' : '') + p.d.toFixed(1)))));
+    pr.append(lst); s.append(pr);
+
+    s.append(h('h2', {}, 'Žaidėjai'));
+    s.append(h('p', {class: 'note', style: 'margin:0 4px 8px'}, `Procentilis – normalizuotos produkcijos vieta lygoje savo grupėje. „Virš kont.“ – kiek žaidė geriau nei tikėtina pagal OVR, amžių ir komandą. Rankinis vertinimas – ${N.date || ''}.`));
+    const groups = [['ALL', 'Visi'], ...['QB', 'HB', 'WR', 'TE', 'OL', 'DL', 'LB', 'DB'].map(g => [g, g]), ['ST', 'K/P']];
+    let g = store.get('teamG', 'ALL');
+    const box = h('div');
+    const draw = () => {
+      box.replaceChildren();
+      const rows = S.mine.filter(r => g === 'ALL' || r.group === g || (g === 'ST' && ['K', 'P'].includes(r.group))).sort((a, b) => b.ovr - a.ovr);
+      rows.forEach(r => {
+        const n = (N.players || {})[r.player];
+        const tags = [h('span', {class: 'tag' + (/Elitas|virš OVR/.test(r.auto) ? ' g' : /žemiau/i.test(r.auto) ? ' r' : '')}, r.auto)];
+        if (n) tags.push(h('span', {class: 'tag k'}, n.action));
+        const card = h('div', {class: 'pl'},
+          h('div', {class: 'top'}, h('span', {class: 'nm'}, r.player), h('span', {class: 'ovr'}, r.ovr)),
+          h('div', {class: 'meta'}, `${r.pos}${r.depth > 1 ? ' #' + r.depth : ''} · ${r.age} m. · ${devName[r.dev] || r.dev} · $${f1(r.capHitM)}M, ${r.yearsLeft} m.${r.releaseSaveM > 0 ? ' · atleidus +$' + f1(r.releaseSaveM) + 'M' : ''}`),
+          r.pctile != null ? h('div', {class: 'row', style: 'margin-top:6px'}, h('span', {class: 'meta', style: 'width:92px'}, `Procentilis ${r.pctile}`), pctBar(r.pctile), h('span', {class: 'meta ' + (r.overCtx >= 0 ? 'pos' : 'neg')}, `virš kont. ${f2s(r.overCtx)}`)) : null,
+          r.metrics ? h('div', {class: 'stats'}, r.metrics) : null,
+          h('div', {class: 'stats'}, r.keyAttr),
+          h('div', {class: 'tags'}, tags),
+          n ? h('details', {}, h('summary', {}, `Vertinimas: ${n.verdict}`), h('p', {}, n.note)) : null);
+        box.append(card);
+      });
+      if (!rows.length) box.append(h('div', {class: 'empty'}, 'Nėra žaidėjų'));
+    };
+    s.append(chips(groups, g, v => { g = v; store.set('teamG', v); draw(); }), box);
+    draw();
+  })();
+
+  // ---------- MOVES ----------
+  (function () {
+    const s = $('#s-moves');
+    s.append(h('p', {class: 'lede', html: `Pasiūlymai sudaryti <b>${N.date || ''}</b> pagal tos dienos duomenis. Žaidėjų skaičiai kortelėse „Komanda“ ir „OP“ atsinaujina automatiškai, o šis sąrašas – kai jį peržiūrime kartu.`}));
+    (N.moves || []).forEach(m => {
+      const cls = /Nemokama/.test(m.kind) ? ' free' : /Parduoti|Atleisti/.test(m.kind) ? ' sell' : '';
+      s.append(h('div', {class: 'card mv' + cls},
+        h('div', {class: 'h'}, h('span', {class: 'n'}, m.priority), h('span', {class: 't'}, m.move)),
+        h('div', {class: 'tags', style: 'margin:6px 0'}, h('span', {class: 'tag'}, m.kind), h('span', {class: 'tag'}, m.pos), m.capM && m.capM !== '—' && m.capM !== '0' ? h('span', {class: 'tag ' + (String(m.capM).startsWith('+') ? 'g' : String(m.capM).startsWith('-') ? 'r' : '')}, `cap ${m.capM}`) : null),
+        h('div', {class: 'stats'}, m.why),
+        m.targets && m.targets !== '—' ? h('details', {}, h('summary', {}, 'Taikiniai'), h('p', {}, m.targets.split(' · ').map((t, i) => [i ? h('br') : null, t]).flat())) : null));
+    });
+  })();
+
+  // ---------- OP ----------
+  (function () {
+    const s = $('#s-op');
+    s.append(h('p', {class: 'lede', html: 'Žaidėjai, kurie žaidžia geriau, nei rodo jų OVR ar alga. Rodikliai normalizuoti (per bandymą arba dalis komandos totalo), kad komandos apimtis ir stiprus QB nepūstų skaičių.'}));
+    let g = store.get('opG', 'DL'), sort = store.get('opSort', 'overCtx'), q = '', mineOnly = false;
+    const sortSel = h('select', {}, ...[['overCtx', 'Virš OVR + konteksto'], ['overOvr', 'Virš OVR'], ['overSalary', 'Virš algos'], ['normScore', 'Produkcija']].map(([v, l]) => h('option', {value: v}, l)));
+    sortSel.value = sort;
+    const search = h('input', {type: 'search', placeholder: 'Ieškoti žaidėjo / komandos'});
+    const box = h('div');
+    const draw = () => {
+      box.replaceChildren();
+      const rows = S.norm.filter(r => (g === 'ALL' || r.group === g) && (!q || (r.player + ' ' + r.team + ' ' + r.nowTeam).toLowerCase().includes(q))).sort((a, b) => b[sort] - a[sort]).slice(0, q ? 60 : 30);
+      rows.forEach((r, i) => box.append(h('div', {class: 'pl'},
+        h('div', {class: 'top'}, h('span', {class: 'nm'}, `${i + 1}. ${r.player}`), h('span', {class: 'ovr'}, r.ovr)),
+        h('div', {class: 'meta'}, `${r.pos} · ${r.team}${r.nowTeam !== r.team ? ' → ' + r.nowTeam : ''} · ${r.age} m. · ${devName[r.dev] || r.dev} · $${f1(r.capHitM)}M · ${r.games} rungt.`),
+        h('div', {class: 'stats'}, r.metrics),
+        h('div', {class: 'tags'}, h('span', {class: 'tag'}, `Procentilis ${r.pctile}`), ...[['overCtx', 'virš kont.'], ['overOvr', 'virš OVR'], ['overSalary', 'virš algos']].map(([k, l]) => h('span', {class: 'tag ' + (r[k] >= 0.5 ? 'g' : r[k] <= -0.5 ? 'r' : '')}, `${l} ${f2s(r[k])}`))))));
+      if (!rows.length) box.append(h('div', {class: 'empty'}, 'Nieko nerasta'));
+    };
+    sortSel.onchange = () => { sort = sortSel.value; store.set('opSort', sort); draw(); };
+    search.oninput = () => { q = search.value.trim().toLowerCase(); draw(); };
+    s.append(chips([['ALL', 'Visi'], ...['QB', 'HB', 'WR', 'TE', 'DL', 'LB', 'DB'].map(x => [x, x])], g, v => { g = v; store.set('opG', v); draw(); }), h('div', {class: 'ctrl'}, search, sortSel), box);
+    const sm = h('details', {class: 'card'}, h('summary', {}, 'Kaip skaičiuojama ir kiek tikslu'));
+    sm.append(h('p', {class: 'note'}, 'Balas – vidutinis z-score pozicijos grupėje. +1 = vienu standartiniu nuokrypiu geriau nei tikėtina. Imtys: QB ≥150 bandymų, HB ≥50 nešimų, WR/TE ≥20 sugavimų, gynyba ≥8 rungt. R² – kiek produkcijos skirtumų paaiškina OVR / atributai / alga (kryžminė patikra).'));
+    S.summary.filter(x => x.r2Ovr != null).forEach(x => sm.append(h('div', {class: 'stats'}, `${x.group} (${x.players}): ${x.metrics}. R² OVR ${f1(x.r2Ovr * 100)}%, atributai ${f1(x.r2Attr * 100)}%, alga ${f1(x.r2Salary * 100)}%; dev virš OVR ${f2s(x.devBeyondOvr)}`)));
+    s.append(sm);
+    draw();
+  })();
+
+  // ---------- ATTR ----------
+  (function () {
+    const s = $('#s-attr');
+    const order = ['QB', 'HB', 'WR', 'TE', 'OL', 'DL', 'LB', 'DB'];
+    const tops = order.map(gr => { const r = S.attr.filter(a => a.group === gr).sort((a, b) => b.weight - a.weight); return [gr, r.slice(0, 3)]; }).filter(x => x[1].length);
+    const sum = h('div', {class: 'card'}, h('h3', {}, 'Svarbiausia pagal poziciją'), h('p', {class: 'note'}, 'Procentas – kaip dažnai atributas pateko į top 3, 150 kartų perskaičiavus modelį su atsitiktinai perimtais žaidėjais.'));
+    tops.forEach(([gr, r]) => sum.append(h('div', {class: 'row', style: 'padding:4px 0;border-bottom:1px solid #f1f2f6;align-items:flex-start'}, h('b', {style: 'width:34px;flex:none'}, gr), h('span', {style: 'font-size:13px'}, r.map(a => `${a.attribute} (${a.top3Pct}%)`).join(' · ')))));
+    s.append(sum);
+    let g = store.get('attrG', 'QB');
+    const box = h('div');
+    const draw = () => {
+      box.replaceChildren();
+      const rows = S.attr.filter(a => a.group === g).sort((a, b) => b.weight - a.weight);
+      const mx = Math.max(...rows.map(r => Math.abs(r.weight)), 0.05);
+      const c1 = h('div', {class: 'card'}, h('h3', {}, `${g}: atributo poveikis`), h('p', {class: 'note'}, g === 'OL' ? 'OL vertinta komandų lygiu: startinio penketo vid. reitingai prieš sack% (atmetus QB Awareness) ir HB jardus iki kontakto (atmetus HB greitį). Apytiksliai.' : '+1 standartinis nuokrypis atributo → tiek normalizuoto balo, kai kiti nesikeičia. Ūgis ir svoris įtraukti.'));
+      const l = h('div', {class: 'list'});
+      rows.forEach(r => l.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, r.attribute), divBar(r.weight, mx, 'var(--blue2)', '#9aa3b5'), h('span', {class: 'val'}, `${r.top3Pct}%`))));
+      c1.append(l); box.append(c1);
+      const tiers = S.attrTiers.filter(t => t.group === g);
+      if (tiers.length) {
+        const c2 = h('div', {class: 'card'}, h('h3', {}, `${tiers[0].attribute}: pakopos`), h('p', {class: 'note'}, 'Vidutinis normalizuotas balas pagal ketvirčius (0 = vidurkis).'));
+        const l2 = h('div', {class: 'list'});
+        const m2 = Math.max(...tiers.map(t => Math.abs(t.avgScore)), 0.3);
+        tiers.forEach(t => l2.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, `${t.tier} (${t.players})`), divBar(t.avgScore, m2), h('span', {class: 'val ' + (t.avgScore >= 0 ? 'pos' : 'neg')}, f2s(t.avgScore)))));
+        c2.append(l2); box.append(c2);
+      }
+      const ms = S.attrMetric.filter(m => m.group === g);
+      if (ms.length) { const c3 = h('div', {class: 'card'}, h('h3', {}, 'Kas lemia kiekvieną rodiklį')); ms.forEach(m => c3.append(h('div', {class: 'kv', style: 'margin-bottom:6px'}, h('span', {}, m.metric), h('span', {}, m.drivers)))); box.append(c3); }
+    };
+    s.append(h('h2', {}, 'Pozicija'), chips(order.map(x => [x, x]), g, v => { g = v; store.set('attrG', v); draw(); }), box);
+    draw();
+    s.append(h('p', {class: 'note', style: 'margin:4px'}, 'Ryšiai koreliaciniai; „dalies“ rodikliai priklauso ir nuo to, ar žaidėjas startuoja. Atributai – dabartiniai.'));
+  })();
+
+  // ---------- ARCH ----------
+  (function () {
+    const s = $('#s-arch');
+    s.append(h('p', {class: 'lede', html: 'Pilnos NeonSportz duomenų kopijos (žaidėjai su visais atributais ir sutartimis, komandos, rungtynės, statistika). Nauja kopija daroma tik kai duomenys pasikeičia. Failai – suspausti CSV (.csv.gz).'}));
+    (S.meta.archive || []).forEach(a => s.append(h('div', {class: 'card arch'}, h('h3', {}, a.date), ...a.files.map(fl => h('a', {href: `data/archive/${a.date}/${fl.file}`, download: ''}, `${fl.file.replace('.csv.gz', '')} (${fl.rows})`)))));
+  })();
+
+  show(store.get('tab', 's-team'));
+})();
+</script>
+</body>
+</html>
