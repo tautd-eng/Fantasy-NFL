@@ -55,9 +55,9 @@ def fetch_all():
     games = get_all("/games/")
     season = max(int(t.get("seasonIndex") or 0) for t in teams)
     stats = {}
-    for cat in ["passing", "rushing", "receiving", "defense", "kicking", "punting"]:
-        for stage in (0, 1, 2):
-            rows = get_all(f"/stats/{cat}/?seasonIndex={season}&stageIndex={stage}")
+    for cat, sea, stage in [(c, se, st) for c in ["passing", "rushing", "receiving", "defense", "kicking", "punting"]
+                            for se in sorted({max(0, season - 1), season}) for st in (0, 1, 2)]:
+            rows = get_all(f"/stats/{cat}/?seasonIndex={sea}&stageIndex={stage}")
             seen, uniq = set(), []
             for r in rows:
                 k = (r.get("player__rosterId"), r.get("team__abbrName"), r.get("seasonIndex"), r.get("stageIndex"))
@@ -65,7 +65,7 @@ def fetch_all():
                     seen.add(k)
                     uniq.append(r)
             if uniq:
-                stats[(cat, stage)] = uniq
+                stats[(sea, cat, stage)] = uniq
     gseen, guniq = set(), []
     for g in games:
         if g.get("pk") not in gseen:
@@ -109,9 +109,9 @@ def archive(teams, players, games, stats, season):
     files = {f"players.csv": to_csv(players), "teams.csv": to_csv(teams), "games.csv": to_csv(games)}
     for cat in ["passing", "rushing", "receiving", "defense", "kicking", "punting"]:
         rows = []
-        for st in (0, 1, 2):
-            for r in stats.get((cat, st), []):
-                rows.append({"snapStage": st, **r})
+        for (se, c, st), rr in sorted(stats.items()):
+            if c == cat:
+                rows += [{"snapSeason": se, "snapStage": st, **r} for r in rr]
         if rows:
             files[f"stats_{cat}.csv"] = to_csv(rows)
     # pokyčio patikra: ignoruoti last_updated tipo laukus
@@ -225,7 +225,7 @@ def att(p, a):
     return f(p.get(a)) if a in ("height", "weight") else f(p.get(a + "Rating"))
 
 
-def analyze(teams, players, stats):
+def analyze(teams, players, stats, frac=1.0):
     P = [p for p in players if not p.get("isRetired")]
     byid = {str(p["rosterId"]): p for p in P}
     abbr = lambda p: ((p.get("team") or {}).get("abbrName") if isinstance(p.get("team"), dict) else None)
@@ -287,33 +287,33 @@ def analyze(teams, players, stats):
         return a / b if b else float("nan")
 
     M = {
-        "QB": (lambda i: g(sd(i, "passing"), "passTotalAtt") >= 150, {
+        "QB": (lambda i: g(sd(i, "passing"), "passTotalAtt") >= max(30, 150 * frac), {
             "ANY/A": lambda i: (lambda s: safe(g(s, "passTotalYds") + 20 * g(s, "passTotalTDs") - 45 * g(s, "passTotalInts"), g(s, "passTotalAtt") + g(s, "passTotalSacks")))(sd(i, "passing")),
             "Comp%": lambda i: (lambda s: 100 * safe(g(s, "passTotalComp"), g(s, "passTotalAtt")))(sd(i, "passing")),
             "Sack% (−)": lambda i: (lambda s: -100 * safe(g(s, "passTotalSacks"), g(s, "passTotalAtt") + g(s, "passTotalSacks")))(sd(i, "passing"))}),
-        "HB": (lambda i: g(sd(i, "rushing"), "rushTotalAtt") >= 50, {
+        "HB": (lambda i: g(sd(i, "rushing"), "rushTotalAtt") >= max(15, 50 * frac), {
             "Yds/touch": lambda i: safe(g(sd(i, "rushing"), "rushTotalYds") + g(sd(i, "receiving"), "recTotalYds"), g(sd(i, "rushing"), "rushTotalAtt") + g(sd(i, "receiving"), "recTotalCatches")),
             "BrokenTkl/att": lambda i: safe(g(sd(i, "rushing"), "rushTotalBrokenTackles"), g(sd(i, "rushing"), "rushTotalAtt")),
             "YAC/att": lambda i: safe(g(sd(i, "rushing"), "rushTotalYdsAfterContact"), g(sd(i, "rushing"), "rushTotalAtt")),
             "Carry share": lambda i: safe(g(sd(i, "rushing"), "rushTotalAtt"), TT[sd(i, "rushing")["team__abbrName"]]["rushAtt"])}),
-        "WR": (lambda i: g(sd(i, "receiving"), "recTotalCatches") >= 20, {
+        "WR": (lambda i: g(sd(i, "receiving"), "recTotalCatches") >= max(6, 20 * frac), {
             "RecYds share": lambda i: safe(g(sd(i, "receiving"), "recTotalYds"), TT[sd(i, "receiving")["team__abbrName"]]["recYds"]),
             "Yds/catch": lambda i: safe(g(sd(i, "receiving"), "recTotalYds"), g(sd(i, "receiving"), "recTotalCatches")),
             "YAC/catch": lambda i: g(sd(i, "receiving"), "recAvgYacPerCatch"),
             "Drops/100 (−)": lambda i: -100 * safe(g(sd(i, "receiving"), "recTotalDrops"), g(sd(i, "receiving"), "recTotalCatches"))}),
-        "TE": (lambda i: g(sd(i, "receiving"), "recTotalCatches") >= 20, {
+        "TE": (lambda i: g(sd(i, "receiving"), "recTotalCatches") >= max(6, 20 * frac), {
             "RecYds share": lambda i: safe(g(sd(i, "receiving"), "recTotalYds"), TT[sd(i, "receiving")["team__abbrName"]]["recYds"]),
             "Yds/catch": lambda i: safe(g(sd(i, "receiving"), "recTotalYds"), g(sd(i, "receiving"), "recTotalCatches")),
             "YAC/catch": lambda i: g(sd(i, "receiving"), "recAvgYacPerCatch")}),
-        "DL": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= 8, {
+        "DL": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= max(2, 8 * frac), {
             "Sack share": lambda i: safe(g(sd(i, "defense"), "defTotalSacks"), TT[sd(i, "defense")["team__abbrName"]]["sacks"]),
             "Sacks/G": lambda i: safe(g(sd(i, "defense"), "defTotalSacks"), g(sd(i, "defense"), "gamesPlayed")),
             "Tackle share": lambda i: safe(g(sd(i, "defense"), "defTotalTackles"), TT[sd(i, "defense")["team__abbrName"]]["tackles"])}),
-        "LB": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= 8, {
+        "LB": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= max(2, 8 * frac), {
             "Tackle share": lambda i: safe(g(sd(i, "defense"), "defTotalTackles"), TT[sd(i, "defense")["team__abbrName"]]["tackles"]),
             "Plays on ball share": lambda i: safe(g(sd(i, "defense"), "defTotalInts") + g(sd(i, "defense"), "defTotalDeflections"), TT[sd(i, "defense")["team__abbrName"]]["ballsDef"]),
             "Sack share": lambda i: safe(g(sd(i, "defense"), "defTotalSacks"), TT[sd(i, "defense")["team__abbrName"]]["sacks"])}),
-        "DB": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= 8, {
+        "DB": (lambda i: g(sd(i, "defense"), "gamesPlayed") >= max(2, 8 * frac), {
             "Plays on ball share": lambda i: safe(g(sd(i, "defense"), "defTotalInts") + g(sd(i, "defense"), "defTotalDeflections"), TT[sd(i, "defense")["team__abbrName"]]["ballsDef"]),
             "INT share": lambda i: safe(g(sd(i, "defense"), "defTotalInts"), max(TT[sd(i, "defense")["team__abbrName"]]["ints"], 1)),
             "Catches allowed/1k (−)": lambda i: -safe(g(sd(i, "defense"), "defTotalCatchAllowed"), TT[sd(i, "defense")["team__abbrName"]]["defPassYds"] / 1000),
@@ -479,7 +479,8 @@ def analyze(teams, players, stats):
         mine.append(row)
     mine.sort(key=lambda x: (x["group"], x["pos"], x["depth"]))
     t = tinfo.get(MYTEAM, {})
-    me = dict(team=MYTEAM, name=t.get("displayName"), wins=t.get("totalWins"), losses=t.get("totalLosses"), seed=t.get("seed"),
+    me = dict(team=MYTEAM, name=t.get("displayName"), stageIndex=int(f(t.get("stageIndex"))), weekIndex=int(f(t.get("weekIndex"))),
+              calendarYear=int(f(t.get("calendarYear"))), wins=t.get("totalWins"), losses=t.get("totalLosses"), seed=t.get("seed"),
               ptsForRank=t.get("ptsForRank"), ptsAgainstRank=t.get("ptsAgainstRank"), offPassYdsRank=t.get("offPassYdsRank"),
               offRushYdsRank=t.get("offRushYdsRank"), defPassYdsRank=t.get("defPassYdsRank"), defRushYdsRank=t.get("defRushYdsRank"),
               capAvailableM=r(f(t.get("capAvailable")) / 1e6, 1), capSpentM=r(f(t.get("capSpent")) / 1e6, 1),
@@ -495,11 +496,28 @@ def main():
         sys.exit("Per mažai duomenų – API grąžino netikėtą atsakymą")
     idx, new = archive(teams, players, games, stats, season)
     print("archyvas:", "nauja kopija" if new else "be pokyčių")
-    out = analyze(teams, players, stats)
+    seasons = sorted({k[0] for k in stats})
+    blocks = {}
+    for se in seasons:
+        sub = {(c, st): v for (s_, c, st), v in stats.items() if s_ == se}
+        gp = max([f(r.get("gamesPlayed")) for r in sub.get(("passing", 1), [])] or [0])
+        if gp < 2:
+            continue
+        frac = min(1.0, gp / 17)
+        a = analyze(teams, players, sub, frac)
+        a["games"] = int(gp)
+        year = int(f(teams[0].get("calendarYear"))) - (season - se) if teams and teams[0].get("calendarYear") else se + 1
+        a["label"] = f"{year} sezonas" + (" (vyksta)" if se == season and gp < 17 else "")
+        blocks[str(se)] = a
+        print("sezonas", se, "rungt.", gp, {k: len(v) for k, v in a.items() if isinstance(v, list)})
+    cur = str(max(int(k) for k in blocks)) if blocks else None
+    full = [k for k, v in blocks.items() if v["games"] >= 17]
+    default = cur if cur and blocks[cur]["games"] >= 8 else (max(full, key=int) if full else cur)
+    out = dict(seasons=blocks, default=default, me=blocks[cur]["me"] if cur else analyze(teams, players, {}, 1.0)["me"])
     out["meta"] = dict(updated=datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"), league=LEAGUE, season=season,
                        archive=[dict(date=e["date"], files=e["files"]) for e in idx][::-1])
     json.dump(out, open(os.path.join(DATA, "site.json"), "w"), ensure_ascii=False, separators=(",", ":"))
-    print("site.json:", {k: len(v) for k, v in out.items() if isinstance(v, list)})
+    print("site.json sezonai:", list(blocks), "default", default)
 
 
 if __name__ == "__main__":
