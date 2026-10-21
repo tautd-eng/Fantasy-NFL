@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["pfccm/agent.py", "pfccm/config.json", ".github/workflows/pfccm.yml"]
+    paths: ["pfccm/agent.py", "pfccm/value.py", "pfccm/config.json", ".github/workflows/pfccm.yml"]
 
 permissions:
   contents: write
