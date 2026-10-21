@@ -11,6 +11,9 @@
 import csv, datetime, gzip, hashlib, io, json, os, sys, time, urllib.request
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import value  # noqa: E402
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
 CFG = json.load(open(os.path.join(ROOT, "config.json")))
@@ -508,6 +511,11 @@ def main():
         a["games"] = int(gp)
         year = int(f(teams[0].get("calendarYear"))) - (season - se) if teams and teams[0].get("calendarYear") else se + 1
         a["label"] = f"{year} sezonas" + (" (vyksta)" if se == season and gp < 17 else "")
+        try:
+            a["value"] = value.build(players, sub, MYTEAM, value.STARTERS)
+        except Exception as e:  # noqa
+            print("value klaida", e)
+            a["value"] = {}
         blocks[str(se)] = a
         print("sezonas", se, "rungt.", gp, {k: len(v) for k, v in a.items() if isinstance(v, list)})
     cur = str(max(int(k) for k in blocks)) if blocks else None

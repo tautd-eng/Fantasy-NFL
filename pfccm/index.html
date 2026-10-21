@@ -80,7 +80,7 @@ a{color:var(--blue2)}
   <button data-s="s-team" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Komanda</button>
   <button data-s="s-moves" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg>Pasiūlymai</button>
   <button data-s="s-op" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>OP</button>
-  <button data-s="s-attr" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Atributai</button>
+  <button data-s="s-attr" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Vertė</button>
   <button data-s="s-arch" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM3 7l2-3h14l2 3M9 12h6"/></svg>Archyvas</button>
 </nav>
 <script>
@@ -115,6 +115,8 @@ a{color:var(--blue2)}
   const rk = n => n == null ? '—' : n + '-a';
 
   const picker = () => seasonKeys.length > 1 ? h('div', {class: 'ctrl'}, (() => { const sel = h('select', {style: 'flex:1'}, ...seasonKeys.map(k => h('option', {value: k}, `${S.seasons[k].label} · ${S.seasons[k].games} rungt.`))); sel.value = SK; sel.onchange = () => { store.set('season', sel.value); location.reload(); }; return sel; })()) : null;
+  const VAL = B.value || {};
+  const vmap = {}; Object.entries(VAL).forEach(([G, b]) => b.players.forEach(p => { vmap[p.player] = {...p, G, n: b.players.length}; }));
   // ---------- TEAM ----------
   (function () {
     const s = $('#s-team');
@@ -147,7 +149,8 @@ a{color:var(--blue2)}
           h('div', {class: 'top'}, h('span', {class: 'nm'}, r.player), h('span', {class: 'ovr'}, r.ovr)),
           h('div', {class: 'meta'}, `${r.pos}${r.depth > 1 ? ' #' + r.depth : ''} · ${r.age} m. · ${devName[r.dev] || r.dev} · $${f1(r.capHitM)}M, ${r.yearsLeft} m.${r.releaseSaveM > 0 ? ' · atleidus +$' + f1(r.releaseSaveM) + 'M' : ''}`),
           r.pctile != null ? h('div', {class: 'row', style: 'margin-top:6px'}, h('span', {class: 'meta', style: 'width:92px'}, `Procentilis ${r.pctile}`), pctBar(r.pctile), h('span', {class: 'meta ' + (r.overCtx >= 0 ? 'pos' : 'neg')}, `virš kont. ${f2s(r.overCtx)}`)) : null,
-          r.metrics ? h('div', {class: 'stats'}, r.metrics) : null,
+          vmap[r.player] ? h('div', {class: 'row', style: 'margin-top:6px'}, h('span', {class: 'meta', style: 'width:92px'}, `Vertė #${vmap[r.player].rank}/${vmap[r.player].n}`), pctBar(Math.round(100 * (1 - (vmap[r.player].rank - 1) / Math.max(1, vmap[r.player].n - 1)))), h('span', {class: 'meta ' + (vmap[r.player].perGame >= 0 ? 'pos' : 'neg')}, `${f2s(vmap[r.player].perGame)}/rungt.`)) : null,
+          vmap[r.player] ? h('div', {class: 'stats'}, vmap[r.player].line) : (r.metrics ? h('div', {class: 'stats'}, r.metrics) : null),
           h('div', {class: 'stats'}, r.keyAttr),
           h('div', {class: 'tags'}, tags),
           n ? h('details', {}, h('summary', {}, `Vertinimas: ${n.verdict}`), h('p', {}, n.note)) : null);
@@ -204,39 +207,69 @@ a{color:var(--blue2)}
     draw();
   })();
 
-  // ---------- ATTR ----------
+  // ---------- VALUE ----------
   (function () {
     const s = $('#s-attr');
-    const order = ['QB', 'HB', 'WR', 'TE', 'OL', 'DL', 'LB', 'DB'];
-    const tops = order.map(gr => { const r = B.attr.filter(a => a.group === gr).sort((a, b) => b.weight - a.weight); return [gr, r.slice(0, 3)]; }).filter(x => x[1].length);
-    const sum = h('div', {class: 'card'}, h('h3', {}, 'Svarbiausia pagal poziciją'), h('p', {class: 'note'}, 'Procentas – kaip dažnai atributas pateko į top 3, 150 kartų perskaičiavus modelį su atsitiktinai perimtais žaidėjais.'));
-    tops.forEach(([gr, r]) => sum.append(h('div', {class: 'row', style: 'padding:4px 0;border-bottom:1px solid #f1f2f6;align-items:flex-start'}, h('b', {style: 'width:34px;flex:none'}, gr), h('span', {style: 'font-size:13px'}, r.map(a => `${a.attribute} (${a.top3Pct}%)`).join(' · ')))));
+    s.append(picker() || '');
+    s.append(h('p', {class: 'lede', html: 'Kiekvienai pozicijai: <b>efektyvumas</b> (vertė per galimybę), <b>žaidimo laikas</b> (galimybės per rungtynes) ir jų sandauga – <b>vertė virš pakaitinio žaidėjo</b>. Snap\'ų NeonSportz neduoda, todėl žaidimo laikas matuojamas galimybėmis. Žemiau – kurie atributai tą vertę lemia.'}));
+    const order = ['QB', 'HB', 'WR', 'TE', 'OL', 'EDGE', 'DT', 'LB', 'CB', 'S', 'K', 'P'].filter(x => VAL[x] || (x === 'OL' && B.attr.some(a => a.group === 'OL')));
+    // santrauka
+    const sum = h('details', {class: 'card'}, h('summary', {style: 'font-size:14px;color:var(--ink);font-weight:650'}, 'Svarbiausi atributai visose pozicijose'));
+    order.forEach(G => { const top = G === 'OL' ? B.attr.filter(a => a.group === 'OL').sort((a, b) => b.weight - a.weight).slice(0, 3).map(a => `${a.attribute} (${a.top3Pct}%)`) : VAL[G].attrs.filter(a => a.weight > 0).slice(0, 3).map(a => `${a.attribute} (${a.top3}%)`);
+      sum.append(h('div', {class: 'row', style: 'padding:4px 0;border-bottom:1px solid #f1f2f6;align-items:flex-start'}, h('b', {style: 'width:44px;flex:none'}, G), h('span', {style: 'font-size:13px'}, top.join(' · ')))); });
+    sum.append(h('p', {class: 'note'}, 'Procentas – kaip dažnai atributas pateko į top 3, 200 kartų perskaičiavus modelį su atsitiktinai perimtais žaidėjais.'));
     s.append(sum);
-    let g = store.get('attrG', 'QB');
+    let g = store.get('valG', 'QB'); if (!order.includes(g)) g = order[0];
+    let mode = 'eff';
     const box = h('div');
     const draw = () => {
       box.replaceChildren();
-      const rows = B.attr.filter(a => a.group === g).sort((a, b) => b.weight - a.weight);
-      const mx = Math.max(...rows.map(r => Math.abs(r.weight)), 0.05);
-      const c1 = h('div', {class: 'card'}, h('h3', {}, `${g}: atributo poveikis`), h('p', {class: 'note'}, g === 'OL' ? 'OL vertinta komandų lygiu: startinio penketo vid. reitingai prieš sack% (atmetus QB Awareness) ir HB jardus iki kontakto (atmetus HB greitį). Apytiksliai.' : '+1 standartinis nuokrypis atributo → tiek normalizuoto balo, kai kiti nesikeičia. Ūgis ir svoris įtraukti.'));
-      const l = h('div', {class: 'list'});
-      rows.forEach(r => l.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, r.attribute), divBar(r.weight, mx, 'var(--blue2)', '#9aa3b5'), h('span', {class: 'val'}, `${r.top3Pct}%`))));
-      c1.append(l); box.append(c1);
-      const tiers = B.attrTiers.filter(t => t.group === g);
-      if (tiers.length) {
-        const c2 = h('div', {class: 'card'}, h('h3', {}, `${tiers[0].attribute}: pakopos`), h('p', {class: 'note'}, 'Vidutinis normalizuotas balas pagal ketvirčius (0 = vidurkis).'));
-        const l2 = h('div', {class: 'list'});
-        const m2 = Math.max(...tiers.map(t => Math.abs(t.avgScore)), 0.3);
-        tiers.forEach(t => l2.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, `${t.tier} (${t.players})`), divBar(t.avgScore, m2), h('span', {class: 'val ' + (t.avgScore >= 0 ? 'pos' : 'neg')}, f2s(t.avgScore)))));
-        c2.append(l2); box.append(c2);
+      if (g === 'OL') {
+        const rows = B.attr.filter(a => a.group === 'OL').sort((a, b) => b.weight - a.weight); const mx = Math.max(...rows.map(r => Math.abs(r.weight)), 0.05);
+        const c = h('div', {class: 'card'}, h('h3', {}, 'OL: atributų poveikis (komandų lygiu)'), h('p', {class: 'note'}, 'OL statistikos API neduoda. Startinio penketo vid. reitingai prieš komandos sack% (atmetus QB Awareness) ir HB jardus iki kontakto (atmetus HB greitį).'));
+        const l = h('div', {class: 'list'}); rows.forEach(r => l.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, r.attribute), divBar(r.weight, mx, 'var(--blue2)', '#9aa3b5'), h('span', {class: 'val'}, `${r.top3Pct}%`)))); c.append(l); box.append(c);
+        return;
       }
-      const ms = B.attrMetric.filter(m => m.group === g);
-      if (ms.length) { const c3 = h('div', {class: 'card'}, h('h3', {}, 'Kas lemia kiekvieną rodiklį')); ms.forEach(m => c3.append(h('div', {class: 'kv', style: 'margin-bottom:6px'}, h('span', {}, m.metric), h('span', {}, m.drivers)))); box.append(c3); }
+      const b = VAL[g];
+      box.append(h('div', {class: 'card'}, h('h3', {}, `${g}: kaip skaičiuojama`),
+        h('div', {class: 'kv'}, h('span', {}, 'Efektyvumas'), h('span', {}, `${b.label}: ${b.formula}`), h('span', {}, 'Žaidimo laikas'), h('span', {}, b.oppLabel),
+          h('span', {}, 'Lygos vidurkis'), h('span', {}, String(b.mean)), h('span', {}, 'Pakaitinis lygis'), h('span', {}, `${b.repl} (20-as procentilis tarp startuolių)`),
+          h('span', {}, 'Mažos imties korekcija'), h('span', {}, `+${b.K} vidutinių galimybių`), h('span', {}, 'OVR paaiškina'), h('span', {}, `${Math.round(b.r2ovr * 100)}% efektyvumo skirtumų`))));
+      // lyderiai
+      const lc = h('div', {class: 'card'}, h('h3', {}, 'Sezono vertė virš pakaitinio'));
+      const showN = store.get('valShow', 10);
+      const list = h('div');
+      const rowsAll = b.players;
+      const mine = rowsAll.filter(p => p.mine);
+      const render = n => { list.replaceChildren(); [...rowsAll.slice(0, n), ...mine.filter(p => p.rank > n)].forEach(p => list.append(h('div', {class: 'pl', style: p.mine ? 'border-color:var(--blue2);background:#f5f8ff' : ''},
+        h('div', {class: 'top'}, h('span', {class: 'nm'}, `${p.rank}. ${p.player}`), h('span', {class: 'ovr'}, p.ovr)),
+        h('div', {class: 'meta'}, `${p.pos} · ${p.team}${p.nowTeam !== p.team ? ' → ' + p.nowTeam : ''} · ${p.age} m. · ${devName[p.dev] || p.dev} · $${f1(p.capHitM)}M · ${p.games} rungt.`),
+        h('div', {class: 'stats'}, p.line),
+        h('div', {class: 'tags'}, h('span', {class: 'tag'}, `efekt. ${p.eff}${p.effAdj !== p.eff ? ' → ' + p.effAdj : ''}`), g !== 'K' && !['EDGE', 'DT', 'LB', 'CB', 'S'].includes(g) ? h('span', {class: 'tag'}, `${p.oppPg}/rungt.`) : null,
+          h('span', {class: 'tag ' + (p.perGame >= 0 ? 'g' : 'r')}, `${f2s(p.perGame)}/rungt.`), h('span', {class: 'tag k'}, `sezonas ${p.season >= 0 ? '+' : ''}${Math.round(p.season)}`),
+          h('span', {class: 'tag ' + (p.overOvr >= 0.5 ? 'g' : p.overOvr <= -0.5 ? 'r' : '')}, `virš OVR ${f2s(p.overOvr)}`))))); };
+      render(showN);
+      const more = h('button', {class: 'chip', style: 'width:100%;margin-top:4px'}, 'Rodyti daugiau'); let n = showN; more.onclick = () => { n += 15; render(n); };
+      lc.append(h('p', {class: 'note'}, 'Mėlynu rėmeliu – tavo komandos žaidėjai (rodomi visada). „efekt. A → B“: tikras efektyvumas → po mažos imties korekcijos.'), list, more);
+      box.append(lc);
+      // atributai
+      const ac = h('div', {class: 'card'}, h('h3', {}, 'Kas lemia vertę'));
+      const sk = ['QB', 'HB', 'WR', 'TE', 'P'].includes(g);
+      const mbox = h('div');
+      const drawA = () => { mbox.replaceChildren(); const key = mode === 'eff' ? 'weight' : 'weightPg'; const rows = [...b.attrs].sort((x, y) => y[key] - x[key]); const mx = Math.max(...rows.map(r => Math.abs(r[key])), 0.05);
+        const l = h('div', {class: 'list'}); rows.forEach(r => l.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, r.attribute), divBar(r[key], mx, 'var(--blue2)', '#9aa3b5'), h('span', {class: 'val'}, mode === 'eff' ? `${r.top3}%` : f2s(r.corrPg))))); mbox.append(l); };
+      ac.append(h('p', {class: 'note'}, sk ? 'Efektyvumas – vertė per galimybę. Su žaidimo laiku – vertė per rungtynes (atributai lemia ir tai, kiek kamuolio žaidėjas gauna). Stulpelio ilgis – poveikis atmetus kitus atributus; skaičius – top 3 dažnis (arba koreliacija).' : 'Stulpelio ilgis – poveikis atmetus kitus atributus; skaičius – kaip dažnai atributas pateko į top 3.'));
+      if (sk) ac.append(chips([['eff', 'Efektyvumas'], ['pg', 'Su žaidimo laiku']], mode, v => { mode = v; drawA(); }));
+      ac.append(mbox); drawA(); box.append(ac);
+      if (b.tiers.length) { const tc = h('div', {class: 'card'}, h('h3', {}, `${b.tierAttr}: pakopos`), h('p', {class: 'note'}, `Vidutinis efektyvumas (${b.label}) pagal ketvirčius. Lygos vidurkis ${b.mean}.`));
+        const l = h('div', {class: 'list'}); const vals = b.tiers.map(t => t.eff - b.mean); const mx = Math.max(...vals.map(Math.abs), 0.01);
+        b.tiers.forEach(t => l.append(h('div', {class: 'row'}, h('span', {class: 'lbl'}, `${t.tier} (${t.n})`), divBar(t.eff - b.mean, mx), h('span', {class: 'val ' + (t.eff >= b.mean ? 'pos' : 'neg')}, String(t.eff))))); tc.append(l); box.append(tc); }
+      if (b.comps.length) { const cc = h('div', {class: 'card'}, h('h3', {}, 'Komponentai'), h('p', {class: 'note'}, 'Kiekvieno rodiklio ryšys su efektyvumu (r) ir labiausiai su juo koreliuojantys atributai.'));
+        b.comps.forEach(c => cc.append(h('div', {style: 'padding:5px 0;border-bottom:1px solid #f1f2f6'}, h('div', {style: 'font-size:13.5px;font-weight:600'}, `${c.metric} `, h('span', {class: 'meta'}, `r su efekt. ${f2s(c.withEff)}`)), h('div', {class: 'stats', style: 'margin:0'}, c.drivers)))); box.append(cc); }
+      if (['K', 'P'].includes(g)) box.append(h('p', {class: 'note', style: 'margin:4px'}, 'K/P imtis maža (~32), todėl atributų ryšiai čia nepatikimi.'));
     };
-    s.prepend(picker() || '');
-    s.append(h('h2', {}, 'Pozicija'), chips(order.map(x => [x, x]), g, v => { g = v; store.set('attrG', v); draw(); }), box);
+    s.append(h('h2', {}, 'Pozicija'), chips(order.map(x => [x, x]), g, v => { g = v; store.set('valG', v); draw(); }), box);
     draw();
-    s.append(h('p', {class: 'note', style: 'margin:4px'}, 'Ryšiai koreliaciniai; „dalies“ rodikliai priklauso ir nuo to, ar žaidėjas startuoja. Atributai – dabartiniai.'));
   })();
 
   // ---------- ARCH ----------
