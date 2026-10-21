@@ -41,11 +41,11 @@ FORMULA = {
     "HB": ("vertė per prisilietimą", "prisilietimai/rungt.", "(bėg. + gaud. jardai + 20×TD − 35×fumble − 10×drop) / (nešimai + sugavimai)", 100),
     "WR": ("vertė per taikinį", "taikiniai/rungt.", "(jardai + 20×TD) / taikiniai; taikiniai = sugavimai / catch%", 60),
     "TE": ("vertė per taikinį", "taikiniai/rungt.", "(jardai + 20×TD) / taikiniai; taikiniai = sugavimai / catch%", 50),
-    "EDGE": ("taškai per rungtynes", "rungtynės", "tackle 1, sack 4, INT 6, PD 1.5, FF 3, FR 2, TD 6; tackle'ai pakoreguoti pagal komandos gynybos apimtį", 4),
-    "DT": ("taškai per rungtynes", "rungtynės", "tackle 1, sack 4, INT 6, PD 1.5, FF 3, FR 2, TD 6; tackle'ai pakoreguoti pagal komandos gynybos apimtį", 4),
-    "LB": ("taškai per rungtynes", "rungtynės", "tackle 1, sack 4, INT 6, PD 1.5, FF 3, FR 2, TD 6; tackle'ai pakoreguoti pagal komandos gynybos apimtį", 4),
-    "CB": ("taškai per rungtynes", "rungtynės", "INT 6, PD 1.5, tackle 0.75, FF 3, FR 2, TD 6, leistas sugavimas −0.5", 4),
-    "S": ("taškai per rungtynes", "rungtynės", "INT 6, PD 1.5, tackle 1, sack 4, FF 3, FR 2, TD 6, leistas sugavimas −0.5", 4),
+    "EDGE": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
+    "DT": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
+    "LB": ("sutaupyti jardai per rungtynes", "rungtynės", "jardų ekvivalentas, sutaupytas per rungtynes: INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3 (pakoreguotas pagal komandos gynybos apimtį)", 4),
+    "CB": ("sutaupyti jardai per rungtynes", "rungtynės", "INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3; tackle 2, leistas sugavimas −4 (tackle pakoreguotas pagal komandos apimtį)", 4),
+    "S": ("sutaupyti jardai per rungtynes", "rungtynės", "INT 50, FF 20, FR 20, TD +20, sack 14, PD 7, tackle 3; leistas sugavimas −4 (tackle pakoreguotas pagal komandos apimtį)", 4),
     "K": ("taškai per rungtynes virš vidurkio", "rungtynės", "FG pataikymas virš lygos vidurkio × 3 (50+ jardų ×1.5) + XP virš vidurkio", 4),
     "P": ("grynieji jardai per spyrį", "spyriai/rungt.", "grynieji jardai per spyrį + 5 × spyriai į 20 jardų zoną / spyriai", 30),
 }
@@ -155,10 +155,11 @@ def build(players, stats, myteam, starters_per_team):
             games = g(de, "gamesPlayed")
             adj = lg_tkl / max(tm_tkl.get(team, lg_tkl), 1)
             tk = g(de, "defTotalTackles") * adj
-            tw = 0.75 if G == "CB" else 1.0
-            val = (tw * tk + 4 * g(de, "defTotalSacks") + 6 * g(de, "defTotalInts") + 1.5 * g(de, "defTotalDeflections") + 3 * g(de, "defTotalForcedFum")
-                   + 2 * g(de, "defTotalFumRec") + 6 * g(de, "defTotalTDs") + 2 * g(de, "defTotalSafeties")
-                   - (0.5 * g(de, "defTotalCatchAllowed") if G in ("CB", "S") else 0))
+            # jardų ekvivalentas, sutaupytas komandai (ta pati skalė kaip QB formulėje: INT ≈ 45 jd + vidutinis metimas)
+            tw = 2.0 if G == "CB" else 3.0
+            val = (tw * tk + 14 * g(de, "defTotalSacks") + 50 * g(de, "defTotalInts") + 7 * g(de, "defTotalDeflections") + 20 * g(de, "defTotalForcedFum")
+                   + 20 * g(de, "defTotalFumRec") + 20 * g(de, "defTotalTDs") + 30 * g(de, "defTotalSafeties")
+                   - (4 * g(de, "defTotalCatchAllowed") if G in ("CB", "S") else 0))
             opp = games
             comps = {"Tackle'ai/rungt.": g(de, "defTotalTackles") / max(games, 1), "Sack'ai/rungt.": g(de, "defTotalSacks") / max(games, 1),
                      "INT+PD/rungt.": (g(de, "defTotalInts") + g(de, "defTotalDeflections")) / max(games, 1),
