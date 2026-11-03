@@ -600,5 +600,48 @@
     "rows": 131
    }
   ]
+ },
+ {
+  "date": "2026-11-03",
+  "season": 1,
+  "hash": "35b9f6875babd3b8872268f534b5dd48384d16428138a6204e3a904743a70c74",
+  "files": [
+   {
+    "file": "players.csv.gz",
+    "rows": 3139
+   },
+   {
+    "file": "teams.csv.gz",
+    "rows": 32
+   },
+   {
+    "file": "games.csv.gz",
+    "rows": 637
+   },
+   {
+    "file": "stats_passing.csv.gz",
+    "rows": 327
+   },
+   {
+    "file": "stats_rushing.csv.gz",
+    "rows": 1313
+   },
+   {
+    "file": "stats_receiving.csv.gz",
+    "rows": 1340
+   },
+   {
+    "file": "stats_defense.csv.gz",
+    "rows": 2690
+   },
+   {
+    "file": "stats_kicking.csv.gz",
+    "rows": 208
+   },
+   {
+    "file": "stats_punting.csv.gz",
+    "rows": 131
+   }
+  ]
  }
 ]
